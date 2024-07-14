@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Mindora-App",
-    "slug": "Mindora-App",
+    "name": "Mindora",
+    "slug": "Mindora",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
