@@ -1,40 +1,29 @@
 import React, { FC, useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { loginUser } from '../redux/authSlice';
 
 const Login: FC = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { status, error } = useAppSelector((state) => state.auth);
 
-  const onPressSignIn = async () => {
-    setIsLoading(true);
-    router.push('/Main');
-    try {
-      const response = await axios.post('https://mobile-bn.onrender.com/api/v1/login', {
-        email,
-        password,
-      });
-      const user = response.data;
-      if (user && user.token) {
-        await AsyncStorage.setItem('token', user.token);
-        setIsLoading(false);
-         // Adjust this according to your actual main screen
-      } else {
+  const onPressSignIn = () => {
+    dispatch(loginUser({ email, password }))
+      .unwrap()
+      .then(() => {
+        router.push('/Main');
+      })
+      .catch((err) => {
         alert('Invalid email or password');
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.error(error);
-      alert('There was an error logging in. Please try again.');
-    }
+      });
   };
 
   const onPressCreateAccount = () => {
-    router.push('/Signup'); // Adjust this according to your actual sign-up screen
+    router.push('/Signup');
   };
 
   return (
@@ -75,7 +64,7 @@ const Login: FC = () => {
         <View style={styles.formAction}>
           <TouchableOpacity onPress={onPressSignIn}>
             <View style={[styles.btn, { backgroundColor: 'purple' }]}>
-              {isLoading ? (
+              {status === 'loading' ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
                 <Text style={styles.btnText}>Log in</Text>
@@ -89,6 +78,7 @@ const Login: FC = () => {
             <Text style={{ textDecorationLine: 'underline' }}>Sign up</Text>
           </Text>
         </TouchableOpacity>
+        {status === 'failed' && <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>}
       </View>
     </SafeAreaView>
   );
