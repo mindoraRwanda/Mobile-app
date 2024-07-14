@@ -31,17 +31,17 @@ export default function SignUp(): React.ReactElement {
     }
     setIsLoading(true);
     const user = {
-      name: form.name,
+      fullname: form.name,
       email: form.email,
       phoneNumber: form.phoneNumber,
       username: form.username,
       password: form.password,
     };
-    axios.post('https://mobile-bn.onrender.com/api/v1/signup', user)
+    axios.post('https://mindora-backend.onrender.com/api/auth/patient/register', user)
       .then(response => {
         Alert.alert(response.data.message);
         setIsLoading(false);
-        router.push('/profile');
+        router.push('/Profile');
       })
       .catch(error => {
         setIsLoading(false);
