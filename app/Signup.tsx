@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import axios from 'axios';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface FormData {
   name: string;
@@ -30,24 +30,14 @@ export default function SignUp(): React.ReactElement {
       return;
     }
     setIsLoading(true);
-    const user = {
-      fullname: form.name,
-      email: form.email,
-      phoneNumber: form.phoneNumber,
-      username: form.username,
-      password: form.password,
-    };
-    axios.post('https://mindora-backend.onrender.com/api/auth/patient/register', user)
-      .then(response => {
-        Alert.alert(response.data.message);
-        setIsLoading(false);
-        router.push('/Profile');
-      })
-      .catch(error => {
-        setIsLoading(false);
-        Alert.alert('Error', 'There was an error signing up. Please try again.');
-        console.error(error);
-      });
+
+    // delay for user feedback
+    setTimeout(() => {
+      setIsLoading(false);
+      Alert.alert('Sign up successfull');
+      router.push('/Profile')
+    }, 1000)
+
   };
 
   const onPressHaveAccount = (): void => {
@@ -56,106 +46,111 @@ export default function SignUp(): React.ReactElement {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Sign Up</Text>
-          <Text style={styles.subtitle}>Create a new account</Text>
-        </View>
-        <View style={styles.form}>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Name</Text>
-            <TextInput
-              autoCapitalize="words"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              onChangeText={(name) => setForm({ ...form, name })}
-              placeholder="Enter your name"
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              value={form.name}
-            />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Sign Up</Text>
+            <Text style={styles.subtitle}>Create a new account</Text>
           </View>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>User Name</Text>
-            <TextInput
-              autoCapitalize="words"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              onChangeText={(username) => setForm({ ...form, username })}
-              placeholder="Enter your user name"
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              value={form.username}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Email address</Text>
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              keyboardType="email-address"
-              onChangeText={(email) => setForm({ ...form, email })}
-              placeholder="john@example.com"
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              value={form.email}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Phone Number</Text>
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              keyboardType="phone-pad"
-              onChangeText={(phoneNumber) => setForm({ ...form, phoneNumber})}
-              placeholder="Enter your phone number"
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              value={form.phoneNumber}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <TextInput
-              autoCorrect={false}
-              clearButtonMode="while-editing"
-              onChangeText={(password) => setForm({ ...form, password })}
-              placeholder="********"
-              placeholderTextColor="#6b7280"
-              style={styles.inputControl}
-              secureTextEntry={true}
-              value={form.password}
-            />
-          </View>
-          <View style={styles.formAction}>
-            <TouchableOpacity onPress={onPressSingIn}>
-              <View style={{...styles.btn, backgroundColor: 'purple'}}>
-                {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-              <Text style={styles.btnText}>Sign Up</Text>
-              )}
-              </View>
+          <View style={styles.form}>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Name</Text>
+              <TextInput
+                autoCapitalize="words"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                onChangeText={(name) => setForm({ ...form, name })}
+                placeholder="Enter your name"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                value={form.name}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>User Name</Text>
+              <TextInput
+                autoCapitalize="words"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                onChangeText={(username) => setForm({ ...form, username })}
+                placeholder="Enter your user name"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                value={form.username}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Email address</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                keyboardType="email-address"
+                onChangeText={(email) => setForm({ ...form, email })}
+                placeholder="john@example.com"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                value={form.email}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Phone Number</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                keyboardType="phone-pad"
+                onChangeText={(phoneNumber) => setForm({ ...form, phoneNumber })}
+                placeholder="Enter your phone number"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                value={form.phoneNumber}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                onChangeText={(password) => setForm({ ...form, password })}
+                placeholder="********"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                secureTextEntry={true}
+                value={form.password}
+              />
+            </View>
+            <View style={styles.formAction}>
+              <TouchableOpacity onPress={onPressSingIn}>
+                <View style={{ ...styles.btn, backgroundColor: 'purple' }}>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.btnText}>Sign Up</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={onPressHaveAccount}>
+              <Text style={styles.formFooter}>
+                Already Have an Account?{' '}
+                <Text style={{ textDecorationLine: 'underline' }}>Sign In</Text>
+              </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={onPressHaveAccount}>
-            <Text style={styles.formFooter}>
-              Already Have an Account?{' '}
-              <Text style={{ textDecorationLine: 'underline' }}>Sign In</Text>
-            </Text>
-          </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     padding: 24,
     flexGrow: 1,
+  },
+  container: {
+
     flexShrink: 1,
     flexBasis: 0,
   },
