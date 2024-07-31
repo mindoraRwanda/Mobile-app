@@ -11,7 +11,7 @@ export default function HomeLayout() {
           color = focused ? 'purple' : 'rgba(74, 8, 135, 0.557)';
 
           if (route.name === 'AI Chat') {
-            iconName = 'robot';
+            iconName = 'home';
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Chat') {

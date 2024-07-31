@@ -64,9 +64,9 @@ const Account: React.FC = () => {
                   source={require('../../assets/ImgForScreen/user.jpg')}
                   style={styles.profileAvatar} />
                 <View style={styles.profileBody}>
-                  <Text style={styles.profileName}>{user?.name || 'John Doe'}</Text>
-                  <Text style={styles.profileHandle}>{user?.email || 'john@example.com'}</Text>
-                  <Text style={styles.profileHandle}>ID: {user?.id || 'JCJ-4140'}</Text>
+                  <Text style={styles.profileName}>{user?.patient.fullname || 'John Doe'}</Text>
+                  <Text style={styles.profileHandle}>{user?.patient.email || 'john@example.com'}</Text>
+                  <Text style={styles.profileHandle}>ID: {user?.patient.medical_id || 'JCJ-4140'}</Text>
                 </View>
                 <FeatherIcon
                   color="#bcbcbc"
