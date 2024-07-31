@@ -12,6 +12,8 @@ export default function Layout() {
         <Stack.Screen name="Main" />
         <Stack.Screen name="Profile" />
         <Stack.Screen name="Signup" />
+       
+        
       </Stack>
     </Provider>
   );
