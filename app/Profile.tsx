@@ -1,5 +1,5 @@
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, TextInput, NativeSyntheticEvent, NativeScrollEvent, Alert, LayoutChangeEvent } from 'react-native';
-import React, { useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert, ScrollView } from 'react-native';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAppDispatch } from '@/redux/hooks';
 
@@ -134,127 +134,132 @@ const questions = [
   },
 ];
 
-interface Question {
-  question: string;
-  options: string[];
-}
-
-
 const Profile: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const scrollViewRef = useRef<ScrollView>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questionWidth, setQuestionWidth] = useState<number>(0);
 
-
-  const handleButtonPress = (questionIndex: number, option: string) => {
+  const handleButtonPress = (option: string) => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
-      [questionIndex]: option,
+      [currentQuestionIndex]: option,
     }));
-    setTimeout(() => {
-      setCurrentQuestionIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1;
-        if (scrollViewRef.current && questionWidth) {
-          scrollViewRef.current.scrollTo({
-            x: nextIndex * questionWidth,
-            animated: true,
-          });
-        }
-        return nextIndex;
-      });
-    }, 200); // Short delay to allow color change animation
   };
 
-  const handleTextInput = (questionIndex: number, text: string) => {
+  const handleTextInput = (text: string) => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
-      [questionIndex]: text,
+      [currentQuestionIndex]: text,
     }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
   };
 
   const handleSubmit = () => {
+    if (Object.keys(answers).length < questions.length) {
+      Alert.alert('Please answer all questions before submitting.');
+      return;
+    }
+
     console.log('Submit answers:', answers);
-    Alert.alert('Profile updated successfully')
-    router.push('/home'); // Adjust the path as needed
+    Alert.alert('Profile updated successfully');
+    router.push('/home');
   };
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const { width } = event.nativeEvent.layout;
-    setQuestionWidth(width);
-  };
-
-
-
+  const currentQuestion = questions[currentQuestionIndex];
+  const isAnswerProvided = answers[currentQuestionIndex] !== undefined;
+  const selectedOption = answers[currentQuestionIndex];
 
   return (
-    <ScrollView style={styles.verticalScrollContainer}>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.topContainer}>
           <Image source={require('../assets/ImgForScreen/AITalk.jpg')} style={styles.logo} />
           <Text style={styles.heading}>Help us match you to the right therapist</Text>
         </View>
-
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerStyle={styles.scrollContainer}
-          horizontal={true}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-        >
-          {questions.map((question, index) => (
-            <View key={index} style={styles.questionContainer}>
-              <Text style={styles.question}>{question.question}</Text>
-              {question.options.map((option, optionIndex) => (
-                option === 'Open-ended response' ? (
-                  <TextInput
-                    key={optionIndex}
-                    style={styles.textInput}
-                    placeholder="Enter your response"
-                    multiline
-                    onChangeText={(text) => handleTextInput(index, text)}
-                    value={answers[index + 9] || ''}
-                  />
-                ) : (
-                  <TouchableOpacity
-                    key={optionIndex}
-                    style={[
-                      styles.button,
-                      answers[index] === option && styles.selectedButton,
-                    ]}
-                    onPress={() => handleButtonPress(index, option)}
-                  >
-                    <Text style={styles.buttonText}>{option}</Text>
-                  </TouchableOpacity>
-                )
-              ))}
-              {index === questions.length - 1 && (
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                  <Text style={styles.submitButtonText}>Submit</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+        <View style={styles.questionContainer}>
+          <Text style={styles.question}>{currentQuestion.question}</Text>
+          {currentQuestion.options.map((option, optionIndex) => (
+            option === 'Open-ended response' ? (
+              <TextInput
+                key={optionIndex}
+                style={styles.textInput}
+                placeholder="Enter your response"
+                multiline
+                onChangeText={handleTextInput}
+                value={answers[currentQuestionIndex] || ''}
+              />
+            ) : (
+              <TouchableOpacity
+                key={optionIndex}
+                style={[
+                  styles.button,
+                  selectedOption === option && styles.selectedButton,
+                ]}
+                onPress={() => handleButtonPress(option)}
+              >
+                <Text style={[
+                  styles.buttonText,
+                  selectedOption === option && styles.selectedButtonText,
+                ]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            )
           ))}
-        </ScrollView>
-      </View>
-    </ScrollView>
+        </View>
+        <View style={styles.navigationContainer}>
+          <TouchableOpacity
+            style={styles.navigationButton}
+            onPress={handlePrevious}
+            disabled={currentQuestionIndex === 0}
+          >
+            <Text style={styles.navigationButtonText}>Previous</Text>
+          </TouchableOpacity>
+          {currentQuestionIndex === questions.length - 1 ? (
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.navigationButton}
+              onPress={handleNext}
+              disabled={!isAnswerProvided}
+            >
+              <Text style={styles.navigationButtonText}>Next</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  verticalScrollContainer: {
+  container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    flex: 1,
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   topContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
+    alignItems: 'center',
   },
   logo: {
     width: 200,
@@ -265,23 +270,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
+    textAlign: 'center',
   },
-  scrollContainer: {
-    paddingVertical: 20,
-    flexDirection: 'row',
-  },
-  sectionContainer: {
-    padding: 20,
-    maxWidth: '100%',
-  },  
   questionContainer: {
     padding: 20,
-    maxWidth: '100%',
     justifyContent: 'center',
   },
   question: {
     fontSize: 16,
     marginBottom: 10,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#fff',
@@ -292,10 +290,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   selectedButton: {
-    backgroundColor: '#eee',
+    backgroundColor: '#4a4a4a', // Change this to your preferred color
   },
   buttonText: {
     fontSize: 16,
+  },
+  selectedButtonText: {
+    color: '#fff', // Change this to match the button color if needed
   },
   textInput: {
     height: 100,
@@ -306,22 +307,29 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     textAlignVertical: 'top',
   },
-  submitButton: {
+  navigationContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  navigationButton: {
+    padding: 10,
     backgroundColor: 'rgba(74, 8, 135, 1)',
-    borderColor: 'rgba(74, 8, 135, 1)',
+    borderRadius: 5,
+  },
+  navigationButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  submitButton: {
+    padding: 10,
+    backgroundColor: 'rgba(74, 8, 135, 1)',
+    borderRadius: 5,
   },
   submitButtonText: {
-    fontSize: 17,
-    lineHeight: 24,
-    fontWeight: '600',
     color: '#fff',
+    fontSize: 16,
   },
 });
 
