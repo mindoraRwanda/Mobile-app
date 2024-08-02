@@ -2,6 +2,23 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+// Sample questions for exercises
+const meditationQuestions = [
+  // Sample questions for meditation
+];
+
+const breathingQuestions = [
+  // Sample questions for breathing
+];
+
+const betterSleepQuestions = [
+  // Sample questions for better sleep
+];
+
+const focusQuestions = [
+  // Sample questions for focus
+];
+
 const depressionQuestions = [
   {
     question: 'Which of the following is a common symptom of depression?',
@@ -62,24 +79,21 @@ export default function Service() {
   const [anxietyModalVisible, setAnxietyModalVisible] = useState(false);
   const [suicideBehaviorModalVisible, setSuicideBehaviorModalVisible] = useState(false);
   const [alcoholUseDisorderModalVisible, setAlcoholUseDisorderModalVisible] = useState(false);
+  const [meditationModalVisible, setMeditationModalVisible] = useState(false);
+  const [breathingModalVisible, setBreathingModalVisible] = useState(false);
+  const [betterSleepModalVisible, setBetterSleepModalVisible] = useState(false);
+  const [focusModalVisible, setFocusModalVisible] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [score, setScore] = useState(0);
 
-  const handleDepressionButtonPress = () => {
-    setDepressionModalVisible(true);
-  };
-
-  const handleAnxietyButtonPress = () => {
-    setAnxietyModalVisible(true);
-  };
-
-  const handleSuicideBehaviorButtonPress = () => {
-    setSuicideBehaviorModalVisible(true);
-  };
-
-  const handleAlcoholUseDisorderButtonPress = () => {
-    setAlcoholUseDisorderModalVisible(true);
-  };
+  const handleDepressionButtonPress = () => setDepressionModalVisible(true);
+  const handleAnxietyButtonPress = () => setAnxietyModalVisible(true);
+  const handleSuicideBehaviorButtonPress = () => setSuicideBehaviorModalVisible(true);
+  const handleAlcoholUseDisorderButtonPress = () => setAlcoholUseDisorderModalVisible(true);
+  const handleMeditationButtonPress = () => setMeditationModalVisible(true);
+  const handleBreathingButtonPress = () => setBreathingModalVisible(true);
+  const handleBetterSleepButtonPress = () => setBetterSleepModalVisible(true);
+  const handleFocusButtonPress = () => setFocusModalVisible(true);
 
   const handleCloseModal = (modalType) => {
     if (modalType === 'depression') {
@@ -90,6 +104,14 @@ export default function Service() {
       setSuicideBehaviorModalVisible(false);
     } else if (modalType === 'alcoholUseDisorder') {
       setAlcoholUseDisorderModalVisible(false);
+    } else if (modalType === 'meditation') {
+      setMeditationModalVisible(false);
+    } else if (modalType === 'breathing') {
+      setBreathingModalVisible(false);
+    } else if (modalType === 'betterSleep') {
+      setBetterSleepModalVisible(false);
+    } else if (modalType === 'focus') {
+      setFocusModalVisible(false);
     }
     setSelectedAnswers({});
     setScore(0);
@@ -177,10 +199,43 @@ export default function Service() {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Exercise</Text>
+      </View>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, styles.exerciseButton]} onPress={handleMeditationButtonPress}>
+          <Icon name="sunny-outline" size={24} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Meditation</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.exerciseButton]} onPress={handleBreathingButtonPress}>
+          <Icon name="airplane-outline" size={24} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Breathing</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, styles.exerciseButton]} onPress={handleBetterSleepButtonPress}>
+          <Icon name="bed-outline" size={24} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Better Sleep</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.exerciseButton]} onPress={handleFocusButtonPress}>
+          <Icon name="bulb-outline" size={24} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Focus</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.anxietyButton]} onPress={handleAnxietyButtonPress}>
+          <Icon name="leaf-outline" size={24} color="#fff" style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Anxiety</Text>
+        </TouchableOpacity>
+      </View>
+      
+
       {renderModal(depressionModalVisible, setDepressionModalVisible, depressionQuestions, "Beck Depression Inventory")}
       {renderModal(anxietyModalVisible, setAnxietyModalVisible, anxietyQuestions, "Anxiety Inventory")}
       {renderModal(suicideBehaviorModalVisible, setSuicideBehaviorModalVisible, suicideBehaviorQuestions, "Suicide Behavior Questionnaire")}
       {renderModal(alcoholUseDisorderModalVisible, setAlcoholUseDisorderModalVisible, alcoholUseDisorderQuestions, "Alcohol Use Disorder Identification Test")}
+      {renderModal(meditationModalVisible, setMeditationModalVisible, meditationQuestions, "Meditation")}
+      {renderModal(breathingModalVisible, setBreathingModalVisible, breathingQuestions, "Breathing")}
+      {renderModal(betterSleepModalVisible, setBetterSleepModalVisible, betterSleepQuestions, "Better Sleep")}
+      {renderModal(focusModalVisible, setFocusModalVisible, focusQuestions, "Focus")}
     </SafeAreaView>
   );
 }
@@ -197,6 +252,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#6200EE',
     marginLeft: 5,
     marginRight: 5,
+    borderRadius: 5,
   },
   headerTitle: {
     fontSize: 24,
@@ -208,6 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 10,
+    flexWrap: 'wrap',
   },
   button: {
     flex: 1,
@@ -227,6 +284,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     margin: 5,
+  },
+  exerciseButton: {
+    backgroundColor: 'purple',
   },
   anxietyButton: {
     backgroundColor: 'purple',
@@ -304,5 +364,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     textAlign: 'center',
+  },
+  exerciseHeaderContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  exerciseHeaderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#6200EE',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    flexWrap: 'wrap',
   },
 });
