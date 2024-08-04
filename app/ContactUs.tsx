@@ -11,7 +11,7 @@ import {
   ScrollView,
   Alert,
   ImageBackground,
-  Linking, 
+  Linking,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
@@ -44,12 +44,10 @@ const ContactUs: React.FC = () => {
           <TouchableOpacity
             onPress={() => {
               router.push('../Main/Account')
-            }}
-          >
+            }}>
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
           <Text numberOfLines={1} style={styles.headerTitle}>
-            Contact Us
           </Text>
           <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
             <TouchableOpacity

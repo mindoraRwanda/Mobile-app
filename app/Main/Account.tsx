@@ -225,74 +225,82 @@ const Account: React.FC = () => {
       </View>
 
       {/* Language Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={languageModalVisible}
-        onRequestClose={() => {
-          setLanguageModalVisible(!languageModalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TouchableOpacity
-              onPress={() => setLanguageModalVisible(false)}
-              style={styles.modalCloseButton}>
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Select Language</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={selectedLanguage}
-                // onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-                style={styles.picker}>
-                <Picker.Item label="English" value="English" />
-                <Picker.Item label="French" value="French" />
-                <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
-              </Picker>
+      {languageModalVisible && (
+        <View style={styles.modalBackdrop}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={languageModalVisible}
+            onRequestClose={() => {
+              setLanguageModalVisible(!languageModalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity
+                  onPress={() => setLanguageModalVisible(false)}
+                  style={styles.modalCloseButton}>
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+                <Text style={styles.modalTitle}>Select Language</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={selectedLanguage}
+                    // onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
+                    style={styles.picker}>
+                    <Picker.Item label="English" value="English" />
+                    <Picker.Item label="French" value="French" />
+                    <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
+                  </Picker>
+                </View>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setLanguageModalVisible(false)}>
+                  <Text style={styles.textStyle}>Done</Text>
+                </Pressable>
+              </View>
             </View>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setLanguageModalVisible(false)}>
-              <Text style={styles.textStyle}>Done</Text>
-            </Pressable>
-          </View>
+          </Modal>
         </View>
-      </Modal>
+      )}
 
       {/* Location Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={locationModalVisible}
-        onRequestClose={() => {
-          setLocationModalVisible(!locationModalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-          <TouchableOpacity
-              onPress={() => setLocationModalVisible(false)}
-              style={styles.modalCloseButton}>
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Select Location</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={selectedLocation}
-                // onValueChange={(itemValue) => setSelectedLocation(itemValue)}
-                style={styles.picker}>
-                <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
-                <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
-                <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
-              </Picker>
+      {locationModalVisible && (
+        <View style={styles.modalBackdrop}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={locationModalVisible}
+            onRequestClose={() => {
+              setLocationModalVisible(!locationModalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity
+                  onPress={() => setLocationModalVisible(false)}
+                  style={styles.modalCloseButton}>
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                </TouchableOpacity>
+                <Text style={styles.modalTitle}>Select Location</Text>
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={selectedLocation}
+                    // onValueChange={(itemValue) => setSelectedLocation(itemValue)}
+                    style={styles.picker}>
+                    <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
+                    <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
+                    <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
+                  </Picker>
+                </View>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setLocationModalVisible(false)}>
+                  <Text style={styles.textStyle}>Done</Text>
+                </Pressable>
+              </View>
             </View>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setLocationModalVisible(false)}>
-              <Text style={styles.textStyle}>Done</Text>
-            </Pressable>
-          </View>
+          </Modal>
         </View>
-      </Modal>
+      )}
     </SafeAreaView>
   );
 };
@@ -440,6 +448,15 @@ const styles = StyleSheet.create({
   },
 
   /** Modal */
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1,
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -460,6 +477,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    zIndex: 2,
   },
   button: {
     borderRadius: 10,
