@@ -10,12 +10,12 @@ import {
   Image,
   Modal,
   Pressable,
+  Picker,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/authSlice';
 import { router } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 
 const Account: React.FC = () => {
@@ -36,6 +36,13 @@ const Account: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.container}>
         <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push('../Main')
+            }}
+          >
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
           <Text numberOfLines={1} style={styles.headerTitle}>
             Settings
           </Text>
@@ -137,7 +144,7 @@ const Account: React.FC = () => {
               <View style={[styles.rowWrapper, styles.rowFirst]}>
                 <TouchableOpacity
                   onPress={() => {
-                    // handle onPress
+                    router.push('../ContactUs')
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Contact Us</Text>
@@ -151,7 +158,7 @@ const Account: React.FC = () => {
               <View style={styles.rowWrapper}>
                 <TouchableOpacity
                   onPress={() => {
-                    // handle onPress
+                    router.push('./Report');
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Report Bug</Text>
@@ -227,17 +234,22 @@ const Account: React.FC = () => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TouchableOpacity onPress={() => router.push('./Main/Account')}>
+            <TouchableOpacity
+              onPress={() => setLanguageModalVisible(false)}
+              style={styles.modalCloseButton}>
               <Ionicons name="arrow-back" size={24} color="#000" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Select Language</Text>
-            <Picker
-              selectedValue={selectedLanguage}
-              onValueChange={(itemValue) => setSelectedLanguage(itemValue)}>
-              <Picker.Item label="English" value="English" />
-              <Picker.Item label="French" value="French" />
-              <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
-            </Picker>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={selectedLanguage}
+                // onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
+                style={styles.picker}>
+                <Picker.Item label="English" value="English" />
+                <Picker.Item label="French" value="French" />
+                <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
+              </Picker>
+            </View>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setLanguageModalVisible(false)}>
@@ -257,14 +269,22 @@ const Account: React.FC = () => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+          <TouchableOpacity
+              onPress={() => setLocationModalVisible(false)}
+              style={styles.modalCloseButton}>
+              <Ionicons name="arrow-back" size={24} color="#000" />
+            </TouchableOpacity>
             <Text style={styles.modalTitle}>Select Location</Text>
-            <Picker
-              selectedValue={selectedLocation}
-              onValueChange={(itemValue) => setSelectedLocation(itemValue)}>
-              <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
-              <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
-              <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
-            </Picker>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={selectedLocation}
+                // onValueChange={(itemValue) => setSelectedLocation(itemValue)}
+                style={styles.picker}>
+                <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
+                <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
+                <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
+              </Picker>
+            </View>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setLocationModalVisible(false)}>
@@ -419,7 +439,6 @@ const styles = StyleSheet.create({
     color: '#dc2626',
   },
 
-
   /** Modal */
   centeredView: {
     flex: 1,
@@ -448,7 +467,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonClose: {
-    marginTop: 50,
+    marginTop: 20,
     backgroundColor: '#4A0887',
   },
   textStyle: {
@@ -458,11 +477,26 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     width: 300,
-    height: 200,
-    marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
     fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  pickerContainer: {
+    width: '100%',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+  },
+  picker: {
+    width: '100%',
+    height: 50,
+    color: '#333',
+  },
+  modalCloseButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 15,
   },
 });
 

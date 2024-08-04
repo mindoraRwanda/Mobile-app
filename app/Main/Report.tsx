@@ -73,6 +73,7 @@ export default function Report() {
     };
     return (
         <SafeAreaView style={styles.container}>
+           
             <View style={styles.header} >
                 <Image
                     style={styles.profileImage}
