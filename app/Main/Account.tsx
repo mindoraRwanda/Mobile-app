@@ -8,28 +8,29 @@ import {
   TouchableOpacity,
   Switch,
   Image,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
+  Modal,
+  Pressable,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/authSlice';
-
-
-interface FormState {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-}
+import { router } from 'expo-router';
+import { Picker } from '@react-native-picker/picker';
+import { Ionicons } from '@expo/vector-icons';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user, token } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
 
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState({
     emailNotifications: true,
     pushNotifications: false,
   });
+
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLocation, setSelectedLocation] = useState('Los Angeles, CA');
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
@@ -56,7 +57,7 @@ const Account: React.FC = () => {
             <View style={styles.sectionBody}>
               <TouchableOpacity
                 onPress={() => {
-                  // handle onPress
+                  router.push('../EditProfile');
                 }}
                 style={styles.profile}>
                 <Image
@@ -80,13 +81,11 @@ const Account: React.FC = () => {
             <View style={styles.sectionBody}>
               <View style={[styles.rowWrapper, styles.rowFirst]}>
                 <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}
+                  onPress={() => setLanguageModalVisible(true)}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Language</Text>
                   <View style={styles.rowSpacer} />
-                  <Text style={styles.rowValue}>English</Text>
+                  <Text style={styles.rowValue}>{selectedLanguage}</Text>
                   <FeatherIcon
                     color="#bcbcbc"
                     name="chevron-right"
@@ -95,13 +94,11 @@ const Account: React.FC = () => {
               </View>
               <View style={styles.rowWrapper}>
                 <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}
+                  onPress={() => setLocationModalVisible(true)}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Location</Text>
                   <View style={styles.rowSpacer} />
-                  <Text style={styles.rowValue}>Los Angeles, CA</Text>
+                  <Text style={styles.rowValue}>{selectedLocation}</Text>
                   <FeatherIcon
                     color="#bcbcbc"
                     name="chevron-right"
@@ -219,36 +216,68 @@ const Account: React.FC = () => {
           <Text style={styles.contentFooter}>App Version 2.24 #50491</Text>
         </ScrollView>
       </View>
+
+      {/* Language Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={languageModalVisible}
+        onRequestClose={() => {
+          setLanguageModalVisible(!languageModalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity onPress={() => router.push('./Main/Account')}>
+              <Ionicons name="arrow-back" size={24} color="#000" />
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Select Language</Text>
+            <Picker
+              selectedValue={selectedLanguage}
+              onValueChange={(itemValue) => setSelectedLanguage(itemValue)}>
+              <Picker.Item label="English" value="English" />
+              <Picker.Item label="French" value="French" />
+              <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
+            </Picker>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setLanguageModalVisible(false)}>
+              <Text style={styles.textStyle}>Done</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Location Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={locationModalVisible}
+        onRequestClose={() => {
+          setLocationModalVisible(!locationModalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Select Location</Text>
+            <Picker
+              selectedValue={selectedLocation}
+              onValueChange={(itemValue) => setSelectedLocation(itemValue)}>
+              <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
+              <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
+              <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
+            </Picker>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setLocationModalVisible(false)}>
+              <Text style={styles.textStyle}>Done</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
-interface Styles {
-  container: ViewStyle;
-  header: ViewStyle;
-  headerAction: ViewStyle;
-  headerTitle: TextStyle;
-  content: ViewStyle;
-  contentFooter: TextStyle;
-  section: ViewStyle;
-  sectionTitle: TextStyle;
-  sectionBody: ViewStyle;
-  profile: ViewStyle;
-  profileAvatar: ImageStyle;
-  profileBody: ViewStyle;
-  profileName: TextStyle;
-  profileHandle: TextStyle;
-  row: ViewStyle;
-  rowWrapper: ViewStyle;
-  rowFirst: ViewStyle;
-  rowLabel: TextStyle;
-  rowSpacer: ViewStyle;
-  rowValue: TextStyle;
-  rowLast: ViewStyle;
-  rowLabelLogout: TextStyle;
-}
-
-const styles = StyleSheet.create<Styles>({
+const styles = StyleSheet.create({
   container: {
     padding: 0,
     flexGrow: 1,
@@ -314,6 +343,7 @@ const styles = StyleSheet.create<Styles>({
     shadowRadius: 1.41,
     elevation: 2,
   },
+
   /** Profile */
   profile: {
     padding: 12,
@@ -387,6 +417,52 @@ const styles = StyleSheet.create<Styles>({
     textAlign: 'center',
     fontWeight: '600',
     color: '#dc2626',
+  },
+
+
+  /** Modal */
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 2,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    marginTop: 50,
+    backgroundColor: '#4A0887',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalTitle: {
+    width: 300,
+    height: 200,
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 
