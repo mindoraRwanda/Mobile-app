@@ -58,9 +58,13 @@ const users: User[] = [
 export default function Chat() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [playingAudio, setPlayingAudio] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
   const navigation = useNavigation();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -71,14 +75,16 @@ export default function Chat() {
         alert('Sorry, we need audio recording permissions to make this work!');
       }
     })();
+  }, []);
 
-    if (scrollViewRef.current) {
+  useEffect(() => {
+    if (scrollViewRef.current && selectedUser) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [messages]);
+  }, [selectedUser, messages[selectedUser?.id]]);
 
   const sendMessage = (text: string, image?: string, audioUri?: string) => {
-    if (text.trim() || image || audioUri) {
+    if (selectedUser && (text.trim() || image || audioUri)) {
       const newMessage: Message = {
         id: Date.now().toString(),
         text: text.trim(),
@@ -87,7 +93,10 @@ export default function Chat() {
         image,
         audioUri,
       };
-      setMessages([...messages, newMessage]);
+      setMessages(prevMessages => ({
+        ...prevMessages,
+        [selectedUser.id]: [...(prevMessages[selectedUser.id] || []), newMessage]
+      }));
       setMessage('');
     }
   };
@@ -127,6 +136,17 @@ export default function Chat() {
       );
       setRecording(recording);
       setIsRecording(true);
+      setRecordingDuration(0);
+
+      const interval = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+
+      recording.setOnRecordingStatusUpdate((status) => {
+        if (status.isDoneRecording) {
+          clearInterval(interval);
+        }
+      });
     } catch (err) {
       console.error('Failed to start recording', err);
     }
@@ -148,10 +168,34 @@ export default function Chat() {
     }
   };
 
-  const playAudio = async (audioUri: string) => {
+  const playAudio = async (audioUri: string, messageId: string) => {
     try {
-      const { sound } = await Audio.Sound.createAsync({ uri: audioUri });
-      await sound.playAsync();
+      if (playingAudio) {
+        if (isPlaying && playingMessageId === messageId) {
+          await playingAudio.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await playingAudio.stopAsync();
+          await playingAudio.unloadAsync();
+          setPlayingAudio(null);
+          setIsPlaying(false);
+        }
+      }
+      
+      if (!isPlaying || playingMessageId !== messageId) {
+        const { sound } = await Audio.Sound.createAsync({ uri: audioUri });
+        setPlayingAudio(sound);
+        setPlayingMessageId(messageId);
+        setIsPlaying(true);
+        await sound.playAsync();
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if (status.didJustFinish) {
+            setIsPlaying(false);
+            setPlayingMessageId(null);
+            setPlayingAudio(null);
+          }
+        });
+      }
     } catch (err) {
       console.error('Failed to play audio', err);
     }
@@ -193,26 +237,32 @@ export default function Chat() {
             ref={scrollViewRef}
             contentContainerStyle={styles.messagesContainer}
           >
-            {messages.map((msg) => (
-              <View
-                key={msg.id}
-                style={[
-                  styles.messageBubble,
-                  msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
-                ]}
-              >
-                {msg.image && (
-                  <Image source={{ uri: msg.image }} style={styles.messageImage} />
-                )}
-                {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
-                {msg.audioUri && (
-                  <TouchableOpacity onPress={() => playAudio(msg.audioUri!)}>
-                    <Text style={styles.audioText}>Play Audio</Text>
-                  </TouchableOpacity>
-                )}
-                <Text style={styles.messageTime}>{formatTime(msg.timestamp)}</Text>
-              </View>
-            ))}
+            {selectedUser && messages[selectedUser.id]?.length > 0 ? (
+              messages[selectedUser.id].map((msg) => (
+                <View
+                  key={msg.id}
+                  style={[
+                    styles.messageBubble,
+                    msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
+                  ]}
+                >
+                  {msg.image && (
+                    <Image source={{ uri: msg.image }} style={styles.messageImage} />
+                  )}
+                  {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
+                  {msg.audioUri && (
+                    <TouchableOpacity onPress={() => playAudio(msg.audioUri!, msg.id)}>
+                      <Text style={styles.audioText}>
+                        {isPlaying && playingMessageId === msg.id ? 'Pause Audio' : 'Play Audio'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <Text style={styles.messageTime}>{formatTime(msg.timestamp)}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.emptyStateText}>No messages yet. Start a conversation!</Text>
+            )}
           </ScrollView>
           <View style={styles.inputContainer}>
             <TouchableOpacity style={styles.inputButton} onPress={openGallery}>
@@ -223,6 +273,7 @@ export default function Chat() {
               onPress={isRecording ? stopRecording : startRecording}
             >
               <Ionicons name={isRecording ? 'stop' : 'mic'} size={24} color={isRecording ? 'red' : 'purple'} />
+              {isRecording && <Text style={styles.recordingDuration}>{recordingDuration}s</Text>}
             </TouchableOpacity>
             <TextInput
               style={styles.input}
@@ -390,7 +441,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
-    // backgroundColor: 'pu'
   },
   closeButton: {
     marginRight: 16,
@@ -402,6 +452,11 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     flex: 1,
+  },
+  headerName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingLeft: 15,
   },
   headerName: {
     fontSize: 16,
@@ -483,5 +538,10 @@ const styles = StyleSheet.create({
   },
   likeButton: {
     marginHorizontal: 6,
+  },
+  recordingDuration: {
+    fontSize: 12,
+    color: 'red',
+    marginLeft: 5,
   },
 });
