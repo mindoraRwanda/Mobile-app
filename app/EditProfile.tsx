@@ -27,6 +27,7 @@ const EditProfile: React.FC = () => {
   const handleSave = () => {
     // Implement save functionality here
     Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
+    router.push('../Main/Account');
   };
 
   return (
@@ -109,6 +110,7 @@ const EditProfile: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 30,
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',

@@ -10,13 +10,14 @@ import {
   Image,
   Modal,
   Pressable,
-  Picker,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/authSlice';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -32,13 +33,32 @@ const Account: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [selectedLocation, setSelectedLocation] = useState('Los Angeles, CA');
 
+
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [languageValue, setLanguageValue] = useState('English');
+  const [languageItems, setLanguageItems] = useState([
+    { label: 'English', value: 'English' },
+    { label: 'French', value: 'French' },
+    { label: 'Kinyarwanda', value: 'Kinyarwanda' },
+  ]);
+
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [locationValue, setLocationValue] = useState('Los Angeles, CA');
+  const [locationItems, setLocationItems] = useState([
+    { label: 'Los Angeles, CA', value: 'Los Angeles, CA' },
+    { label: 'Kigali/ Rwanda', value: 'Kigali/ Rwanda' },
+    { label: 'Nairobi/ Kenya', value: 'Nairobi/ Kenya' },
+  ]);
+
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              router.push('../Main')
+              router.push(`../Main`)
             }}
           >
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -242,19 +262,18 @@ const Account: React.FC = () => {
                   <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
                 <Text style={styles.modalTitle}>Select Language</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={selectedLanguage}
-                    // onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-                    style={styles.picker}>
-                    <Picker.Item label="English" value="English" />
-                    <Picker.Item label="French" value="French" />
-                    <Picker.Item label="Kinyarwanda" value="Kinyarwanda" />
-                  </Picker>
-                </View>
+                <DropDownPicker
+                  open={languageOpen}
+                  value={languageValue}
+                  items={languageItems}
+                  setOpen={setLanguageOpen}
+                  setValue={setLanguageValue}
+                  setItems={setLanguageItems}
+                  // onChangeValue={(value) => setSelectedLanguage(value)}
+                />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setLanguageModalVisible(false)}>
+                  onPress={() => setLanguageModalVisible(!languageModalVisible)}>
                   <Text style={styles.textStyle}>Done</Text>
                 </Pressable>
               </View>
@@ -281,16 +300,15 @@ const Account: React.FC = () => {
                   <Ionicons name="arrow-back" size={24} color="#000" />
                 </TouchableOpacity>
                 <Text style={styles.modalTitle}>Select Location</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={selectedLocation}
-                    // onValueChange={(itemValue) => setSelectedLocation(itemValue)}
-                    style={styles.picker}>
-                    <Picker.Item label="Los Angeles, CA" value="Los Angeles, CA" />
-                    <Picker.Item label="Kigali/ Rwanda" value="Kigali/ Rwanda" />
-                    <Picker.Item label="Nairobi/ Kenya" value="Nairobi/ Kenya" />
-                  </Picker>
-                </View>
+                <DropDownPicker
+                  open={locationOpen}
+                  value={locationValue}
+                  items={locationItems}
+                  setOpen={setLocationOpen}
+                  setValue={setLocationValue}
+                  setItems={setLocationItems}
+                  // onChangeValue={(value) => setSelectedLocation(value)}
+                />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
                   onPress={() => setLocationModalVisible(false)}>
@@ -307,6 +325,7 @@ const Account: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 30,
     padding: 0,
     flexGrow: 1,
     flexShrink: 1,
