@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   audioText: {
-    color: 'white',
+    color: 'whit',
     textDecorationLine: 'underline',
     marginBottom: 4,
   },
