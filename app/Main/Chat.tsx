@@ -557,13 +557,13 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   audioText: {
-    color: 'blue',
+    color: 'white',
     textDecorationLine: 'underline',
     marginBottom: 4,
   },
   recordingDuration: {
     fontSize: 12,
-    color: 'red',
+    color: 'green',
     marginTop: 4,
   },
 });
