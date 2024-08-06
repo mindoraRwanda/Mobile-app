@@ -3,6 +3,7 @@ import { Modal, View, Text, StyleSheet, ImageBackground, SafeAreaView, Image, To
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import CancelBooking from '../Cancel';
 
 interface Therapist {
   name: string;
@@ -20,390 +21,412 @@ export default function Appointment() {
   const [name, setName] = useState<string>('');
   const [date, setDate] = useState<string>('');
   const [time, setTime] = useState<string>('');
+  const [reason, setReason] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
 
   const therapists: Therapist[] = [
-    { 
-      name: 'Noella Nizigama', 
-      location: 'Kigali', 
+    {
+      name: 'Noella Nizigama',
+      location: 'Kigali',
       job: 'Psychologist',
       image: require('../../assets/ImgForScreen/team3.jpg'),
-      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."' 
+      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
-    { 
+    {
       name: 'Uwirora Gilbert',
-      location: 'Kigali', 
-      job: 'Clinical Psychologist', 
+      location: 'Kigali',
+      job: 'Clinical Psychologist',
       image: require('../../assets/ImgForScreen/team2.jpg'),
-      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."' 
+      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
-    { 
+    {
       name: 'Murenzi Patrick',
       location: 'Kigali',
       job: 'Psychologist',
       image: require('../../assets/ImgForScreen/team5.jpg'),
-      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."' 
+      description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
-    { 
-      name: 'Nsengiyumva Athanaze', 
-      location: 'Kigali', 
+    {
+      name: 'Nsengiyumva Athanaze',
+      location: 'Kigali',
       job: 'Psychologist',
       image: require('../../assets/ImgForScreen/team6.jpg'),
       description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-     },
+    },
   ];
 
   return (
     <View style={styles.main}>
-      <View style={styles.exercisesSection}>
-        <View style={styles.listHeader}>
-          <Text style={styles.listTitle}>Mental Health Checkups</Text>
-        </View>
-
-        <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={styles.exercisesList}>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('UCLA Test' as never)}>
-              <Image source={require('../../assets/ImgForScreen/EUC.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Beck's Depression Inventory</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Anxiety Questionnaire' as never)}>
-              <Image source={require('../../assets/ImgForScreen/analysis.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Anxiety</Text>
-              <Text style={styles.exerciseSubtext}>Take Test</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('SBQ Questionnaire' as never)}>
-              <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Suicide Behaviors Questionnaire</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('AUDIT Questionnaire' as never)}>
-              <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Alcohol Use Disorders Identification Test</Text>
-            </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.exercisesSection}>
+          <View style={styles.listHeader}>
+            <Text style={styles.listTitle}>Mental Health Checkups</Text>
           </View>
-        </ScrollView>
-      </View>
 
-      <View style={styles.exercisesSection}>  
-        <View style={styles.listHeader}>
-          <Text style={styles.listTitle}>Exercise </Text>
+          <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
+            <View style={styles.exercisesList}>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('UCLA Test' as never)}>
+                <Image source={require('../../assets/ImgForScreen/EUC.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Beck's Depression Inventory</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Anxiety Questionnaire' as never)}>
+                <Image source={require('../../assets/ImgForScreen/analysis.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Anxiety</Text>
+                <Text style={styles.exerciseSubtext}>Take Test</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('SBQ Questionnaire' as never)}>
+                <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Suicide Behaviors Questionnaire</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('AUDIT Questionnaire' as never)}>
+                <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Alcohol Use Disorders Identification Test</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
 
-        <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={styles.exercisesList}>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Meditation' as never)}>
-              <Image source={require('../../assets/ImgForScreen/med.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Meditation</Text>
-              <Text style={styles.exerciseSubtext}>Meditate with Melody</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Breathing Exercise' as never)}>
-              <Image source={require('../../assets/ImgForScreen/Breathing.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Breathing</Text>
-              <Text style={styles.exerciseSubtext}>Breathe Relax Revive</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Better Sleep' as never)}>
-              <Image source={require('../../assets/ImgForScreen/med1.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Better Sleep</Text>
-              <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Anxiety Management' as never)}>
-              <Image source={require('../../assets/ImgForScreen/relax.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Anxiety</Text>
-              <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.exerciseButton}
-              onPress={() => navigation.navigate('Focus' as never)}>
-              <Image source={require('../../assets/ImgForScreen/relax.jpg')} style={styles.exerciseIcon} />
-              <Text style={styles.exerciseText}>Focus</Text>
-              <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
-            </TouchableOpacity>
+        <View style={styles.exercisesSection}>
+          <View style={styles.listHeader}>
+            <Text style={styles.listTitle}>Exercise </Text>
           </View>
-        </ScrollView>
-      </View>
 
-      <View style={styles.header}>
-        <Text style={styles.title}>Find Your Therapist </Text>
-        <View style={styles.searchSection}>
-          <TextInput
-            style={styles.input}
-            placeholder="Search therapists"
-            onChangeText={text => setSearchText(text)}
-          />
-          <Icon style={styles.searchIcon} name="search" size={20} color="#fff"/>
+          <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
+            <View style={styles.exercisesList}>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Meditation' as never)}>
+                <Image source={require('../../assets/ImgForScreen/med.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Meditation</Text>
+                <Text style={styles.exerciseSubtext}>Meditate with Melody</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Breathing Exercise' as never)}>
+                <Image source={require('../../assets/ImgForScreen/Breathing.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Breathing</Text>
+                <Text style={styles.exerciseSubtext}>Breathe Relax Revive</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Better Sleep' as never)}>
+                <Image source={require('../../assets/ImgForScreen/med1.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Better Sleep</Text>
+                <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Anxiety Management' as never)}>
+                <Image source={require('../../assets/ImgForScreen/relax.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Anxiety</Text>
+                <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Focus' as never)}>
+                <Image source={require('../../assets/ImgForScreen/relax.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Focus</Text>
+                <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
-      </View> 
-      
-      <ScrollView horizontal={false} showsHorizontalScrollIndicator={false}>
-        {therapists.map((therapist, index) => (
-          <View key={index} style={styles.therapy}>
-            <Image source={therapist.image} style={styles.avatar}/>
-            <View style={styles.therapyDesc}>
-              <Text style={styles.avatarTitle}>{therapist.name}</Text>
-              <Text style={styles.avatarAddress}>{therapist.location}</Text>
-              <Text style={styles.avatarJob}>{therapist.job}</Text>
-              <View style={styles.avatarButton}>
-                <TouchableOpacity onPress={() => {setProfileModalVisible(true); setSelectedTherapist(therapist);}}>
-                  <Text style={styles.avatarButtonText}>Visite</Text>
-                </TouchableOpacity>
+
+        <View style={styles.header}>
+          <Text style={styles.title}>Find Your Therapist </Text>
+          <View style={styles.searchSection}>
+            <TextInput
+              style={styles.input}
+              placeholder="Search therapists"
+              onChangeText={text => setSearchText(text)}
+            />
+            <Icon style={styles.searchIcon} name="search" size={20} color="#fff" />
+          </View>
+        </View>
+
+        <ScrollView horizontal={false} showsHorizontalScrollIndicator={false}>
+          {therapists.map((therapist, index) => (
+            <View key={index} style={styles.therapy}>
+              <Image source={therapist.image} style={styles.avatar} />
+              <View style={styles.therapyDesc}>
+                <Text style={styles.avatarTitle}>{therapist.name}</Text>
+                <Text style={styles.avatarAddress}>{therapist.location}</Text>
+                <Text style={styles.avatarJob}>{therapist.job}</Text>
+                <View style={styles.avatarButton}>
+                  <TouchableOpacity onPress={() => { setProfileModalVisible(true); setSelectedTherapist(therapist); }} style={styles.button}>
+                    <Text style={styles.buttonText}>View Profile</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { setBookingModalVisible(true); setSelectedTherapist(therapist); }} style={styles.button}>
+                    <Text style={styles.buttonText}>Book Now</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        ))}
+          ))}
+        </ScrollView>
       </ScrollView>
 
-      <Modal visible={profileModalVisible} onRequestClose={() => setProfileModalVisible(false)}>
-        {selectedTherapist && (
-          <View style={styles.modalContent}>
-            <Image source={selectedTherapist.image} style={styles.avatarModel}/>
-            <View style={styles.box}>
-              <Text style={styles.title}>Doctor's Description</Text>
-              <Text style={styles.avatarTitle}>{selectedTherapist.name}</Text>
-              <Text style={styles.avatarAddress}>{selectedTherapist.location}</Text>
-              <Text style={styles.avatarJob}>{selectedTherapist.job}</Text>
-              <Text style={styles.avatarDescription}>{selectedTherapist.description}</Text>
+      <Modal visible={profileModalVisible} animationType="slide">
+        <View style={styles.profileModal}>
+          <View style={styles.profileContent}>
+            <Image source={selectedTherapist?.image} style={styles.profileImage} />
+            <Text style={styles.profileName}>{selectedTherapist?.name}</Text>
+            <Text style={styles.profileJob}>{selectedTherapist?.job}</Text>
+            <Text style={styles.profileDescription}>{selectedTherapist?.description}</Text>
+            <Button title="Close" onPress={() => setProfileModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={bookingModalVisible} animationType="slide">
+        <ScrollView>
+          <View style={styles.bookingModal}>
+            <Text style={styles.bookingTitle}>Book Appointment with {selectedTherapist?.name}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Your Name"
+              onChangeText={text => setName(text)}
+              value={name}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Preferred Date (YYYY-MM-DD)"
+              onChangeText={text => setDate(text)}
+              value={date}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Preferred Time (HH:MM)"
+              onChangeText={text => setTime(text)}
+              value={time}
+            />
+            <TextInput
+              style={styles.textArea}
+              placeholder="Reason for Appointment"
+              onChangeText={text => setReason(text)}
+              value={reason}
+              multiline
+              numberOfLines={4}
+            />
+            <View style={styles.buttonRow}>
+
+              <TouchableOpacity style={styles.bookBtn}
+                onPress={() => {
+                  console.log(`Appointment booked with ${selectedTherapist?.name}`);
+                  console.log(`Name: ${name}`);
+                  console.log(`Date: ${date}`);
+                  console.log(`Time: ${time}`);
+                  console.log(`Reason: ${reason}`);
+                  setBookingModalVisible(false);
+                }}>
+                <Text style={styles.bookBtnText}>Submit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity  >
+                <CancelBooking />
+              </TouchableOpacity>
             </View>
           </View>
-        )}
-        <TouchableOpacity 
-          style={{
-            position: 'absolute', 
-            top: 10, 
-            right: 10, 
-            backgroundColor: 'rgba(74, 8, 135, 0.757)', 
-            borderRadius: 30, 
-            padding: 10
-          }}
-          onPress={() => setProfileModalVisible(false)}
-        >
-          <Icon name="times" size={24} color="white" />
-        </TouchableOpacity>
-        <View style={styles.box}>
-          <Text style={styles.title}>Book an Appointment</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your Name"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Date (dd/mm/yyyy)"
-            value={date}
-            onChangeText={setDate}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Time (HH:MM)"
-            value={time}
-            onChangeText={setTime}
-          />
-          <Button title="Submit" onPress={() => {
-            // Handle form submission
-            setProfileModalVisible(false);
-          }} />
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  main: {},
-  header: {
-    color: 'white',
-    width: '100%',
-    paddingLeft: 20,
-  },
-  header1: {
-    fontSize: 50,
-    color: 'purple',
-    marginTop: 20,
-    fontWeight: 'bold'
-  },
-  title: {
-    fontSize: 30,
-    color: 'black',
-    marginTop: 10,
-    fontWeight: 'bold'
-  },
-  therapy: {
-    backgroundColor: 'white',
-    borderColor: 'rgba(74, 8, 135, 0.157)',
-    width: '90%',
-    height: 120,
-    padding: 20,
-    borderRadius: 10,
-    marginLeft: '5%',
-    marginBottom: 10,
-    flexDirection: 'row',
-    gap: 20,
-    alignItems: 'center',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  therapyDesc: {
-    width: '60%',
-    height: 100,
-  },
-  avatar: {
-    width: 100,
-    height: 120,
-    alignSelf: 'center',
-    borderTopLeftRadius: 10, 
-    borderBottomLeftRadius: 10, 
-  },
-  avatarTitle: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold'
-  },
-  avatarAddress: {
-    fontSize: 13,
-    color: 'black',
-    fontWeight: 'bold'
-  },
-  avatarJob: {
-    fontSize: 15,
-    color: 'black',
-    fontWeight: 'bold'
-  },
-  avatarButton: {},
-  avatarButtonText: {
-    fontSize: 18,
-    width: 100,
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    backgroundColor: 'rgba(74, 8, 135, 0.757)',
-    borderRadius: 5,
-    padding: 5
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '90%',
-    height: 'auto',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 10,
-    borderRadius: 5,
-  },
-  avatarDescription: {
-    marginTop: 10,
-    textAlign: 'center',
-    fontSize: 15,
-  },
-  avatarModel: {
-    width: '100%',
-    height: 200,
-    alignSelf: 'center',
-    marginBottom: 10
-  },
-  searchSection: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    margin: 10,
-    borderRadius: 25,
-    borderColor: 'gray',
-  },
-  searchIcon: {
-    padding: 10,
-    backgroundColor: '#800080',
-    borderRadius: 10,
-  },
-  box: {
-    borderWidth: 1,
-    padding: 10,
-    margin: 10,
-    borderRadius: 10,
+  main: {
+    marginTop: 50,
+    flex: 1,
+    backgroundColor: '#F3F3F3',
+    paddingHorizontal: 16,
   },
   exercisesSection: {
-    marginVertical: 8,
-    paddingHorizontal: 1,
+    marginBottom: 20,
+  },
+  listHeader: {
+    marginBottom: 10,
+  },
+  listTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  listContent: {
+    flexDirection: 'row',
   },
   exercisesList: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   exerciseButton: {
     alignItems: 'center',
-    backgroundColor: '#fff',
-    width: 150,
-    height: 100,
-    borderRadius: 5,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginLeft: 12,
+    marginRight: 15,
   },
   exerciseIcon: {
-    width: '100%',
-    height: 60,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 5,
   },
   exerciseText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginTop: 6,
+    color: '#333',
   },
- 
   exerciseSubtext: {
+    fontSize: 12,
+    color: '#666',
+  },
+  header: {
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  searchSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DDD',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  searchIcon: {
+    marginLeft: 8,
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: '#333',
+  },
+  therapy: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: '#FFF',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 8,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginRight: 16,
+  },
+  therapyDesc: {
+    flex: 1,
+  },
+  avatarTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  avatarAddress: {
     fontSize: 14,
     color: '#666',
   },
-  seeAllButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignSelf: 'center',
+  avatarJob: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
   },
-  seeAllButtonText: {
+  avatarButton: {
+    flexDirection: 'row',
+  },
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#4A0887',
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  buttonText: {
+    fontSize: 14,
+    color: '#FFF',
+  },
+  profileModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    padding: 16,
+  },
+  modalBtn: {
+    backgroundColor: '#4A0887'
+  },
+  profileContent: {
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 16,
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  profileJob: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 16,
+  },
+  profileDescription: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  bookingModal: {
+    flex: 1,
+    marginTop: 30,
+    justifyContent: 'center',
+    backgroundColor: '#FFF',
+    padding: 16,
+  },
+  bookingTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  bookBtn: {
+    backgroundColor: '#4A0887',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  bookBtnText: {
     color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
-
-  listHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-     marginBottom: 6,
+  textArea: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: '#333',
+    borderColor: '#aaa',
+    borderWidth: 1,
+    borderRadius: 8,
+    textAlignVertical: 'top',
+    marginBottom: 16,
   },
-  listTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    lineHeight: 22,
-    color: '#121a26',
-  },
-  listAction: {
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 20,
-    color: '#778599',
-  },
-})
-
+});

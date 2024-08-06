@@ -154,6 +154,7 @@ const ContactUs: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 30,
     padding: 0,
     flexGrow: 1,
     flexShrink: 1,
