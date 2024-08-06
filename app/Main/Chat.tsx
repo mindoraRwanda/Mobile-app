@@ -65,6 +65,7 @@ export default function Chat() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -300,6 +301,10 @@ export default function Chat() {
     </Modal>
   );
 
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.exercisesSection}>
@@ -335,8 +340,16 @@ export default function Chat() {
         </ScrollView>
       </View>
       <Text style={styles.communityText}>Chat with your helpers</Text>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search helpers..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
       <ScrollView contentContainerStyle={styles.chatList}>
-        {users.map((user) => (
+        {filteredUsers.map((user) => (
           <TouchableOpacity key={user.id} style={styles.userButton} onPress={() => setSelectedUser(user)}>
             <Image style={styles.avatar} source={user.image} />
             <View style={styles.userInfo}>
@@ -402,21 +415,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  searchContainer: {
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  searchInput: {
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+  },
   chatList: {
     paddingHorizontal: 16,
   },
   userButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginBottom: 8,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 16,
   },
   userInfo: {
     flex: 1,
@@ -424,49 +448,41 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    paddingLeft: 15,
   },
   userStatus: {
     fontSize: 14,
-    color: 'gray',
-    paddingLeft: 15,
+    color: '#888888',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: '#EEEEEE',
   },
   closeButton: {
     marginRight: 16,
   },
   avatarSmall: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 16,
   },
   headerInfo: {
     flex: 1,
   },
   headerName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    paddingLeft: 15,
-  },
-  headerName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    paddingLeft: 15,
   },
   headerStatus: {
     fontSize: 14,
-    color: 'gray',
-    paddingLeft: 15,
+    color: '#888888',
   },
   headerButton: {
     marginLeft: 16,
@@ -475,73 +491,79 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messagesContainer: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
     padding: 16,
   },
   messageBubble: {
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 8,
     maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
+    marginBottom: 8,
   },
   myMessage: {
-    backgroundColor: '#DCF8C6',
     alignSelf: 'flex-end',
+    backgroundColor: 'purple',
   },
   theirMessage: {
-    backgroundColor: '#ECECEC',
     alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+   
   },
   messageText: {
     fontSize: 16,
+    color: 'white',
   },
   messageImage: {
     width: 200,
     height: 200,
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-  audioText: {
-    color: 'blue',
-    textDecorationLine: 'underline',
+    borderRadius: 8,
+    marginBottom: 8,
   },
   messageTime: {
     fontSize: 12,
-    color: 'gray',
-    marginTop: 5,
+    color: 'white',
     alignSelf: 'flex-end',
+    marginTop: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    padding: 8,
+    backgroundColor: '#F5F5F5',
+  },
+  inputButton: {
+    padding: 8,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 25,
-    backgroundColor: '#ECECEC',
-    fontSize: 16,
-  },
-  inputButton: {
-    marginHorizontal: 6,
+    marginHorizontal: 8,
+    maxHeight: 100,
   },
   emojiButton: {
-    marginHorizontal: 6,
+    padding: 8,
   },
   sendButton: {
-    marginHorizontal: 6,
+    padding: 8,
   },
   likeButton: {
-    marginHorizontal: 6,
+    padding: 8,
+  },
+  emptyStateText: {
+    textAlign: 'center',
+    color: '#888888',
+    marginTop: 24,
+  },
+  audioText: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+    marginBottom: 4,
   },
   recordingDuration: {
     fontSize: 12,
     color: 'red',
-    marginLeft: 5,
+    marginTop: 4,
   },
 });
