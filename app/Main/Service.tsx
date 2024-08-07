@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, ImageBackground, SafeAreaView, Image, TouchableOpacity, Button, TextInput } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Modal, View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Button, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import CancelBooking from '../Cancel';
@@ -55,6 +54,13 @@ export default function Appointment() {
     },
   ];
 
+  // Function to filter therapists based on search text
+  const filteredTherapists = therapists.filter(therapist =>
+    therapist.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    therapist.job.toLowerCase().includes(searchText.toLowerCase()) ||
+    therapist.location.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <View style={styles.main}>
       <ScrollView>
@@ -66,23 +72,23 @@ export default function Appointment() {
           <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={styles.exercisesList}>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('UCLA Test' as never)}>
+                onPress={() => navigation.navigate('Test' as never)}>
                 <Image source={require('../../assets/ImgForScreen/EUC.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Beck's Depression Inventory</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('Anxiety Questionnaire' as never)}>
+                onPress={() => navigation.navigate('Anxietys' as never)}>
                 <Image source={require('../../assets/ImgForScreen/analysis.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Anxiety</Text>
                 <Text style={styles.exerciseSubtext}>Take Test</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('SBQ Questionnaire' as never)}>
+                onPress={() => navigation.navigate('Suicide' as never)}>
                 <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Suicide Behaviors Questionnaire</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('AUDIT Questionnaire' as never)}>
+                onPress={() => navigation.navigate('Questionnaire' as never)}>
                 <Image source={require('../../assets/ImgForScreen/booking.png')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Alcohol Use Disorders Identification Test</Text>
               </TouchableOpacity>
@@ -92,7 +98,7 @@ export default function Appointment() {
 
         <View style={styles.exercisesSection}>
           <View style={styles.listHeader}>
-            <Text style={styles.listTitle}>Exercise </Text>
+            <Text style={styles.listTitle}>Exercise</Text>
           </View>
 
           <ScrollView contentContainerStyle={styles.listContent} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -104,19 +110,19 @@ export default function Appointment() {
                 <Text style={styles.exerciseSubtext}>Meditate with Melody</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('Breathing Exercise' as never)}>
+                onPress={() => navigation.navigate('Breathing' as never)}>
                 <Image source={require('../../assets/ImgForScreen/Breathing.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Breathing</Text>
                 <Text style={styles.exerciseSubtext}>Breathe Relax Revive</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('Better Sleep' as never)}>
+                onPress={() => navigation.navigate('Better' as never)}>
                 <Image source={require('../../assets/ImgForScreen/med1.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Better Sleep</Text>
                 <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
-                onPress={() => navigation.navigate('Anxiety Management' as never)}>
+                onPress={() => navigation.navigate('Anxiety' as never)}>
                 <Image source={require('../../assets/ImgForScreen/relax.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Anxiety</Text>
                 <Text style={styles.exerciseSubtext}>Relax Yourself</Text>
@@ -132,19 +138,20 @@ export default function Appointment() {
         </View>
 
         <View style={styles.header}>
-          <Text style={styles.title}>Find Your Therapist </Text>
+          <Text style={styles.title}>Find Your Therapist</Text>
           <View style={styles.searchSection}>
             <TextInput
               style={styles.input}
               placeholder="Search therapists"
               onChangeText={text => setSearchText(text)}
+              value={searchText}
             />
             <Icon style={styles.searchIcon} name="search" size={20} color="#fff" />
           </View>
         </View>
 
         <ScrollView horizontal={false} showsHorizontalScrollIndicator={false}>
-          {therapists.map((therapist, index) => (
+          {filteredTherapists.map((therapist, index) => (
             <View key={index} style={styles.therapy}>
               <Image source={therapist.image} style={styles.avatar} />
               <View style={styles.therapyDesc}>
@@ -172,93 +179,86 @@ export default function Appointment() {
             <Text style={styles.profileName}>{selectedTherapist?.name}</Text>
             <Text style={styles.profileJob}>{selectedTherapist?.job}</Text>
             <Text style={styles.profileDescription}>{selectedTherapist?.description}</Text>
-            <Button title="Close" onPress={() => setProfileModalVisible(false)} />
+            <TouchableOpacity style={styles.closeButton} onPress={() => setProfileModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
       <Modal visible={bookingModalVisible} animationType="slide">
-        <ScrollView>
-          <View style={styles.bookingModal}>
-            <Text style={styles.bookingTitle}>Book Appointment with {selectedTherapist?.name}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your Name"
-              onChangeText={text => setName(text)}
-              value={name}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Preferred Date (YYYY-MM-DD)"
-              onChangeText={text => setDate(text)}
-              value={date}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Preferred Time (HH:MM)"
-              onChangeText={text => setTime(text)}
-              value={time}
-            />
-            <TextInput
-              style={styles.textArea}
-              placeholder="Reason for Appointment"
-              onChangeText={text => setReason(text)}
-              value={reason}
-              multiline
-              numberOfLines={4}
-            />
-            <View style={styles.buttonRow}>
-
-              <TouchableOpacity style={styles.bookBtn}
-                onPress={() => {
-                  console.log(`Appointment booked with ${selectedTherapist?.name}`);
-                  console.log(`Name: ${name}`);
-                  console.log(`Date: ${date}`);
-                  console.log(`Time: ${time}`);
-                  console.log(`Reason: ${reason}`);
-                  setBookingModalVisible(false);
-                }}>
-                <Text style={styles.bookBtnText}>Submit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity  >
-                <CancelBooking />
-              </TouchableOpacity>
-            </View>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Book an Appointment</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Name"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Date (YYYY-MM-DD)"
+            value={date}
+            onChangeText={setDate}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Time (HH:MM)"
+            value={time}
+            onChangeText={setTime}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Reason for Visit"
+            value={reason}
+            onChangeText={setReason}
+          />
+          <View style={styles.modalButtons}>
+            <Button title="Cancel" onPress={() => setBookingModalVisible(false)} />
+            <Button title="Confirm" onPress={() => {
+              // Handle booking confirmation
+              setBookingModalVisible(false);
+            }} />
           </View>
-        </ScrollView>
+        </View>
       </Modal>
+
+      <CancelBooking />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   main: {
-    marginTop: 50,
     flex: 1,
-    backgroundColor: '#F3F3F3',
-    paddingHorizontal: 16,
+    backgroundColor: '#f8f8f8',
   },
   exercisesSection: {
     marginBottom: 20,
   },
   listHeader: {
+    paddingHorizontal: 10,
     marginBottom: 10,
   },
   listTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
   },
   listContent: {
-    flexDirection: 'row',
+    paddingHorizontal: 10,
   },
   exercisesList: {
     flexDirection: 'row',
-    marginBottom: 20,
+    justifyContent: 'space-between',
   },
   exerciseButton: {
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    marginHorizontal: 5,
     alignItems: 'center',
-    marginRight: 15,
+    padding: 10,
+    elevation: 3,
+    width: 120,
   },
   exerciseIcon: {
     width: 80,
@@ -269,65 +269,57 @@ const styles = StyleSheet.create({
   exerciseText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
   },
   exerciseSubtext: {
     fontSize: 12,
-    color: '#666',
+    color: '#888',
   },
   header: {
-    paddingTop: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#DDD',
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
   },
   searchSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  searchIcon: {
-    marginLeft: 8,
+    marginTop: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 3,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: '#333',
+    padding: 10,
+    fontSize: 16,
+  },
+  searchIcon: {
+    padding: 10,
+    backgroundColor: '#4A0887',
+    borderRadius: 10,
   },
   therapy: {
     flexDirection: 'row',
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 8,
+    padding: 10,
+    marginVertical: 5,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 2,
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginRight: 16,
+    marginRight: 10,
   },
   therapyDesc: {
     flex: 1,
+    justifyContent: 'center',
   },
   avatarTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   avatarAddress: {
     fontSize: 14,
@@ -335,34 +327,37 @@ const styles = StyleSheet.create({
   },
   avatarJob: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    color: '#888',
+    marginBottom: 10,
   },
   avatarButton: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   button: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
     backgroundColor: '#4A0887',
+    padding: 10,
     borderRadius: 8,
-    marginRight: 8,
+    marginHorizontal: 5,
+    alignItems: 'center',
   },
   buttonText: {
-    fontSize: 14,
-    color: '#FFF',
+    color: '#fff',
+    fontWeight: 'bold',
   },
   profileModal: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
-    padding: 16,
-  },
-  modalBtn: {
-    backgroundColor: '#4A0887'
+    backgroundColor: '#F9F9F9',
+    padding: 20,
   },
   profileContent: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 20,
+    elevation: 5,
     alignItems: 'center',
   },
   profileImage: {
@@ -370,63 +365,53 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 16,
+    borderColor: '#DDD',
+    borderWidth: 2,
   },
   profileName: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
   },
   profileJob: {
-    fontSize: 18,
+    fontSize: 20,
     color: '#666',
     marginBottom: 16,
   },
   profileDescription: {
     fontSize: 16,
-    color: '#333',
+    color: '#444',
     textAlign: 'center',
+    lineHeight: 22,
   },
-  bookingModal: {
-    flex: 1,
-    marginTop: 30,
-    justifyContent: 'center',
-    backgroundColor: '#FFF',
-    padding: 16,
-  },
-  bookingTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  closeButton: {
     marginTop: 20,
-  },
-  bookBtn: {
-    backgroundColor: '#4A0887',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    backgroundColor: '#4A0887',
+    borderRadius: 8,
   },
-  bookBtnText: {
-    color: '#fff',
+  closeButtonText: {
     fontSize: 16,
+    color: '#FFF',
     fontWeight: 'bold',
   },
-  textArea: {
+  modalContainer: {
     flex: 1,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: '#333',
-    borderColor: '#aaa',
-    borderWidth: 1,
-    borderRadius: 8,
-    textAlignVertical: 'top',
-    marginBottom: 16,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
