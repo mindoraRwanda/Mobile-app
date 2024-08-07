@@ -17,6 +17,7 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
+import Community from '../Community';
 
 interface User {
   id: string;
@@ -182,7 +183,7 @@ export default function Chat() {
           setIsPlaying(false);
         }
       }
-      
+
       if (!isPlaying || playingMessageId !== messageId) {
         const { sound } = await Audio.Sound.createAsync({ uri: audioUri });
         setPlayingAudio(sound);
@@ -301,7 +302,7 @@ export default function Chat() {
     </Modal>
   );
 
-  const filteredUsers = users.filter(user => 
+  const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -310,8 +311,10 @@ export default function Chat() {
       <View style={styles.exercisesSection}>
         <View style={styles.listHeader}>
           <Text style={styles.listTitle}>Community</Text>
-          <TouchableOpacity onPress={() => { /* handle onPress */ }}>
-            <Text style={styles.listAction}>View All</Text>
+          <TouchableOpacity onPress={() => {
+            
+          }}>
+            <Community />
           </TouchableOpacity>
         </View>
         <ScrollView
@@ -390,10 +393,6 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  listAction: {
-    fontSize: 16,
-    color: 'purple',
   },
   listContent: {
     paddingHorizontal: 8,
@@ -506,7 +505,7 @@ const styles = StyleSheet.create({
   theirMessage: {
     alignSelf: 'flex-start',
     backgroundColor: '#FFFFFF',
-   
+
   },
   messageText: {
     fontSize: 16,
