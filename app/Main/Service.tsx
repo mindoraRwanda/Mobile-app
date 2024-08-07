@@ -190,40 +190,44 @@ export default function Appointment() {
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Book an Appointment</Text>
           <TextInput
-            style={styles.input}
+            style={styles.modalInput}
             placeholder="Your Name"
             value={name}
             onChangeText={setName}
           />
           <TextInput
-            style={styles.input}
+            style={styles.modalInput}
             placeholder="Date (YYYY-MM-DD)"
             value={date}
             onChangeText={setDate}
           />
           <TextInput
-            style={styles.input}
+            style={styles.modalInput}
             placeholder="Time (HH:MM)"
             value={time}
             onChangeText={setTime}
           />
           <TextInput
-            style={styles.input}
+            style={styles.modalInput}
             placeholder="Reason for Visit"
             value={reason}
             onChangeText={setReason}
+            multiline
+            numberOfLines={4}
           />
           <View style={styles.modalButtons}>
-            <Button title="Cancel" onPress={() => setBookingModalVisible(false)} />
-            <Button title="Confirm" onPress={() => {
-              // Handle booking confirmation
-              setBookingModalVisible(false);
-            }} />
+            <TouchableOpacity style={styles.cancelButton}>
+              <CancelBooking />
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setBookingModalVisible(false)} style={styles.confirmButton}>
+              <Text style={styles.confirmButtonText}>Confirm</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      <CancelBooking />
+
     </View>
   );
 }
@@ -232,6 +236,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#f8f8f8',
+    marginTop: 50,
   },
   exercisesSection: {
     marginBottom: 20,
@@ -332,7 +337,8 @@ const styles = StyleSheet.create({
   },
   avatarButton: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end', // Corrected to 'flex-end'
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#4A0887',
@@ -400,18 +406,74 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    alignItems: 'center',
     backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    elevation: 5,
   },
   modalTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#333',
     textAlign: 'center',
+  },
+  modalInput: {
+    width: '100%',
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+    color: '#333',
+    backgroundColor: '#f8f8f8',
+  },
+  modalReasonInput: {
+    width: '100%',
+    height: 150, // Adjust height for multiline input
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    paddingTop: 15, // Add padding at the top
+    marginBottom: 15,
+    fontSize: 16,
+    color: '#333',
+    backgroundColor: '#f8f8f8',
+    textAlignVertical: 'top', // Align text at the top
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
     marginTop: 20,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    paddingVertical: 15,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#4A0887',
+    paddingVertical: 15,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  confirmButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
