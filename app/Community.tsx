@@ -4,6 +4,7 @@ import { View, Modal, TouchableOpacity, ScrollView, SafeAreaView, Text, Image, S
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Audio from 'expo-av';
+import JoinModal from './JoinModal';
 
 type CommunityType = {
     id: string;
@@ -43,6 +44,8 @@ const Community: React.FC = (): JSX.Element => {
     const [recordingDuration, setRecordingDuration] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const scrollViewRef = useRef<ScrollView>(null);
+    const [communityToJoin, setCommunityToJoin] = useState<CommunityType | null>(null);
+    const [confirmationModalVisible, setConfirmationModalVisible] = useState<boolean>(false);
 
     const navigation = useNavigation();
 
@@ -176,11 +179,19 @@ const Community: React.FC = (): JSX.Element => {
         }
     };
 
-    const handleJoinRequest = (communityId: string) => {
-        setJoinedCommunities(prevState => ({
-            ...prevState,
-            [communityId]: true
-        }));
+    const handleJoinRequest = (community: CommunityType) => {
+        setCommunityToJoin(community);
+        setConfirmationModalVisible(true);
+    };
+
+    const confirmJoin = () => {
+        if (communityToJoin) {
+            setJoinedCommunities(prevState => ({
+                ...prevState,
+                [communityToJoin.id]: true
+            }));
+            setConfirmationModalVisible(false);
+        }
     };
 
     const renderChatScreen = () => (
@@ -285,6 +296,14 @@ const Community: React.FC = (): JSX.Element => {
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Select a Community</Text>
                 </View>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                    />
+                </View>
                 <ScrollView contentContainerStyle={styles.communityListContainer}>
                     {communities
                         .filter(community => community.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -308,7 +327,7 @@ const Community: React.FC = (): JSX.Element => {
                                 {!joinedCommunities[community.id] && (
                                     <TouchableOpacity
                                         style={styles.joinButton}
-                                        onPress={() => handleJoinRequest(community.id)}
+                                        onPress={() => handleJoinRequest(community)}
                                     >
                                         <Text style={styles.joinButtonText}>Join</Text>
                                     </TouchableOpacity>
@@ -316,15 +335,38 @@ const Community: React.FC = (): JSX.Element => {
                             </TouchableOpacity>
                         ))}
                 </ScrollView>
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                </View>
             </SafeAreaView>
+        </Modal>
+    );
+
+    const renderConfirmationModal = () => (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={confirmationModalVisible}
+            onRequestClose={() => setConfirmationModalVisible(false)}
+        >
+            <View style={styles.confirmationModalContainer}>
+                <View style={styles.confirmationModalContent}>
+                    <Text style={styles.confirmationModalTitle}>Join Community</Text>
+                    <Text style={styles.confirmationModalText}>Are you sure you want to join {communityToJoin?.name}?</Text>
+                    <View style={styles.confirmationModalButtons}>
+                    <TouchableOpacity
+                            style={styles.ModalButtonNo}
+                            onPress={() => setConfirmationModalVisible(false)}
+                        >
+                            <Text style={styles.confirmationModalButtonText}>No</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.ModalButtonYes}
+                            onPress={confirmJoin}
+                        >
+                            <Text style={styles.confirmationModalButtonText}>Yes</Text>
+                        </TouchableOpacity>
+                       
+                    </View>
+                </View>
+            </View>
         </Modal>
     );
 
@@ -333,10 +375,11 @@ const Community: React.FC = (): JSX.Element => {
             <TouchableOpacity
                 onPress={() => setOpenCommunity(true)}
             >
-                <Text style={{ color: 'black',  fontSize: 18}}>View all</Text>
+                <Text style={{ color: 'black', fontSize: 18 }}>View all</Text>
             </TouchableOpacity>
             {renderCommunityList()}
             {renderChatScreen()}
+            {renderConfirmationModal()}
         </View>
     );
 };
@@ -488,7 +531,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     searchInput: {
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#fff',
         borderRadius: 20,
         padding: 10,
     },
@@ -497,6 +540,50 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         flex: 1,
         textAlign: 'center',
+    },
+    confirmationModalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    confirmationModalContent: {
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    confirmationModalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    confirmationModalText: {
+        fontSize: 16,
+        marginBottom: 20,
+    },
+    confirmationModalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    ModalButtonNo: {
+        backgroundColor: 'red',
+        borderRadius: 8,
+        padding: 10,
+        flex: 1,
+        marginHorizontal: 5,
+    },
+   ModalButtonYes: {
+        backgroundColor: 'purple',
+        borderRadius: 8,
+        padding: 10,
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    confirmationModalButtonText: {
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 16,
     },
 });
 

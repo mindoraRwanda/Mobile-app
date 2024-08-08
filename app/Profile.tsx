@@ -174,7 +174,7 @@ const Profile: React.FC = () => {
 
     console.log('Submit answers:', answers);
     Alert.alert('Profile updated successfully');
-    router.push('/home');
+    router.push('/Main');
   };
 
   const currentQuestion = questions[currentQuestionIndex];
