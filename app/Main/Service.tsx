@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
   exercisesList: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+
   },
   exerciseButton: {
     backgroundColor: '#FFF',

@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF0000',
+    color: '#4A0887',
     marginBottom: 10,
   },
   modalText: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingVertical: 12,
-    backgroundColor: '#007BFF',
+    backgroundColor: '#4A0887',
     borderRadius: 8,
   },
   cancelButtonText: {
