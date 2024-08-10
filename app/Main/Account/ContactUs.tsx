@@ -43,7 +43,7 @@ const ContactUs: React.FC = () => {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              router.push('../Main/Account')
+              router.push('../Main/Account');
             }}>
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
@@ -66,7 +66,7 @@ const ContactUs: React.FC = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Get in Touch</Text>
             <ImageBackground
-              source={require('./../assets/contact.jpeg')}
+              source={require('../../../assets/contact.jpeg')}
               style={styles.backgroundImage}
               imageStyle={styles.backgroundImageStyle}
             >
