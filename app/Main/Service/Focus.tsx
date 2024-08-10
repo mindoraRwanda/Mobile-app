@@ -9,7 +9,7 @@ export default function Focus() {
       </View>
 
       <Image
-        source={require('../assets/ImgForScreen/docRep.jpg')} // Replace with an appropriate image
+        source={require('../../../assets/ImgForScreen/docRep.jpg')} // Replace with an appropriate image
         style={styles.image}
       />
 

@@ -1,38 +1,38 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 
-export default function Better() {
+export default function Anxiety() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Better Sleep</Text>
+        <Text style={styles.title}>Anxiety Management</Text>
       </View>
 
       <Image
-        source={require('../assets/ImgForScreen/welcome.jpg')} // Replace with an appropriate image
+        source={require('../../../assets/ImgForScreen/EUC.jpg')} // Replace with an appropriate image
         style={styles.image}
       />
 
       <View style={styles.content}>
         <Text style={styles.description}>
-          Discover techniques and tips to improve your sleep quality and wake up feeling refreshed. Follow these steps to create a restful sleep environment and bedtime routine.
+          Anxiety is a common experience that can affect anyone. It's important to have strategies to manage and cope with anxiety. Here are some helpful techniques and resources to support you in managing your anxiety.
         </Text>
 
         <Text style={styles.instruction}>
-          Sleep Tips:
+          Techniques for Managing Anxiety:
         </Text>
 
-        {/* Example tips */}
-        <View style={styles.tipContainer}>
-          <Text style={styles.tip}>1. Establish a regular sleep schedule.</Text>
-          <Text style={styles.tip}>2. Create a relaxing bedtime routine.</Text>
-          <Text style={styles.tip}>3. Keep your bedroom cool, dark, and quiet.</Text>
-          <Text style={styles.tip}>4. Avoid screens before bedtime.</Text>
-          <Text style={styles.tip}>5. Limit caffeine and heavy meals before sleep.</Text>
+        {/* Example techniques */}
+        <View style={styles.techniquesContainer}>
+          <Text style={styles.technique}>1. Practice deep breathing exercises.</Text>
+          <Text style={styles.technique}>2. Engage in regular physical activity.</Text>
+          <Text style={styles.technique}>3. Maintain a healthy sleep schedule.</Text>
+          <Text style={styles.technique}>4. Practice mindfulness and meditation.</Text>
+          <Text style={styles.technique}>5. Reach out for professional support if needed.</Text>
         </View>
 
         <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startButtonText}>Start Sleep Routine</Text>
+          <Text style={styles.startButtonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -42,7 +42,7 @@ export default function Better() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#e3f2fd', // Light blue background for calmness
+    backgroundColor: '#f0f8ff', // Light blue background for a calming effect
     padding: 20,
   },
   header: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#003f5c', // Darker blue color for the title
+    color: '#003f5c', // Dark blue for title
   },
   image: {
     width: '100%',
@@ -68,27 +68,27 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: '#003f5c', // Darker blue color for text
+    color: '#003f5c', // Dark blue for text
     marginBottom: 15,
     textAlign: 'center',
   },
   instruction: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#007bb2', // Medium blue color for instructions
+    color: 'purple', // Medium blue for instructions
     marginBottom: 15,
     textAlign: 'center',
   },
-  tipContainer: {
+  techniquesContainer: {
     marginBottom: 20,
   },
-  tip: {
+  technique: {
     fontSize: 16,
-    color: '#003f5c', // Darker blue color for tips
+    color: '#003f5c', // Dark blue for techniques
     marginVertical: 5,
   },
   startButton: {
-    backgroundColor: '#007bb2', // Medium blue color for start button
+    backgroundColor: '#007bb2', // Medium blue for start button
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

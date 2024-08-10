@@ -323,7 +323,7 @@ export default function Chat() {
           showsHorizontalScrollIndicator={false}
         >
           <View style={styles.exercisesList}>
-            <TouchableOpacity style={styles.exerciseButton} onPress={() => navigation.navigate('Join Community' as never)}>
+            <TouchableOpacity style={styles.exerciseButton} onPress={() => navigation.navigate('Community' as never)}>
               <Image source={require('../../assets/ImgForScreen/grp1.jpg')} style={styles.exerciseIcon} />
               <Text style={styles.exerciseLabel}>Communities</Text>
             </TouchableOpacity>
@@ -342,7 +342,7 @@ export default function Chat() {
           </View>
         </ScrollView>
       </View>
-      <Text style={styles.communityText}>Chat with your helpers</Text>
+      <Text style={styles.communityText}>Chat </Text>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}

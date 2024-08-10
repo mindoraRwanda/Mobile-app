@@ -1,4 +1,4 @@
-// app/home/_layout.js
+
 import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
@@ -53,7 +53,7 @@ export default function HomeLayout() {
       />
       <Tabs.Screen name="Chat" />
       <Tabs.Screen 
-        name="Account" 
+        name="Report" 
         options={{
           headerShown: false
         }}

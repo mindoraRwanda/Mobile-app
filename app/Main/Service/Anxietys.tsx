@@ -1,37 +1,37 @@
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Test() {
+export default function Anxietys() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Beck's Depression Inventory</Text>
+        <Text style={styles.title}>Anxiety Questionnaire</Text>
       </View>
       
       <View style={styles.content}>
         <Image
-          source={require('../assets/ImgForScreen/med1.jpg')} // Replace with an appropriate image
+          source={require('../../../assets/ImgForScreen/med2.jpg')} // Replace with an appropriate image
           style={styles.image}
         />
         
         <Text style={styles.description}>
-          Beck's Depression Inventory (BDI) is a self-report questionnaire used to assess the severity of depression. It consists of a series of questions that help to identify the presence and intensity of depressive symptoms.
+          The Anxiety Questionnaire helps assess your current anxiety levels. Please take your time to answer the following questions based on how you have been feeling lately.
         </Text>
         
         <Text style={styles.instruction}>
-          Please answer the following questions based on your feelings over the past two weeks:
+          Answer the questions below by selecting the option that best describes your feelings over the past two weeks:
         </Text>
         
         {/* Example questions */}
         <View style={styles.questions}>
-          <Text style={styles.question}>1. I feel sad:</Text>
+          <Text style={styles.question}>1. I feel nervous or anxious:</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Nearly every day</Text></TouchableOpacity>
           
-          <Text style={styles.question}>2. I feel hopeless:</Text>
+          <Text style={styles.question}>2. I have trouble relaxing:</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
@@ -49,7 +49,7 @@ export default function Test() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f0f4f8',
+    backgroundColor: '#eaf2f8', // Light blue background for a calming effect
     padding: 20,
   },
   header: {
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 20,
     elevation: 3,
   },

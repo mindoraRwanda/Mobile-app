@@ -1,45 +1,45 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Suicide() {
+export default function Test() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Suicide Behaviors Questionnaire</Text>
+        <Text style={styles.title}>Beck's Depression Inventory</Text>
       </View>
       
       <View style={styles.content}>
         <Image
-          source={require('../assets/ImgForScreen/med3.jpg')} // Replace with an appropriate image
+          source={require('../../../assets/ImgForScreen/med1.jpg')} // Replace with an appropriate image
           style={styles.image}
         />
         
         <Text style={styles.description}>
-          This questionnaire is designed to help identify thoughts and behaviors related to suicide. Your responses are confidential and will help us understand and support your mental health needs.
+          Beck's Depression Inventory (BDI) is a self-report questionnaire used to assess the severity of depression. It consists of a series of questions that help to identify the presence and intensity of depressive symptoms.
         </Text>
         
         <Text style={styles.instruction}>
-          Please answer the following questions based on how you have been feeling over the past month:
+          Please answer the following questions based on your feelings over the past two weeks:
         </Text>
         
         {/* Example questions */}
         <View style={styles.questions}>
-          <Text style={styles.question}>1. Have you had thoughts about suicide?</Text>
+          <Text style={styles.question}>1. I feel sad:</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>A few days</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Nearly every day</Text></TouchableOpacity>
           
-          <Text style={styles.question}>2. Have you made any plans to harm yourself?</Text>
+          <Text style={styles.question}>2. I feel hopeless:</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>A few days</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Nearly every day</Text></TouchableOpacity>
         </View>
         
         <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>Submit Responses</Text>
+          <Text style={styles.submitButtonText}>Submit Answers</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -49,7 +49,7 @@ export default function Suicide() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f1f1f1', // Light grey background for a neutral tone
+    backgroundColor: '#f0f4f8',
     padding: 20,
   },
   header: {
@@ -59,17 +59,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#5B2A8A', // A calming purple shade
+    color: '#4A0887',
   },
   content: {
     backgroundColor: '#ffffff',
-    borderRadius: 12,
+    borderRadius: 10,
     padding: 20,
     elevation: 3,
   },
   image: {
     width: '100%',
-    height: 180,
+    height: 200,
     borderRadius: 10,
     marginBottom: 20,
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   instruction: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#5B2A8A', // A calming purple shade
+    color: '#4A0887',
     marginBottom: 15,
   },
   questions: {
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   optionButton: {
-    backgroundColor: '#5B2A8A', // A calming purple shade
-    padding: 12,
+    backgroundColor: '#4A0887',
+    padding: 10,
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   submitButton: {
-    backgroundColor: '#5B2A8A', // A calming purple shade
+    backgroundColor: '#4A0887',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

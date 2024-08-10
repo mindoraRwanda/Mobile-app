@@ -2,44 +2,44 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Anxietys() {
+export default function Suicide() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Anxiety Questionnaire</Text>
+        <Text style={styles.title}>Suicide Behaviors Questionnaire</Text>
       </View>
       
       <View style={styles.content}>
         <Image
-          source={require('../assets/ImgForScreen/med2.jpg')} // Replace with an appropriate image
+          source={require('../../../assets/ImgForScreen/med3.jpg')} // Replace with an appropriate image
           style={styles.image}
         />
         
         <Text style={styles.description}>
-          The Anxiety Questionnaire helps assess your current anxiety levels. Please take your time to answer the following questions based on how you have been feeling lately.
+          This questionnaire is designed to help identify thoughts and behaviors related to suicide. Your responses are confidential and will help us understand and support your mental health needs.
         </Text>
         
         <Text style={styles.instruction}>
-          Answer the questions below by selecting the option that best describes your feelings over the past two weeks:
+          Please answer the following questions based on how you have been feeling over the past month:
         </Text>
         
         {/* Example questions */}
         <View style={styles.questions}>
-          <Text style={styles.question}>1. I feel nervous or anxious:</Text>
+          <Text style={styles.question}>1. Have you had thoughts about suicide?</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>A few days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Nearly every day</Text></TouchableOpacity>
           
-          <Text style={styles.question}>2. I have trouble relaxing:</Text>
+          <Text style={styles.question}>2. Have you made any plans to harm yourself?</Text>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Not at all</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Several days</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>A few days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>More than half the days</Text></TouchableOpacity>
           <TouchableOpacity style={styles.optionButton}><Text style={styles.optionText}>Nearly every day</Text></TouchableOpacity>
         </View>
         
         <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>Submit Answers</Text>
+          <Text style={styles.submitButtonText}>Submit Responses</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -49,7 +49,7 @@ export default function Anxietys() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#eaf2f8', // Light blue background for a calming effect
+    backgroundColor: '#f1f1f1', // Light grey background for a neutral tone
     padding: 20,
   },
   header: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#4A0887',
+    color: '#5B2A8A', // A calming purple shade
   },
   content: {
     backgroundColor: '#ffffff',
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 180,
     borderRadius: 10,
     marginBottom: 20,
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   instruction: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4A0887',
+    color: '#5B2A8A', // A calming purple shade
     marginBottom: 15,
   },
   questions: {
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   optionButton: {
-    backgroundColor: '#4A0887',
-    padding: 10,
+    backgroundColor: '#5B2A8A', // A calming purple shade
+    padding: 12,
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   submitButton: {
-    backgroundColor: '#4A0887',
+    backgroundColor: '#5B2A8A', // A calming purple shade
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

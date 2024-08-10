@@ -1,41 +1,40 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 
-export default function Meditation() {
+export default function Breathing() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Meditate with Melody</Text>
+        <Text style={styles.title}>Breathe Relax Revive</Text>
       </View>
 
       <Image
-        source={require('../assets/ImgForScreen/med3.jpg')} // Replace with an appropriate image
+        source={require('../../../assets/ImgForScreen/Breathing.jpg')} // Replace with an appropriate image
         style={styles.image}
       />
 
       <View style={styles.content}>
         <Text style={styles.description}>
-          Welcome to your meditation space. Here you can find guided meditations to help you relax and center yourself.
-          Take a moment to breathe deeply and let go of any stress.
+          Welcome to the Breathing Exercise page. This section is designed to help you calm your mind and relax your body through guided breathing exercises.
         </Text>
 
         <Text style={styles.instruction}>
-          Choose a meditation exercise below to begin your journey:
+          Follow the exercises below to enhance your relaxation:
         </Text>
 
         {/* Example exercise buttons */}
         <TouchableOpacity style={styles.exerciseButton}>
-          <Text style={styles.exerciseText}>Guided Breathing</Text>
+          <Text style={styles.exerciseText}>Deep Breathing</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.exerciseButton}>
-          <Text style={styles.exerciseText}>Mindfulness Meditation</Text>
+          <Text style={styles.exerciseText}>Box Breathing</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.exerciseButton}>
-          <Text style={styles.exerciseText}>Body Scan Meditation</Text>
+          <Text style={styles.exerciseText}>4-7-8 Breathing</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startButtonText}>Start Meditation</Text>
+          <Text style={styles.startButtonText}>Start Breathing Exercise</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -45,7 +44,7 @@ export default function Meditation() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#e0f7fa', // Light blue background for a calming effect
+    backgroundColor: '#e0f2f1', // Light green background for relaxation
     padding: 20,
   },
   header: {
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#004d40', // Deep teal color for calmness
+    color: '#004d40', // Deep teal color for a calming effect
   },
   image: {
     width: '100%',
