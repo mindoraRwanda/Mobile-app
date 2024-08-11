@@ -1,12 +1,36 @@
+import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
 import { LineChart, PieChart, ProgressChart } from 'react-native-chart-kit';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 export default function Report() {
+    const [symptom, setSymptom] = useState('');
+    const [symptomsList, setSymptomsList] = useState<string[]>([]);
+    const [mood, setMood] = useState('');
+    const [moodLog, setMoodLog] = useState<string[]>([]);
+
+    // Function to log a new symptom
+    const handleAddSymptom = () => {
+        if (symptom.trim()) {
+            setSymptomsList([...symptomsList, symptom.trim()]);
+            setSymptom('');
+            Alert.alert("Symptom Added", "Your symptom has been logged.");
+        } else {
+            Alert.alert("Input Error", "Please enter a symptom.");
+        }
+    };
+
+    // Function to log a new mood
+    const handleAddMood = (selectedMood: string) => {
+        setMood(selectedMood);
+        setMoodLog([...moodLog, selectedMood]);
+        Alert.alert("Mood Logged", `You logged your mood as: ${selectedMood}`);
+    };
+
+    // Sample data for charts
     const line = {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [
@@ -31,9 +55,9 @@ export default function Report() {
         backgroundGradientTo: '#08130D',
         backgroundGradientToOpacity: 0,
         color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        strokeWidth: 2, // optional, default 3
+        strokeWidth: 2,
         barPercentage: 0.5,
-        useShadowColorFromDataset: false, // optional
+        useShadowColorFromDataset: false,
     };
 
     const progressData = {
@@ -41,32 +65,39 @@ export default function Report() {
         data: [0.4, 0.6, 0.8],
     };
 
+    // Function to generate summary report
+    const generateReport = () => {
+        const moodFrequency = moodLog.reduce((acc: { [key: string]: number }, currentMood) => {
+            acc[currentMood] = (acc[currentMood] || 0) + 1;
+            return acc;
+        }, {});
+
+        const mostFrequentMood = Object.keys(moodFrequency).reduce((a, b) => moodFrequency[a] > moodFrequency[b] ? a : b, '');
+
+        const reportSummary = `
+        Total Moods Logged: ${moodLog.length}
+        Most Frequent Mood: ${mostFrequentMood}
+        Total Symptoms Logged: ${symptomsList.length}
+        `;
+
+        Alert.alert("Progress Report", reportSummary);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.header}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            router.push(`../Main`);
-                        }}
-                    >
+                    <TouchableOpacity onPress={() => router.push(`../Main`)}>
                         <Ionicons name="arrow-back" size={24} color="#fff" />
                     </TouchableOpacity>
                     <Text numberOfLines={1} style={styles.headerTitle}>
                         Report
                     </Text>
-                    <TouchableOpacity
-                        onPress={() => {
-                            // handle onPress
-                        }}
-                    >
-                        <FeatherIcon
-                            color="#fff"
-                            name="more-vertical"
-                            size={24}
-                        />
+                    <TouchableOpacity onPress={() => {}}>
+                        <FeatherIcon color="#fff" name="more-vertical" size={24} />
                     </TouchableOpacity>
                 </View>
+
                 <View style={styles.body}>
                     <Text style={styles.textHeader}>Your Daily Progress</Text>
                     <ProgressChart
@@ -78,6 +109,7 @@ export default function Report() {
                         chartConfig={chartConfig}
                         hideLegend={false}
                     />
+
                     <Text style={styles.textHeader}>Daily Activity</Text>
                     <PieChart
                         data={pieData}
@@ -89,6 +121,7 @@ export default function Report() {
                         paddingLeft="15"
                         absolute
                     />
+
                     <Text style={styles.textHeader}>Your Weekly Progress</Text>
                     <LineChart
                         data={line}
@@ -98,6 +131,56 @@ export default function Report() {
                         bezier
                         style={{ marginVertical: 8, borderRadius: 16 }}
                     />
+
+                    {/* Mood Tracking Section */}
+                    <Text style={styles.textHeader}>Log Your Daily Mood</Text>
+                    <View style={styles.moodButtonsContainer}>
+                        {['Happy', 'Sad', 'Anxious', 'Angry', 'Neutral'].map((item, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[styles.moodButton, mood === item && styles.selectedMoodButton]}
+                                onPress={() => handleAddMood(item)}
+                            >
+                                <Text style={styles.moodButtonText}>{item}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    <Text style={styles.textHeader}>Logged Moods</Text>
+                    {moodLog.length > 0 ? (
+                        moodLog.map((loggedMood, index) => (
+                            <Text key={index} style={styles.moodItem}>
+                                {index + 1}. {loggedMood}
+                            </Text>
+                        ))
+                    ) : (
+                        <Text style={styles.noMoodText}>No moods logged yet.</Text>
+                    )}
+
+                    {/* Symptom Logging Section */}
+                    <Text style={styles.textHeader}>Log Your Symptoms</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter a symptom..."
+                        value={symptom}
+                        onChangeText={setSymptom}
+                    />
+                    <Button title="Add Symptom" onPress={handleAddSymptom} color="#4b0889" />
+
+                    <Text style={styles.textHeader}>Logged Symptoms</Text>
+                    {symptomsList.length > 0 ? (
+                        symptomsList.map((sym, index) => (
+                            <Text key={index} style={styles.symptomItem}>
+                                {index + 1}. {sym}
+                            </Text>
+                        ))
+                    ) : (
+                        <Text style={styles.noSymptomText}>No symptoms logged yet.</Text>
+                    )}
+
+                    {/* Progress Report Section */}
+                    <Text style={styles.textHeader}>Progress Report</Text>
+                    <Button title="Generate Report" onPress={generateReport} color="#4b0889" />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -117,7 +200,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        elevation: 4, 
+        elevation: 4,
     },
     headerTitle: {
         fontSize: 20,
@@ -125,10 +208,6 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         flex: 1,
-    },
-    headerAction: {
-        flexDirection: 'row',
-        alignItems: 'center',
     },
     body: {
         flex: 1,
@@ -144,4 +223,56 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 10,
     },
+    moodButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
+    },
+    moodButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+    },
+    selectedMoodButton: {
+        backgroundColor: '#4b0889',
+    },
+    moodButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    moodItem: {
+        fontSize: 16,
+        color: '#333',
+        marginVertical: 5,
+    },
+    noMoodText: {
+        fontSize: 16,
+        color: '#999',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 10,
+        marginVertical: 10,
+        fontSize: 16,
+    },
+    symptomItem: {
+        fontSize: 16,
+        color: '#333',
+        marginVertical: 5,
+    },
+    noSymptomText: {
+        fontSize: 16,
+        color: '#999',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
 });
+
