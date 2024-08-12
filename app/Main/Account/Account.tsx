@@ -58,7 +58,7 @@ const Account: React.FC = () => {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              router.push(`../Main`)
+              router.push("../../Main")
             }}
           >
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -84,7 +84,7 @@ const Account: React.FC = () => {
             <View style={styles.sectionBody}>
               <TouchableOpacity
                 onPress={() => {
-                  router.push('./EditProfile.tsx');
+                  router.push("../../Main/Account/EditProfile");
                 }}
                 style={styles.profile}>
                 <Image
@@ -164,7 +164,7 @@ const Account: React.FC = () => {
               <View style={[styles.rowWrapper, styles.rowFirst]}>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push('./ContactUs');
+                    router.push('../../Main/Account/ContactUs');
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Contact Us</Text>
@@ -206,7 +206,7 @@ const Account: React.FC = () => {
               <View style={[styles.rowWrapper, styles.rowLast]}>
                 <TouchableOpacity
                   onPress={() => {
-                    // handle onPress
+                    router.push('../..Main/Account/TermsAndConditions')
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Terms and Privacy</Text>
@@ -269,7 +269,7 @@ const Account: React.FC = () => {
                   setOpen={setLanguageOpen}
                   setValue={setLanguageValue}
                   setItems={setLanguageItems}
-                  // onChangeValue={(value) => setSelectedLanguage(value)}
+                  onChangeValue={(value) => setSelectedLanguage(value)}
                 />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
@@ -307,7 +307,7 @@ const Account: React.FC = () => {
                   setOpen={setLocationOpen}
                   setValue={setLocationValue}
                   setItems={setLocationItems}
-                  // onChangeValue={(value) => setSelectedLocation(value)}
+                  onChangeValue={(value) => setSelectedLocation(value)}
                 />
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
