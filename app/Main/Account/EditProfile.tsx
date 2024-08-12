@@ -27,13 +27,13 @@ const EditProfile: React.FC = () => {
   const handleSave = () => {
     // Implement save functionality here
     Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
-    router.push('../Main/Account');
+    router.push('../../Main');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push('./Main/Account')}>
+        <TouchableOpacity onPress={() => router.push('../../Main')}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>

@@ -43,7 +43,7 @@ const ContactUs: React.FC = () => {
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              router.push('../Main/Account');
+              router.push('../../Main');
             }}>
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>

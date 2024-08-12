@@ -1,278 +1,389 @@
 import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+  Modal,
+  ScrollView
+} from 'react-native';
 import { LineChart, PieChart, ProgressChart } from 'react-native-chart-kit';
-import { ScrollView } from 'react-native-gesture-handler';
-import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function Report() {
-    const [symptom, setSymptom] = useState('');
-    const [symptomsList, setSymptomsList] = useState<string[]>([]);
-    const [mood, setMood] = useState('');
-    const [moodLog, setMoodLog] = useState<string[]>([]);
+  const [symptom, setSymptom] = useState('');
+  const [symptomsList, setSymptomsList] = useState<string[]>([]);
+  const [mood, setMood] = useState('');
+  const [moodLog, setMoodLog] = useState<string[]>([]);
+  const [medicalHistoryVisible, setMedicalHistoryVisible] = useState(false);
 
-    // Function to log a new symptom
-    const handleAddSymptom = () => {
-        if (symptom.trim()) {
-            setSymptomsList([...symptomsList, symptom.trim()]);
-            setSymptom('');
-            Alert.alert("Symptom Added", "Your symptom has been logged.");
-        } else {
-            Alert.alert("Input Error", "Please enter a symptom.");
-        }
-    };
+  const handleAddSymptom = () => {
+    if (symptom.trim()) {
+      setSymptomsList([...symptomsList, symptom.trim()]);
+      setSymptom('');
+      Alert.alert("Symptom Added", "Your symptom has been logged.");
+    } else {
+      Alert.alert("Input Error", "Please enter a symptom.");
+    }
+  };
 
-    // Function to log a new mood
-    const handleAddMood = (selectedMood: string) => {
-        setMood(selectedMood);
-        setMoodLog([...moodLog, selectedMood]);
-        Alert.alert("Mood Logged", `You logged your mood as: ${selectedMood}`);
-    };
+  const handleAddMood = (selectedMood: string) => {
+    setMood(selectedMood);
+    setMoodLog([...moodLog, selectedMood]);
+    Alert.alert("Mood Logged", `You logged your mood as: ${selectedMood}`);
+  };
 
-    // Sample data for charts
-    const line = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-            {
-                data: [20, 45, 28, 80, 99, 43, 50],
-                strokeWidth: 2,
-            },
-        ],
-    };
+  const generateReport = () => {
+    const moodFrequency = moodLog.reduce(
+      (acc: { [key: string]: number }, currentMood) => {
+        acc[currentMood] = (acc[currentMood] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
 
-    const pieData = [
-        { name: 'hrs Job', population: 12, color: '#27ae60', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-        { name: 'hrs Sport', population: 2, color: '#2980b9', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-        { name: 'hrs Study', population: 5, color: '#f39c12', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-        { name: 'hrs Sleep', population: 8, color: '#8e44ad', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-        { name: 'hrs Other', population: 3, color: 'rgb(0, 0, 255)', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-    ];
+    const mostFrequentMood = Object.keys(moodFrequency).reduce((a, b) =>
+      moodFrequency[a] > moodFrequency[b] ? a : b,
+    );
 
-    const chartConfig = {
-        backgroundGradientFrom: '#1E2923',
-        backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: '#08130D',
-        backgroundGradientToOpacity: 0,
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        strokeWidth: 2,
-        barPercentage: 0.5,
-        useShadowColorFromDataset: false,
-    };
-
-    const progressData = {
-        labels: ['Sport', 'Reading', 'Run'],
-        data: [0.4, 0.6, 0.8],
-    };
-
-    // Function to generate summary report
-    const generateReport = () => {
-        const moodFrequency = moodLog.reduce((acc: { [key: string]: number }, currentMood) => {
-            acc[currentMood] = (acc[currentMood] || 0) + 1;
-            return acc;
-        }, {});
-
-        const mostFrequentMood = Object.keys(moodFrequency).reduce((a, b) => moodFrequency[a] > moodFrequency[b] ? a : b, '');
-
-        const reportSummary = `
+    const reportSummary = `
         Total Moods Logged: ${moodLog.length}
         Most Frequent Mood: ${mostFrequentMood}
         Total Symptoms Logged: ${symptomsList.length}
         `;
 
-        Alert.alert("Progress Report", reportSummary);
-    };
+    Alert.alert("Progress Report", reportSummary);
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.push(`../Main`)}>
-                        <Ionicons name="arrow-back" size={24} color="#fff" />
-                    </TouchableOpacity>
-                    <Text numberOfLines={1} style={styles.headerTitle}>
-                        Report
-                    </Text>
-                    <TouchableOpacity onPress={() => {}}>
-                        <FeatherIcon color="#fff" name="more-vertical" size={24} />
-                    </TouchableOpacity>
-                </View>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.push(`../Main`)}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Report</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setMedicalHistoryVisible(true);
+            }}
+          >
+            <MaterialCommunityIcons color="#fff" name="medical-bag" size={24} />
+          </TouchableOpacity>
+        </View>
 
-                <View style={styles.body}>
-                    <Text style={styles.textHeader}>Your Daily Progress</Text>
-                    <ProgressChart
-                        data={progressData}
-                        width={Dimensions.get('window').width - 30}
-                        height={220}
-                        strokeWidth={16}
-                        radius={32}
-                        chartConfig={chartConfig}
-                        hideLegend={false}
-                    />
+        {/* Body */}
+        <View style={styles.body}>
+          {/* Progress Charts */}
+          <Text style={styles.sectionTitle}>Your Daily Progress</Text>
+          <ProgressChart
+            data={progressData}
+            width={Dimensions.get('window').width - 30}
+            height={220}
+            strokeWidth={16}
+            radius={32}
+            chartConfig={chartConfig}
+            hideLegend={false}
+          />
 
-                    <Text style={styles.textHeader}>Daily Activity</Text>
-                    <PieChart
-                        data={pieData}
-                        width={Dimensions.get('window').width}
-                        height={220}
-                        chartConfig={chartConfig}
-                        accessor="population"
-                        backgroundColor="transparent"
-                        paddingLeft="15"
-                        absolute
-                    />
+          <Text style={styles.sectionTitle}>Daily Activity</Text>
+          <PieChart
+            data={pieData}
+            width={Dimensions.get('window').width}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="population"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+          />
 
-                    <Text style={styles.textHeader}>Your Weekly Progress</Text>
-                    <LineChart
-                        data={line}
-                        width={Dimensions.get('window').width - 30}
-                        height={220}
-                        chartConfig={chartConfig}
-                        bezier
-                        style={{ marginVertical: 8, borderRadius: 16 }}
-                    />
+          <Text style={styles.sectionTitle}>Your Weekly Progress</Text>
+          <LineChart
+            data={lineData}
+            width={Dimensions.get('window').width - 30}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chartStyle}
+          />
 
-                    {/* Mood Tracking Section */}
-                    <Text style={styles.textHeader}>Log Your Daily Mood</Text>
-                    <View style={styles.moodButtonsContainer}>
-                        {['Happy', 'Sad', 'Anxious', 'Angry', 'Neutral'].map((item, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles.moodButton, mood === item && styles.selectedMoodButton]}
-                                onPress={() => handleAddMood(item)}
-                            >
-                                <Text style={styles.moodButtonText}>{item}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+          {/* Mood Logging */}
+          <Text style={styles.sectionTitle}>Log Your Daily Mood</Text>
+          <View style={styles.moodButtonsContainer}>
+            {['Happy', 'Sad', 'Anxious', 'Angry', 'Neutral'].map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.moodButton,
+                  mood === item && styles.selectedMoodButton,
+                ]}
+                onPress={() => handleAddMood(item)}
+              >
+                <Text style={styles.moodButtonText}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-                    <Text style={styles.textHeader}>Logged Moods</Text>
-                    {moodLog.length > 0 ? (
-                        moodLog.map((loggedMood, index) => (
-                            <Text key={index} style={styles.moodItem}>
-                                {index + 1}. {loggedMood}
-                            </Text>
-                        ))
-                    ) : (
-                        <Text style={styles.noMoodText}>No moods logged yet.</Text>
-                    )}
+          {/* Logged Moods */}
+          <Text style={styles.sectionTitle}>Logged Moods</Text>
+          {moodLog.length > 0 ? (
+            moodLog.map((loggedMood, index) => (
+              <Text key={index} style={styles.loggedItem}>
+                {index + 1}. {loggedMood}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.noItemText}>No moods logged yet.</Text>
+          )}
 
-                    {/* Symptom Logging Section */}
-                    <Text style={styles.textHeader}>Log Your Symptoms</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter a symptom..."
-                        value={symptom}
-                        onChangeText={setSymptom}
-                    />
-                    <Button title="Add Symptom" onPress={handleAddSymptom} color="#4b0889" />
+          {/* Symptom Logging */}
+          <Text style={styles.sectionTitle}>Log Your Symptoms</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter a symptom..."
+            value={symptom}
+            onChangeText={setSymptom}
+          />
+          <Button title="Add Symptom" onPress={handleAddSymptom} color="#4b0889" />
 
-                    <Text style={styles.textHeader}>Logged Symptoms</Text>
-                    {symptomsList.length > 0 ? (
-                        symptomsList.map((sym, index) => (
-                            <Text key={index} style={styles.symptomItem}>
-                                {index + 1}. {sym}
-                            </Text>
-                        ))
-                    ) : (
-                        <Text style={styles.noSymptomText}>No symptoms logged yet.</Text>
-                    )}
+          {/* Logged Symptoms */}
+          <Text style={styles.sectionTitle}>Logged Symptoms</Text>
+          {symptomsList.length > 0 ? (
+            symptomsList.map((symptom, index) => (
+              <Text key={index} style={styles.loggedItem}>
+                {index + 1}. {symptom}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.noItemText}>No symptoms logged yet.</Text>
+          )}
 
-                    {/* Progress Report Section */}
-                    <Text style={styles.textHeader}>Progress Report</Text>
-                    <Button title="Generate Report" onPress={generateReport} color="#4b0889" />
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    );
+          {/* Generate Report */}
+          <Text style={styles.sectionTitle}>Progress Report</Text>
+          <Button title="Generate Report" onPress={generateReport} color="#4b0889" />
+        </View>
+      </ScrollView>
+
+      {/* Medical History Modal */}
+      <Modal
+        visible={medicalHistoryVisible}
+        animationType="slide"
+        onRequestClose={() => setMedicalHistoryVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Medical History</Text>
+          <ScrollView style={styles.modalBody}>
+            <Text style={styles.historySectionTitle}>Mental Health Diagnoses</Text>
+            <Text style={styles.historyItem}>
+              - Generalized Anxiety Disorder (January 15, 2023)
+            </Text>
+            <Text style={styles.historyItem}>
+              - Major Depressive Disorder (April 10, 2022)
+            </Text>
+
+            <Text style={styles.historySectionTitle}>Therapy Sessions</Text>
+            <Text style={styles.historyItem}>
+              - March 20, 2023: Session with Dr. Jane Smith - Coping mechanisms for anxiety
+            </Text>
+            <Text style={styles.historyItem}>
+              - February 15, 2023: Session with Dr. John Doe - Progress with medication
+            </Text>
+
+            <Text style={styles.historySectionTitle}>Medications</Text>
+            <Text style={styles.historyItem}>
+              - Sertraline 50mg/day (Started: April 12, 2022)
+            </Text>
+            <Text style={styles.historyItem}>
+              - Alprazolam 0.5mg as needed (Started: January 18, 2023)
+            </Text>
+
+            <Text style={styles.historySectionTitle}>Personal Notes</Text>
+            <Text style={styles.historyItem}>
+              - May 1, 2023: Feeling more in control of anxiety, but still struggling with sleep.
+            </Text>
+            <Text style={styles.historyItem}>
+              - April 25, 2023: Rough week, felt very down and isolated.
+            </Text>
+          </ScrollView>
+          <Button title="Close" onPress={() => setMedicalHistoryVisible(false)} color="#4b0889" />
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f8f8f8',
+      flex: 1,
+      backgroundColor: '#4b0889',
+      marginTop: 50,
     },
     header: {
-        paddingVertical: 20,
-        paddingHorizontal: 15,
-        backgroundColor: '#4b0889',
-        borderRadius: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        elevation: 4,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 15,
+      paddingTop: 15,
+      paddingBottom: 10,
+      backgroundColor: '#4b0889',
     },
     headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white',
-        textAlign: 'center',
-        flex: 1,
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
     },
     body: {
-        flex: 1,
-        backgroundColor: 'white',
-        padding: 20,
-        margin: 10,
-        borderRadius: 10,
+      paddingHorizontal: 15,
+      paddingVertical: 20,
+      backgroundColor: '#fff',
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
     },
-    textHeader: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#4b0889',
-        textAlign: 'center',
-        marginVertical: 10,
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginVertical: 10,
+      color: '#333',
     },
     moodButtonsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginVertical: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginVertical: 10,
     },
     moodButton: {
-        backgroundColor: '#ccc',
-        padding: 10,
-        borderRadius: 5,
-        flex: 1,
-        marginHorizontal: 5,
-        alignItems: 'center',
+      backgroundColor: '#ddd',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 10,
     },
     selectedMoodButton: {
-        backgroundColor: '#4b0889',
+      backgroundColor: '#4b0889',
     },
     moodButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+      color: '#333',
+      fontWeight: 'bold',
     },
-    moodItem: {
-        fontSize: 16,
-        color: '#333',
-        marginVertical: 5,
+    loggedItem: {
+      color: '#555',
+      marginBottom: 5,
     },
-    noMoodText: {
-        fontSize: 16,
-        color: '#999',
-        textAlign: 'center',
-        marginVertical: 10,
+    noItemText: {
+      color: '#aaa',
+      fontStyle: 'italic',
     },
     input: {
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginVertical: 10,
-        fontSize: 16,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10,
+      padding: 10,
+      marginBottom: 10,
     },
-    symptomItem: {
-        fontSize: 16,
-        color: '#333',
-        marginVertical: 5,
+    modalContainer: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: '#f4f4f4',
     },
-    noSymptomText: {
-        fontSize: 16,
-        color: '#999',
-        textAlign: 'center',
-        marginVertical: 10,
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      textAlign: 'center',
+      color: '#4b0889',
     },
-});
+    modalBody: {
+      flex: 1,
+      paddingHorizontal: 10,
+    },
+    historySectionTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      color: '#4b0889',
+    },
+    historyItem: {
+      fontSize: 14,
+      color: '#555',
+      marginBottom: 15,
+      padding: 10,
+      borderRadius: 10,
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#ddd',
+    },
+    chartStyle: {
+      borderRadius: 16,
+    },
+  });
+  
 
+const chartConfig = {
+  backgroundGradientFrom: '#ffffff',
+  backgroundGradientTo: '#ffffff',
+  color: (opacity = 1) => `rgba(75, 8, 137, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(75, 8, 137, ${opacity})`,
+  strokeWidth: 2, // optional, default 3
+  barPercentage: 0.5,
+  useShadowColorFromDataset: false,
+};
+
+const progressData = {
+  labels: ['Mood Tracking', 'Symptom Log', 'Therapy Sessions'], // optional
+  data: [0.8, 0.6, 0.9],
+};
+
+const pieData = [
+  {
+    name: 'Happy',
+    population: 40,
+    color: '#4b0889',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
+  {
+    name: 'Sad',
+    population: 30,
+    color: '#ffd700',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
+  {
+    name: 'Anxious',
+    population: 15,
+    color: '#ff6347',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
+  {
+    name: 'Angry',
+    population: 10,
+    color: '#20b2aa',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
+  {
+    name: 'Neutral',
+    population: 5,
+    color: '#9370db',
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 15,
+  },
+];
+
+const lineData = {
+  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43, 50],
+      strokeWidth: 2, // optional
+    },
+  ],
+};
