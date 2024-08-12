@@ -185,7 +185,7 @@ const Profile: React.FC = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.topContainer}>
-          <Image source={require('../assets/ImgForScreen/AITalk.jpg')} style={styles.logo} />
+          <Image source={require('../../../assets/ImgForScreen/AITalk.jpg')} style={styles.logo} />
           <Text style={styles.heading}>Help us match you to the right therapist</Text>
         </View>
         <View style={styles.questionContainer}>

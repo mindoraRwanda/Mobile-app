@@ -10,7 +10,7 @@ export default function Questionnaire() {
       
       <View style={styles.content}>
         <Image
-          source={require('../assets/ImgForScreen/user.jpg')} // Replace with an appropriate image
+          source={require('../../../assets/ImgForScreen/user.jpg')} // Replace with an appropriate image
           style={styles.image}
         />
         

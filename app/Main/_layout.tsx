@@ -1,4 +1,3 @@
-// app/home/_layout.js
 import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
@@ -10,7 +9,7 @@ export default function HomeLayout() {
           let iconName;
           color = focused ? 'purple' : 'rgba(74, 8, 135, 0.557)';
 
-          if (route.name === 'AI Chat') {
+          if (route.name === 'Home') {
             iconName = 'robot';
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
@@ -42,20 +41,26 @@ export default function HomeLayout() {
         name="Home" 
         options={{
           title: 'AI Chat',
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Tabs.Screen 
         name="Service" 
         options={{
-          headerShown: false
+          headerShown: false,
         }}
       />
       <Tabs.Screen name="Chat" />
       <Tabs.Screen 
+        name="Report" 
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen 
         name="Account" 
         options={{
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Tabs>

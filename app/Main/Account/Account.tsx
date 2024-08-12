@@ -12,8 +12,8 @@ import {
   Pressable,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import { logout } from '../../redux/authSlice';
+import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
+import { logout } from '../../../redux/authSlice';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -84,12 +84,12 @@ const Account: React.FC = () => {
             <View style={styles.sectionBody}>
               <TouchableOpacity
                 onPress={() => {
-                  router.push('../EditProfile');
+                  router.push('./EditProfile.tsx');
                 }}
                 style={styles.profile}>
                 <Image
                   alt=""
-                  source={require('../../assets/ImgForScreen/user.jpg')}
+                  source={require('../../../assets/ImgForScreen/user.jpg')}
                   style={styles.profileAvatar} />
                 <View style={styles.profileBody}>
                   <Text style={styles.profileName}>{user?.name || 'John Doe'}</Text>
@@ -164,7 +164,7 @@ const Account: React.FC = () => {
               <View style={[styles.rowWrapper, styles.rowFirst]}>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push('../ContactUs')
+                    router.push('./ContactUs');
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Contact Us</Text>
