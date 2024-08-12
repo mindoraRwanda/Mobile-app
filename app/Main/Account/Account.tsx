@@ -178,7 +178,7 @@ const Account: React.FC = () => {
               <View style={styles.rowWrapper}>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push('./Report');
+                    router.push('../Report');
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Report Bug</Text>
@@ -206,7 +206,7 @@ const Account: React.FC = () => {
               <View style={[styles.rowWrapper, styles.rowLast]}>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push('../..Main/Account/TermsAndConditions')
+                    router.push('../../Main/Account/TermsAndConditions')
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Terms and Privacy</Text>

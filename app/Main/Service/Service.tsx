@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Button, TextInput } from 'react-native';
+import { Modal, View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import CancelBooking from '../../Cancel';
@@ -163,7 +163,7 @@ export default function Appointment() {
                     <Text style={styles.buttonText}>View Profile</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => { setBookingModalVisible(true); setSelectedTherapist(therapist); }} style={styles.button}>
-                    <Text style={styles.buttonText}>Book Now</Text>
+                    <Text style={styles.buttonText}>Booking</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -172,62 +172,75 @@ export default function Appointment() {
         </ScrollView>
       </ScrollView>
 
-      <Modal visible={profileModalVisible} animationType="slide">
-        <View style={styles.profileModal}>
-          <View style={styles.profileContent}>
-            <Image source={selectedTherapist?.image} style={styles.profileImage} />
-            <Text style={styles.profileName}>{selectedTherapist?.name}</Text>
-            <Text style={styles.profileJob}>{selectedTherapist?.job}</Text>
-            <Text style={styles.profileDescription}>{selectedTherapist?.description}</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setProfileModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+      {/* Therapist Profile Modal */}
+      <Modal visible={profileModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContainer}>
+            <ScrollView>
+              <TouchableOpacity onPress={() => setProfileModalVisible(false)} style={styles.closeButton}>
+                <Icon name="times" size={30} color="#333" />
+              </TouchableOpacity>
+              <Image source={selectedTherapist?.image} style={styles.modalImage} />
+              <Text style={styles.modalTitle}>{selectedTherapist?.name}</Text>
+              <Text style={styles.modalText}>{selectedTherapist?.location}</Text>
+              <Text style={styles.modalText}>{selectedTherapist?.job}</Text>
+              <Text style={styles.modalDescription}>{selectedTherapist?.description}</Text>
+            </ScrollView>
           </View>
         </View>
       </Modal>
 
-      <Modal visible={bookingModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Book an Appointment</Text>
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Your Name"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Date (YYYY-MM-DD)"
-            value={date}
-            onChangeText={setDate}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Time (HH:MM)"
-            value={time}
-            onChangeText={setTime}
-          />
-          <TextInput
-            style={styles.modalInput}
-            placeholder="Reason for Visit"
-            value={reason}
-            onChangeText={setReason}
-            multiline
-            numberOfLines={4}
-          />
-          <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.cancelButton}>
-              <CancelBooking />
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setBookingModalVisible(false)} style={styles.confirmButton}>
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
+      {/* Appointment Booking Modal */}
+      <Modal visible={bookingModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Book an Appointment</Text>
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Your Name"
+              value={name}
+              onChangeText={setName}
+              placeholderTextColor="#888"
+            />
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Date (YYYY-MM-DD)"
+              value={date}
+              onChangeText={setDate}
+              placeholderTextColor="#888"
+            />
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Time (HH:MM)"
+              value={time}
+              onChangeText={setTime}
+              placeholderTextColor="#888"
+            />
+
+            <TextInput
+              style={styles.modalReasonInput}
+              placeholder="Reason for Visit"
+              value={reason}
+              onChangeText={setReason}
+              multiline
+              numberOfLines={4}
+              placeholderTextColor="#888"
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setBookingModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={() => setBookingModalVisible(false)}>
+                <Text style={styles.confirmButtonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
-
-
     </View>
   );
 }
@@ -235,217 +248,213 @@ export default function Appointment() {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#E5E8E8',
     marginTop: 50,
   },
-  exercisesSection: {
-    marginBottom: 20,
-  },
-  listHeader: {
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  listTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  listContent: {
-    paddingHorizontal: 10,
-  },
-  exercisesList: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-
-  },
-  exerciseButton: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    marginHorizontal: 5,
-    alignItems: 'center',
-    padding: 10,
-    elevation: 3,
-    width: 120,
-  },
-  exerciseIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 5,
-  },
-  exerciseText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  exerciseSubtext: {
-    fontSize: 12,
-    color: '#888',
-  },
   header: {
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingTop: 10,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#4A0887',
+    marginBottom: 10,
+    textAlign: 'center',
   },
   searchSection: {
     flexDirection: 'row',
-    marginTop: 10,
+    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 3,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    
   },
   input: {
     flex: 1,
-    padding: 10,
     fontSize: 16,
+    color: 'black',
+    marginRight: 10,
   },
   searchIcon: {
     padding: 10,
-    backgroundColor: '#4A0887',
-    borderRadius: 10,
+    color: '#4A0887',
+
   },
   therapy: {
     flexDirection: 'row',
-    padding: 10,
-    marginVertical: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 2,
+    padding: 10,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginRight: 10,
   },
   therapyDesc: {
     flex: 1,
+    marginLeft: 15,
     justifyContent: 'center',
   },
   avatarTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
   },
   avatarAddress: {
     fontSize: 14,
-    color: '#666',
+    color: '#888',
+    marginBottom: 5,
   },
   avatarJob: {
-    fontSize: 14,
-    color: '#888',
+    fontSize: 16,
+    color: '#4A0887',
     marginBottom: 10,
   },
   avatarButton: {
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Corrected to 'flex-end'
-    marginTop: 10,
+    justifyContent: 'space-between',
   },
   button: {
     backgroundColor: '#4A0887',
-    padding: 10,
-    borderRadius: 8,
-    marginHorizontal: 5,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFF',
     fontWeight: 'bold',
+    fontSize: 14,
   },
-  profileModal: {
+  exercisesSection: {
+    marginVertical: 20,
+  },
+  listHeader: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  listTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4A0887',
+  },
+  listContent: {
+    paddingHorizontal: 20,
+  },
+  exercisesList: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  exerciseButton: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    marginRight: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  exerciseIcon: {
+    width: 50,
+    height: 50,
+    marginBottom: 10,
+  },
+  exerciseText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+  },
+  exerciseSubtext: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+  },
+  overlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9F9F9',
-    padding: 20,
   },
-  profileContent: {
+  modalContainer: {
     width: '90%',
     backgroundColor: '#FFF',
     borderRadius: 12,
     padding: 20,
     elevation: 5,
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 16,
-    borderColor: '#DDD',
-    borderWidth: 2,
-  },
-  profileName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  profileJob: {
-    fontSize: 20,
-    color: '#666',
-    marginBottom: 16,
-  },
-  profileDescription: {
-    fontSize: 16,
-    color: '#444',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  closeButton: {
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#4A0887',
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    fontSize: 16,
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    marginHorizontal: 20,
-    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  modalDescription: {
+    fontSize: 16,
     color: '#333',
     textAlign: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  modalImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   modalInput: {
     width: '100%',
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
     color: '#333',
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#f9f9f9',
   },
   modalReasonInput: {
     width: '100%',
-    height: 150, // Adjust height for multiline input
+    height: 100,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingHorizontal: 15,
-    paddingTop: 15, // Add padding at the top
+    paddingTop: 15,
     marginBottom: 15,
     fontSize: 16,
     color: '#333',
-    backgroundColor: '#f8f8f8',
-    textAlignVertical: 'top', // Align text at the top
+    backgroundColor: '#f9f9f9',
+    textAlignVertical: 'top',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -454,27 +463,41 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   cancelButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#D32F2F',
     paddingVertical: 15,
-    borderRadius: 5,
+    borderRadius: 10,
     width: '45%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   confirmButton: {
     backgroundColor: '#4A0887',
     paddingVertical: 15,
-    borderRadius: 5,
+    borderRadius: 10,
     width: '45%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   cancelButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFF',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   confirmButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFF',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
   },
 });
