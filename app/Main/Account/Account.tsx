@@ -178,7 +178,7 @@ const Account: React.FC = () => {
               <View style={styles.rowWrapper}>
                 <TouchableOpacity
                   onPress={() => {
-                    router.push('../Report');
+                    router.push('../../Main/Report');
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Report Bug</Text>
@@ -192,7 +192,7 @@ const Account: React.FC = () => {
               <View style={styles.rowWrapper}>
                 <TouchableOpacity
                   onPress={() => {
-                    // handle onPress
+                    router.push('../../Main/Account/Rate')
                   }}
                   style={styles.row}>
                   <Text style={styles.rowLabel}>Rate in App Store</Text>
