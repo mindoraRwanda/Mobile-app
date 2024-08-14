@@ -35,7 +35,7 @@ export default function SignUp(): React.ReactElement {
     setTimeout(() => {
       setIsLoading(false);
       Alert.alert('Sign up successfull');
-      router.push('/Profile')
+      router.push('./Main/Account/Profile')
     }, 1000)
 
   };
