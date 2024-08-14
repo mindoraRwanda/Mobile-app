@@ -69,7 +69,7 @@ const Account: React.FC = () => {
           <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
             <TouchableOpacity
               onPress={() => {
-                // handle onPress
+                router.push('./Service/Resources')
               }}>
               <FeatherIcon
                 color="#000"
