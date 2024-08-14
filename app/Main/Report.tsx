@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#4b0889',
-      marginTop: 27.8,
+      marginTop: 40,
     },
     header: {
       flexDirection: 'row',
@@ -269,7 +269,6 @@ const styles = StyleSheet.create({
       backgroundColor: '#4b0889',
     },
     moodButtonText: {
-      color: '#333',
       fontWeight: 'bold',
     },
     loggedItem: {
@@ -383,7 +382,7 @@ const lineData = {
   datasets: [
     {
       data: [20, 45, 28, 80, 99, 43, 50],
-      strokeWidth: 2, // optional
+      strokeWidth: 2,
     },
   ],
 };
