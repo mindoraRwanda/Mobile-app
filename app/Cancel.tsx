@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
+    paddingHorizontal: 20,
   },
   modalContainer: {
     flex: 1,

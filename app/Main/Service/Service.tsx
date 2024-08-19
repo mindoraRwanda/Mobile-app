@@ -236,8 +236,8 @@ export default function Appointment() {
             />
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setBookingModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+              <TouchableOpacity >
+                <CancelBooking/>
               </TouchableOpacity>
               <TouchableOpacity style={styles.confirmButton} onPress={() => setBookingModalVisible(false)}>
                 <Text style={styles.confirmButtonText}>Confirm</Text>
