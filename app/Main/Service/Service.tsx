@@ -77,6 +77,11 @@ export default function Appointment() {
                 <Text style={styles.exerciseText}>Beck's Depression Inventory</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.exerciseButton}
+                onPress={() => navigation.navigate('Resources' as never)}>
+                <Image source={require('../../../assets/ImgForScreen/EUC.jpg')} style={styles.exerciseIcon} />
+                <Text style={styles.exerciseText}>Resource</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.exerciseButton}
                 onPress={() => navigation.navigate('Anxietys' as never)}>
                 <Image source={require('../../../assets/ImgForScreen/analysis.jpg')} style={styles.exerciseIcon} />
                 <Text style={styles.exerciseText}>Anxiety</Text>
@@ -249,7 +254,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#E5E8E8',
-    marginTop: 50,
+    marginTop: 30,
   },
   header: {
     paddingHorizontal: 20,
@@ -369,6 +374,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    width: 150,
+    height: 150,
   },
   exerciseIcon: {
     width: 50,
