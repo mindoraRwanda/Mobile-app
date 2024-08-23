@@ -67,7 +67,7 @@ export default function Report() {
       <ScrollView>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.push(`../Main`)}>
+          <TouchableOpacity onPress={() => router.push(`./Dashboard`)}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Report</Text>

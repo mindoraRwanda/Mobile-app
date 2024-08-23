@@ -21,8 +21,8 @@ export default function HomeLayout() {
             iconName = 'laptop-medical';
             return <FontAwesome5 name={iconName} size={size} color={color} />;
           }
-          if (route.name === 'Report') {
-            iconName = 'profile';
+          if (route.name === 'Dashboard') {
+            iconName = 'dashboard';
             return <AntDesign name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Account') {
@@ -37,15 +37,15 @@ export default function HomeLayout() {
         },
       })}
     >
-      <Tabs.Screen 
-        name="Home" 
+      <Tabs.Screen
+        name="Home"
         options={{
           title: 'AI Chat',
           headerShown: false,
         }}
       />
-      <Tabs.Screen 
-        name="Service" 
+      <Tabs.Screen
+        name="Service"
         options={{
           headerShown: false,
         }}
@@ -56,14 +56,14 @@ export default function HomeLayout() {
         headerShown: false,
       }}
        />
-      <Tabs.Screen 
-        name="Report" 
+      <Tabs.Screen
+        name="Dashboard"
         options={{
           headerShown: false,
         }}
       />
-      <Tabs.Screen 
-        name="Account" 
+      <Tabs.Screen
+        name="Account"
         options={{
           headerShown: false,
         }}
