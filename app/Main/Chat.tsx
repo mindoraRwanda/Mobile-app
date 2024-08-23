@@ -373,6 +373,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     padding: 16,
+    marginTop: 20,
   },
   communityText: {
     fontSize: 20,

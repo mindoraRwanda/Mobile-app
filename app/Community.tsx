@@ -292,7 +292,7 @@ const Community: React.FC = (): JSX.Element => {
                         style={styles.closeButton}
                         onPress={() => setOpenCommunity(false)}
                     >
-                        <Ionicons name="arrow-back" size={24} color="black" />
+                        <Ionicons name="arrow-back" size={25} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Select a Community</Text>
                 </View>
@@ -410,6 +410,20 @@ const styles = StyleSheet.create({
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
+        backgroundColor: '#4b0889',
+        justifyContent:'space-between',
+    },
+      
+    headerInfo: {
+        flex: 1,
+    },
+    headerName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    headerStatus: {
+        color: '#ccc',
     },
     closeButton: {
         marginRight: 16,
@@ -529,11 +543,19 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         padding: 16,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 20,
     },
     searchInput: {
-        backgroundColor: '#fff',
+        backgroundColor: 'purple',
         borderRadius: 20,
         padding: 10,
+        color: 'black',
+    },
+        searchButton: {
+        backgroundColor: 'purple',
+        borderRadius: 20,
+        padding: 10
     },
     headerTitle: {
         fontSize: 18,
