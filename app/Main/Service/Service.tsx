@@ -318,12 +318,12 @@ const styles = StyleSheet.create({
   avatarAddress: {
     fontSize: 14,
     color: '#888',
-    marginBottom: 5,
+    marginBottom: 4,
   },
   avatarJob: {
     fontSize: 16,
     color: '#4A0887',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   avatarButton: {
     flexDirection: 'row',
@@ -344,11 +344,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   exercisesSection: {
-    marginVertical: 20,
+    marginVertical: 5,
   },
   listHeader: {
     paddingHorizontal: 20,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   listTitle: {
     fontSize: 22,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   exerciseIcon: {
     width: 50,
     height: 50,
-    marginBottom: 10,
+    marginBottom: 3,
   },
   exerciseText: {
     fontSize: 16,

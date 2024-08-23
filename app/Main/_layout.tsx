@@ -50,7 +50,12 @@ export default function HomeLayout() {
           headerShown: false,
         }}
       />
-      <Tabs.Screen name="Chat" />
+      <Tabs.Screen
+       name="Chat" 
+       options={{
+        headerShown: false,
+      }}
+       />
       <Tabs.Screen 
         name="Report" 
         options={{
