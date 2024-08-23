@@ -69,7 +69,7 @@ const Account: React.FC = () => {
           <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
             <TouchableOpacity
               onPress={() => {
-                router.push('./Service/Resources')
+                router.push('../Dashboard/ProgressTracking')
               }}>
               <FeatherIcon
                 color="#000"
