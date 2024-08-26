@@ -143,8 +143,8 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                                             router.push('./GamifiedExercise');
                                         }}
                                     >
-                                        <MaterialIcons name="library-books" size={50} color="purple" />
-                                        <Text style={styles.cardText}>Resources</Text>
+                                        <MaterialIcons name="library-books" size={24} color="black" />
+                                        <Text style={styles.cardText}>Gamefied Exercise</Text>
                                     </TouchableOpacity>
                                 </View>
                                 
