@@ -378,8 +378,8 @@ const styles = StyleSheet.create({
     height: 150,
   },
   exerciseIcon: {
-    width: 50,
-    height: 50,
+    width: 100,
+    height: 55,
     marginBottom: 3,
   },
   exerciseText: {

@@ -140,7 +140,7 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                                     <TouchableOpacity
                                         style={styles.card}
                                         onPress={() => {
-                                            router.push('./Dashboard/Report');
+                                            router.push('./GamifiedExercise');
                                         }}
                                     >
                                         <MaterialIcons name="library-books" size={24} color="black" />
@@ -178,7 +178,7 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() =>
-                        router.push('./Dashboard/Help')}
+                        router.push('./Help')}
                 >
                     <Text style={styles.footerText}>Help</Text>
                 </TouchableOpacity>
