@@ -99,7 +99,7 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                         <>
                             <View style={styles.header}>
                                 <Text style={styles.title}>Welcome to Mindora</Text>
-                                <Ionicons name="notifications-outline" size={24} color="white" />
+                                <Ionicons name="notifications-outline" size={28} color="white" />
                             </View>
 
                             <View style={styles.featureSection}>
@@ -109,14 +109,14 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                                         onPress={() =>
                                             router.push('./MoodTracking')}
                                     >
-                                        <FontAwesome name="smile-o" size={24} color="black" />
+                                        <FontAwesome name="smile-o" size={50} color="purple" />
                                         <Text style={styles.cardText}>Track Mood</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.card}
                                         onPress={() => setIsBooking(true)}
                                     >
-                                        <FontAwesome name="calendar" size={24} color="black" />
+                                        <FontAwesome name="calendar" size={50} color="purple" />
                                         <Text style={styles.cardText}>Book Appointments</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -125,14 +125,14 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                                         style={styles.card}
                                         onPress={() => router.push('./Community')}
                                     >
-                                        <FontAwesome name="users" size={24} color="black" />
+                                        <FontAwesome name="users" size={50} color="purple" />
                                         <Text style={styles.cardText}>Support Community</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.card}
                                         onPress={() => router.push('./Report')}
                                     >
-                                        <MaterialIcons name="assessment" size={24} color="black" />
+                                        <MaterialIcons name="assessment" size={50} color="purple" />
                                         <Text style={styles.cardText}>View Reports</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -143,10 +143,11 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
                                             router.push('./GamifiedExercise');
                                         }}
                                     >
-                                        <MaterialIcons name="library-books" size={24} color="black" />
+                                        <MaterialIcons name="library-books" size={50} color="purple" />
                                         <Text style={styles.cardText}>Resources</Text>
                                     </TouchableOpacity>
                                 </View>
+                                
                             </View>
 
                             <View style={styles.statisticsSection}>
