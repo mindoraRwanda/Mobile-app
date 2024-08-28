@@ -48,6 +48,7 @@ export default function HomeLayout() {
         name="Service"
         options={{
           headerShown: false,
+          title: 'Services',
         }}
       />
       <Tabs.Screen
