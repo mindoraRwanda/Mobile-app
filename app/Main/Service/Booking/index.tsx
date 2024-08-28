@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import CancelBooking from '../../Cancel';
+import CancelBooking from '../../../../components/Cancel';
 
 interface Therapist {
   name: string;
@@ -13,7 +13,7 @@ interface Therapist {
 }
 
 export default function Appointment() {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null);
   const [profileModalVisible, setProfileModalVisible] = useState<boolean>(false);
   const [bookingModalVisible, setBookingModalVisible] = useState<boolean>(false);
@@ -28,28 +28,28 @@ export default function Appointment() {
       name: 'Noella Nizigama',
       location: 'Kigali',
       job: 'Psychologist',
-      image: require('../../../assets/ImgForScreen/team3.jpg'),
+      image: require('../../../../assets/ImgForScreen/team3.jpg'),
       description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
     {
       name: 'Uwirora Gilbert',
       location: 'Kigali',
       job: 'Clinical Psychologist',
-      image: require('../../../assets/ImgForScreen/team2.jpg'),
+      image: require('../../../../assets/ImgForScreen/team2.jpg'),
       description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
     {
       name: 'Murenzi Patrick',
       location: 'Kigali',
       job: 'Psychologist',
-      image: require('../../../assets/ImgForScreen/team5.jpg'),
+      image: require('../../../../assets/ImgForScreen/team5.jpg'),
       description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
     {
       name: 'Nsengiyumva Athanaze',
       location: 'Kigali',
       job: 'Psychologist',
-      image: require('../../../assets/ImgForScreen/team6.jpg'),
+      image: require('../../../../assets/ImgForScreen/team6.jpg'),
       description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
     },
   ];
@@ -64,7 +64,7 @@ export default function Appointment() {
   return (
     <View style={styles.main}>
       <ScrollView>
-        <View style={styles.exercisesSection}>
+        {/* <View style={styles.exercisesSection}>
           <View style={styles.listHeader}>
             <Text style={styles.listTitle}>Mental Health Checkups</Text>
           </View>
@@ -99,9 +99,9 @@ export default function Appointment() {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </View>
+        </View> */}
 
-        <View style={styles.exercisesSection}>
+        {/* <View style={styles.exercisesSection}>
           <View style={styles.listHeader}>
             <Text style={styles.listTitle}>Exercise</Text>
           </View>
@@ -140,7 +140,7 @@ export default function Appointment() {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </View>
+        </View> */}
 
         <View style={styles.header}>
           <Text style={styles.title}>Find Your Therapist</Text>

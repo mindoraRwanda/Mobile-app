@@ -17,7 +17,7 @@ import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
-import Community from '../Community';
+import Community from '../../Community';
 
 interface User {
   id: string;
@@ -39,19 +39,19 @@ const users: User[] = [
   {
     id: '1',
     name: 'Noella Nizigama',
-    image: require('../../assets/ImgForScreen/team2.jpg'),
+    image: require('../../../assets/ImgForScreen/team2.jpg'),
     lastSeen: 'Active now',
   },
   {
     id: '2',
     name: 'Uwirora Gilbert',
-    image: require('../../assets/ImgForScreen/team3.jpg'),
+    image: require('../../../assets/ImgForScreen/team3.jpg'),
     lastSeen: 'Active 5h ago',
   },
   {
     id: '3',
     name: 'Murenzi Patrick',
-    image: require('../../assets/ImgForScreen/team5.jpg'),
+    image: require('../../../assets/ImgForScreen/team5.jpg'),
     lastSeen: 'Active 2h ago',
   },
 ];
@@ -324,19 +324,19 @@ export default function Chat() {
         >
           <View style={styles.exercisesList}>
             <TouchableOpacity style={styles.exerciseButton} onPress={() => navigation.navigate('Community' as never)}>
-              <Image source={require('../../assets/ImgForScreen/grp1.jpg')} style={styles.exerciseIcon} />
+              <Image source={require('../../../assets/ImgForScreen/grp1.jpg')} style={styles.exerciseIcon} />
               <Text style={styles.exerciseLabel}>Communities</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.exerciseButton} onPress={() => navigation.navigate('Online Experts' as never)}>
-              <Image source={require('../../assets/ImgForScreen/grp1.jpg')} style={styles.exerciseIcon} />
+              <Image source={require('../../../assets/ImgForScreen/grp1.jpg')} style={styles.exerciseIcon} />
               <Text style={styles.exerciseLabel}>Consultants</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.exerciseButton}>
-              <Image source={require('../../assets/ImgForScreen/team3.jpg')} style={styles.exerciseIcon} />
+              <Image source={require('../../../assets/ImgForScreen/team3.jpg')} style={styles.exerciseIcon} />
               <Text style={styles.exerciseLabel}>Helper</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.exerciseButton}>
-              <Image source={require('../../assets/ImgForScreen/team3.jpg')} style={styles.exerciseIcon} />
+              <Image source={require('../../../assets/ImgForScreen/team3.jpg')} style={styles.exerciseIcon} />
               <Text style={styles.exerciseLabel}>Connections</Text>
             </TouchableOpacity>
           </View>

@@ -1,38 +1,38 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 
-export default function Focus() {
+export default function Anxiety() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Focus</Text>
+        <Text style={styles.title}>Anxiety Management</Text>
       </View>
 
       <Image
-        source={require('../../../assets/ImgForScreen/docRep.jpg')} // Replace with an appropriate image
+        source={require('../../../../assets/ImgForScreen/EUC.jpg')} // Replace with an appropriate image
         style={styles.image}
       />
 
       <View style={styles.content}>
         <Text style={styles.description}>
-          Maintaining focus can significantly improve productivity and overall well-being. Explore the following techniques and resources to enhance your focus and concentration.
+          Anxiety is a common experience that can affect anyone. It's important to have strategies to manage and cope with anxiety. Here are some helpful techniques and resources to support you in managing your anxiety.
         </Text>
 
         <Text style={styles.instruction}>
-          Techniques for Enhancing Focus:
+          Techniques for Managing Anxiety:
         </Text>
 
         {/* Example techniques */}
         <View style={styles.techniquesContainer}>
-          <Text style={styles.technique}>1. Set clear and specific goals.</Text>
-          <Text style={styles.technique}>2. Break tasks into smaller, manageable steps.</Text>
-          <Text style={styles.technique}>3. Minimize distractions in your environment.</Text>
-          <Text style={styles.technique}>4. Use the Pomodoro Technique for time management.</Text>
-          <Text style={styles.technique}>5. Take regular breaks to rest and recharge.</Text>
+          <Text style={styles.technique}>1. Practice deep breathing exercises.</Text>
+          <Text style={styles.technique}>2. Engage in regular physical activity.</Text>
+          <Text style={styles.technique}>3. Maintain a healthy sleep schedule.</Text>
+          <Text style={styles.technique}>4. Practice mindfulness and meditation.</Text>
+          <Text style={styles.technique}>5. Reach out for professional support if needed.</Text>
         </View>
 
         <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startButtonText}>Start Focus Exercise</Text>
+          <Text style={styles.startButtonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -42,7 +42,7 @@ export default function Focus() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#e0f7fa', // Light teal background for a calming effect
+    backgroundColor: '#f0f8ff', // Light blue background for a calming effect
     padding: 20,
   },
   header: {
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#004d40', // Dark teal for title
+    color: '#003f5c', // Dark blue for title
   },
   image: {
     width: '100%',
@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: '#004d40', // Dark teal for text
+    color: '#003f5c', // Dark blue for text
     marginBottom: 15,
     textAlign: 'center',
   },
   instruction: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#00796b', // Medium teal for instructions
+    color: 'purple', // Medium blue for instructions
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -84,11 +84,11 @@ const styles = StyleSheet.create({
   },
   technique: {
     fontSize: 16,
-    color: '#004d40', // Dark teal for techniques
+    color: '#003f5c', // Dark blue for techniques
     marginVertical: 5,
   },
   startButton: {
-    backgroundColor: '#00796b', // Medium teal for start button
+    backgroundColor: '#007bb2', // Medium blue for start button
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

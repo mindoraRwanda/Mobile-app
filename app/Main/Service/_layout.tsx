@@ -1,20 +1,37 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import { Provider } from 'react-redux';
-import store from '../../../redux/store';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+  createMaterialTopTabNavigator,
+} from "@react-navigation/material-top-tabs";
+import { withLayoutContext } from "expo-router";
+import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 
+const { Navigator } = createMaterialTopTabNavigator();
 
+export const MaterialTopTabs = withLayoutContext<
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
+>(Navigator);
 
-export default function Layout() {
+export default function TabLayout() {
   return (
-    <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Service" />
-         
-        </Stack>
-      </GestureHandlerRootView>
-    </Provider>
+    <MaterialTopTabs
+      screenOptions={{
+        tabBarLabelStyle: { textTransform: 'none' },
+        tabBarIndicatorStyle: { backgroundColor: 'purple' },
+      }}
+    >
+      <MaterialTopTabs.Screen 
+        name="Booking" 
+      />
+      <MaterialTopTabs.Screen 
+        name="feeds" 
+      />
+      <MaterialTopTabs.Screen 
+        name="exercise"
+      />
+    </MaterialTopTabs>
   );
 }
