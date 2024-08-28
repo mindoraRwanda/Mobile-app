@@ -56,13 +56,13 @@ const Account: React.FC = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               router.push("../../Main")
             }}
           >
             <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <Text numberOfLines={1} style={styles.headerTitle}>
             Settings
           </Text>
@@ -240,7 +240,7 @@ const Account: React.FC = () => {
               </View>
             </View>
           </View>
-          <Text style={styles.contentFooter}>App Version 2.24 #50491</Text>
+          <Text style={styles.contentFooter}>App Version 1.00 #Alpha</Text>
         </ScrollView>
       </View>
 
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     fontWeight: '600',
-    color: '#dc2626',
+    color: '#4A0887',
   },
 
   /** Modal */
