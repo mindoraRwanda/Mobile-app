@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { loginUser } from '../redux/authSlice';
@@ -7,28 +7,43 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 const Login: FC = () => {
   const router = useRouter();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { status, error } = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
 
+  const validateEmail = (email: string): boolean => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const validatePassword = (password: string): boolean => {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordPattern.test(password);
+  };
+
   const onPressSignIn = () => {
+    if (!validateEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+    if (!validatePassword(password)) {
+      Alert.alert('Invalid Password', 'Password must be at least 6 characters long.');
+      return;
+    }
+
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push('/Main');
-    }, 1000);
-
-    // dispatch(loginUser({ email, password }))
-    //   .unwrap()
-    //   .then(() => {
-    //     router.push('/Main');
-    //   })
-    //     .catch((err) => {
-    //       alert('Invalid email or password');
-    //     });
+    dispatch(loginUser({ email, password }))
+      .unwrap()
+      .then(() => {
+        setIsLoading(false);
+        router.push('/Main');
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        Alert.alert('Login Failed', 'Invalid email or password');
+      });
   };
 
   const onPressCreateAccount = () => {
