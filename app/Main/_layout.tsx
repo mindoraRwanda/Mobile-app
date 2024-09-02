@@ -21,7 +21,7 @@ export default function HomeLayout() {
             iconName = 'laptop-medical';
             return <FontAwesome5 name={iconName} size={size} color={color} />;
           }
-          if (route.name === 'Dashboard') {
+          if (route.name === 'Progress') {
             iconName = 'dashboard';
             return <AntDesign name={iconName} size={size} color={color} />;
           }
@@ -58,7 +58,7 @@ export default function HomeLayout() {
       }}
        />
       <Tabs.Screen
-        name="Dashboard"
+        name="Progress"
         options={{
           headerShown: false,
         }}
