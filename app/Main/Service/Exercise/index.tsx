@@ -1,115 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-
-const exercises = [
-  {
-    id: '1',
-    title: 'Meditation',
-    description: 'Calm your mind with guided meditation.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Meditation',
-  },
-  {
-    id: '2',
-    title: 'Breathing Exercises',
-    description: 'Improve your mental health with breathing techniques.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Breathing',
-  },
- {
-    id: '3',
-    title: 'Breathing Exercises',
-    description: 'Improve your mental health with breathing techniques.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Breathing',
-  },
-   {
-    id: '4',
-    title: 'Breathing Exercises',
-    description: 'Improve your mental health with breathing techniques.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Breathing',
-  },
-  {
-    id: '5',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '6',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '7',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '8',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '9',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '10',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '11',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '12',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '13',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-  {
-    id: '14',
-    title: 'Anxiety Management',
-    description: 'Learn how to manage anxiety effectively.',
-    image: 'https://via.placeholder.com/100',
-    link: './Exercise/Anxiety',
-  },
-];
+import { fetchExercises } from '@/redux/exerciseSlice';
+import { RootState } from '@/redux/store';
 
 export default function ExercisePage() {
+  const dispatch = useDispatch();
   const router = useRouter();
+  const { exercises, status, error } = useSelector((state: RootState) => state.exercises);
 
-  const renderExerciseItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.card} 
-      onPress={() => router.push(item.link)} // Navigate to the specific exercise page
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchExercises());
+    }
+  }, [status, dispatch]);
+
+  const renderExerciseItem = ({ item }: { item: Exercise }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push(`./Exercise/${item.id}`)} 
     >
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.content}>
@@ -122,7 +32,9 @@ export default function ExercisePage() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Mental Health Exercises</Text>
-      <FlatList 
+      {status === 'loading' && <Text>Loading...</Text>}
+      {status === 'failed' && <Text>{error}</Text>}
+      <FlatList
         data={exercises}
         renderItem={renderExerciseItem}
         keyExtractor={item => item.id}
