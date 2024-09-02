@@ -6,6 +6,8 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CancelBooking from '../../../../components/Cancel';
+import { useDispatch } from 'react-redux';
+import { fetchTherapists } from '@/redux/therapistSlice';
 
 interface Therapist {
   id: string;
@@ -17,6 +19,7 @@ interface Therapist {
 }
 
 export default function Appointment() {
+  const dispatch = useDispatch();
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -31,54 +34,21 @@ export default function Appointment() {
 
   useFocusEffect(
     useCallback(() => {
-      const fetchTherapists = async () => {
-        const data: Therapist[] = [
-          {
-            id: '1',
-            name: 'Noella Nizigama',
-            location: 'Kigali',
-            job: 'Psychologist',
-            image: require('../../../../assets/ImgForScreen/team3.jpg'),
-            description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-          },
-           {
-            id: '2',
-            name: 'Uwirora Gilbert',
-            location: 'Kigali',
-            job: 'Clinical Psychologist',
-            image: require('../../../../assets/ImgForScreen/team2.jpg'),
-            description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-           },
-            {
-              id: '3',
-              name: 'Murenzi Patrick',
-              location: 'Kigali',
-              job: 'Psychologist',
-              image: require('../../../../assets/ImgForScreen/team5.jpg'),
-              description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-            },
-            {
-              id: '4',
-              name: 'Nsengiyumva Athanaze',
-              location: 'Kigali',
-              job: 'Psychologist',
-              image: require('../../../../assets/ImgForScreen/team6.jpg'),
-              description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-            },
-          {
-            id: '5',
-            name: 'Nsengiyumva Athanaze',
-            location: 'Kigali',
-            job: 'Psychologist',
-            image: require('../../../../assets/ImgForScreen/team6.jpg'),
-            description: '"Exploring the intricate landscapes of the mind and unraveling the complexities of behavior, I navigate the realm of psychology. My journey delves into understanding the human psyche, decoding emotions, and deciphering the unique tapestry of human thought. Passionately committed to unraveling the mysteries of cognition, emotions, and behaviors, I embrace the fascinating world of psychology, driven by a curiosity to comprehend the intricacies of the human experience."'
-},
-        ];
-        setTherapists(data);
+      const fetchTherapistsData = async () => {
+        const data = await dispatch(fetchTherapists()).unwrap();
+        const therapistsData: Therapist[] = data.map((item: any) => ({
+          id: item.id,
+          name: `${item.user.firstName} ${item.user.lastName}`,
+          location: item.personalInformation.address || 'N/A',
+          job: item.personalInformation.degree || 'N/A',
+          image: { uri: item.user.profileImage },
+          description: `Gender: ${item.personalInformation.gender}\nEmail: ${item.user.email}\nPhone: ${item.personalInformation.phone}\nDate of Birth: ${item.personalInformation.dateOfBirth}\nDiploma: ${item.personalInformation.diploma}\nLicense: ${item.personalInformation.licence}`
+        }));
+        setTherapists(therapistsData);
       };
 
-      fetchTherapists();
-    }, [])
+      fetchTherapistsData();
+    }, [dispatch])
   );
 
   const filteredTherapists = therapists.filter(therapist =>
@@ -94,10 +64,8 @@ export default function Appointment() {
   };
 
   const handleBookingSubmit = () => {
-    // Implement booking logic here
     console.log('Booking submitted:', bookingDetails);
     setModalVisible(false);
-    // Reset booking details
     setBookingDetails({ name: '', date: '', time: '', reason: '' });
   };
 
@@ -275,22 +243,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4,
   },
   therapistJob: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#4A0887',
-    marginBottom: 2,
   },
   therapistLocation: {
     fontSize: 14,
-    color: '#888',
+    color: '#777',
   },
   bookButton: {
     backgroundColor: '#4A0887',
-    paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 15,
+    borderRadius: 10,
   },
   bookButtonText: {
     color: '#FFF',
@@ -298,66 +264,60 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
+    width: '90%',
     backgroundColor: '#FFF',
     borderRadius: 20,
     padding: 20,
-    width: '90%',
-    maxHeight: '80%',
+    alignItems: 'center',
   },
   closeButton: {
-    alignSelf: 'flex-end',
-    padding: 10,
+    position: 'absolute',
+    top: 20,
+    right: 20,
   },
   modalImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignSelf: 'center',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 15,
   },
   modalName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
-    textAlign: 'center',
-    marginBottom: 5,
   },
   modalJob: {
     fontSize: 18,
     color: '#4A0887',
-    textAlign: 'center',
-    marginBottom: 5,
   },
   modalLocation: {
     fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginBottom: 15,
+    color: '#777',
   },
   modalDescription: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#333',
+    marginTop: 10,
     textAlign: 'center',
-    lineHeight: 24,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#4A0887',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 15,
   },
   input: {
-    backgroundColor: '#F0F4F8',
+    height: 45,
+    borderColor: '#E1E8ED',
+    borderWidth: 1,
     borderRadius: 10,
-    padding: 15,
+    paddingHorizontal: 15,
     marginBottom: 15,
-    fontSize: 16,
+    width: '100%',
   },
   textArea: {
     height: 100,
@@ -366,17 +326,18 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    width: '100%',
   },
   confirmButton: {
     backgroundColor: '#4A0887',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 10,
+    alignItems: 'center',
+    flex: 1,
   },
   confirmButtonText: {
     color: '#FFF',
-    fontSize: 16,
     fontWeight: 'bold',
   },
 });

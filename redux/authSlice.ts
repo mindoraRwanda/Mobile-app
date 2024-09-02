@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+// Define the type for AuthState
 interface AuthState {
   token: string | null;
   user: any;
@@ -8,13 +9,15 @@ interface AuthState {
   error: string | null;
 }
 
-const initialState: AuthState = {
+// Define initial state for auth
+const initialAuthState: AuthState = {
   token: null,
   user: null,
   status: 'idle',
   error: null,
 };
 
+// Define async thunks for auth actions
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }: { email: string; password: string }) => {
@@ -31,20 +34,21 @@ export const signupUser = createAsyncThunk(
   async ({ name, email, phoneNumber, username, password }: {
     name: string; email: string; phoneNumber: string; username: string; password: string
   }) => {
-    const response = await axios.post('', {
+    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/signup', {
       name,
       email,
       phoneNumber,
       username,
       password,
     });
-    return response.data
+    return response.data;
   }
 );
 
+// Create auth slice
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: initialAuthState,
   reducers: {
     logout(state) {
       state.token = null;
