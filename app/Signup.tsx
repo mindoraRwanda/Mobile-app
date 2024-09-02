@@ -3,6 +3,10 @@ import { Text, View, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityInd
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch,RootState  } from '@/redux/store'; 
+import { signupUser } from '@/redux/authSlice';
+
 
 interface FormData {
   name: string;
@@ -14,6 +18,7 @@ interface FormData {
 
 export default function SignUp(): React.ReactElement {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [form, setForm] = useState<FormData>({
     name: '',
@@ -22,22 +27,51 @@ export default function SignUp(): React.ReactElement {
     username: '',
     password: '',
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const onPressSingIn = (): void => {
-    if (!form.email || !form.phoneNumber || !form.password || !form.name || !form.username) {
-      Alert.alert('Please fill in all fields');
+  const { status, error } = useSelector((state: RootState) => state.auth);
+
+  const validateEmail = (email: string): boolean => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const validatePhoneNumber = (phoneNumber: string): boolean => {
+    const phonePattern = /^[0-9]{10,}$/;
+    return phonePattern.test(phoneNumber);
+  };
+
+  const validatePassword = (password: string): boolean => {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    return passwordPattern.test(password);  };
+
+  const validateUsername = (username: string): boolean => {
+    const usernamePattern = /^[a-zA-Z0-9_]+$/; 
+    return usernamePattern.test(username);
+  };
+
+  const onPressSignIn = async (): Promise<void> => {
+    const errors: { [key: string]: string } = {};
+  
+    if (!form.name) errors.name = 'Name is required';
+    if (!form.email || !validateEmail(form.email)) errors.email = 'Valid email is required';
+    if (!form.phoneNumber || !validatePhoneNumber(form.phoneNumber)) errors.phoneNumber = 'Valid phone number is required';
+    if (!form.username || !validateUsername(form.username)) errors.username = 'Username is required';
+    if (!form.password || !validatePassword(form.password)) errors.password = 'Password must be at least 6 characters long';
+  
+    if (Object.keys(errors).length > 0) {
+      const errorMessages = Object.values(errors).join('\n');
+      Alert.alert('Validation Errors', errorMessages);
       return;
     }
-    setIsLoading(true);
-
-    // delay for user feedback
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert('Sign up successfull');
-      router.push('./Main/Account/Profile')
-    }, 1000)
-
+  
+    try {
+      await dispatch(signupUser(form))
+      .unwrap(); 
+      Alert.alert('Sign up successful');
+      router.push('./Main/Account/Profile');
+    } catch (err) {
+      Alert.alert('Sign up failed', err.message || 'An error occurred');
+    }
   };
 
   const onPressHaveAccount = (): void => {
@@ -121,9 +155,9 @@ export default function SignUp(): React.ReactElement {
               />
             </View>
             <View style={styles.formAction}>
-              <TouchableOpacity onPress={onPressSingIn}>
+              <TouchableOpacity onPress={onPressSignIn}>
                 <View style={{ ...styles.btn, backgroundColor: 'purple' }}>
-                  {isLoading ? (
+                  {status === 'loading' ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
                     <Text style={styles.btnText}>Sign Up</Text>
@@ -131,6 +165,7 @@ export default function SignUp(): React.ReactElement {
                 </View>
               </TouchableOpacity>
             </View>
+            {status === 'failed' && <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>}
             <TouchableOpacity onPress={onPressHaveAccount}>
               <Text style={styles.formFooter}>
                 Already Have an Account?{' '}
@@ -150,7 +185,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   container: {
-
     flexShrink: 1,
     flexBasis: 0,
   },
