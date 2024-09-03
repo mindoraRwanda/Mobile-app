@@ -34,7 +34,7 @@ export const signupUser = createAsyncThunk(
   async ({ name, email, phoneNumber, username, password }: {
     name: string; email: string; phoneNumber: string; username: string; password: string
   }) => {
-    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/signup', {
+    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/register', {
       name,
       email,
       phoneNumber,
