@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CancelBooking from '../../../../components/Cancel';
 import { useDispatch } from 'react-redux';
 import { fetchTherapists } from '@/redux/therapistSlice';
+import createBooking from '@/redux/bookingSlice';
 
 interface Therapist {
   id: string;
@@ -63,10 +64,15 @@ export default function Appointment() {
     setModalVisible(true);
   };
 
-  const handleBookingSubmit = () => {
-    console.log('Booking submitted:', bookingDetails);
-    setModalVisible(false);
-    setBookingDetails({ name: '', date: '', time: '', reason: '' });
+  const handleBookingSubmit = async () => {
+    try {
+      await dispatch(createBooking(bookingDetails)).unwrap();
+      console.log('Booking successfully created');
+      setModalVisible(false);
+      setBookingDetails({ name: '', date: '', time: '', reason: '' });
+    } catch (error) {
+      console.error('Failed to create booking:', error);
+    }
   };
 
   const renderTherapistCard = ({ item }: { item: Therapist }) => (

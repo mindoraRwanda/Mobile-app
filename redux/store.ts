@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
 import therapistReducer from './therapistSlice';
-import feedsReducer from './feedsSlice';
-import exerciseReducer from './exerciseSlice';  // Import the exerciseReducer
+import exerciseReducer from './exerciseSlice';  
+import bookingReducer from './bookingSlice';  
+import userReducer from './userSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     therapists: therapistReducer,
     exercises: exerciseReducer,
+    bookings: bookingReducer,
+    user: userReducer,
   },
 });
 
