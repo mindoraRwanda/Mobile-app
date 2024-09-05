@@ -1,3 +1,4 @@
+import { createComment } from '@/redux/commentSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -14,6 +15,7 @@ import {
   Linking,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useDispatch } from 'react-redux';
 
 const ContactUs: React.FC = () => {
   const [form, setForm] = useState({
@@ -21,10 +23,36 @@ const ContactUs: React.FC = () => {
     email: '',
     message: '',
   });
+  const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    Alert.alert('Contact Us', 'Your message has been sent.');
-    setForm({ name: '', email: '', message: '' });
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.message) {
+      Alert.alert('Validation Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (!isValidEmail(form.email)) {
+      Alert.alert('Validation Error', 'Please enter a valid email address.');
+      return;
+    }
+
+    try {
+      await dispatch(createComment({
+        content: form.message,
+        createdBy: form.name,
+        postId: 'somePostId',  
+      })).unwrap();
+      Alert.alert('Contact Us', 'Your message has been sent.');
+      setForm({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      Alert.alert('Error', 'Failed to send message. Please try again.');
+    }
   };
 
   const openTwitter = () => {

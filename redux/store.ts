@@ -4,6 +4,7 @@ import therapistReducer from './therapistSlice';
 import exerciseReducer from './exerciseSlice';  
 import bookingReducer from './bookingSlice';  
 import userReducer from './userSlice';
+import commentReducer from './commentSlice';  
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     exercises: exerciseReducer,
     bookings: bookingReducer,
     user: userReducer,
+    comments: commentReducer,
   },
 });
 
