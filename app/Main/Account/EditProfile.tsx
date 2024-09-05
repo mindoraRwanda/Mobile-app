@@ -1,33 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons, FontAwesome, Entypo, MaterialIcons, Fontisto } from '@expo/vector-icons';
-import ImagePicker from 'react-native-image-crop-picker';
 import { router } from 'expo-router';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { updateUser, getUserById } from '@/redux/userSlice';
 
 const EditProfile: React.FC = () => {
-  const [name, setName] = useState('John Doe');
-  const [dob, setDob] = useState('12/27/1995');
-  const [email, setEmail] = useState('john@example.com');
-  const [phone, setPhone] = useState('+250 783 974 066');
-  const [gender, setGender] = useState('Male');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
+  const userId = user?.id;
 
-  // const handlePickImage = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 300,
-  //     cropping: true,
-  //   }).then((image) => {
-  //     setProfileImage(image.path);
-  //   }).catch((error) => {
-  //     console.log(error);
-  //   });
-  // };
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
+  const [profileImage, setProfileImage] = useState<string | null>(user?.profileImage || '');
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getUserById(userId));
+    }
+  }, [userId, dispatch]);
 
   const handleSave = () => {
-    // Implement save functionality here
-    Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
-    router.push('../../Main');
+    if (userId) {
+      dispatch(updateUser({ userId, firstName, lastName, email, phoneNumber, profileImage }))
+        .then(() => {
+          Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
+          router.push('../../Main'); // Redirect after update
+        })
+        .catch(() => {
+          Alert.alert('Error', 'Failed to update profile.');
+        });
+    }
   };
 
   return (
@@ -39,9 +44,7 @@ const EditProfile: React.FC = () => {
         <Text style={styles.headerTitle}>Edit Profile</Text>
       </View>
       <View style={styles.profileImageContainer}>
-        <TouchableOpacity
-        // onPress={handlePickImage}
-        >
+        <TouchableOpacity>
           {profileImage ? (
             <Image source={{ uri: profileImage }} style={styles.profileImage} />
           ) : (
@@ -58,20 +61,18 @@ const EditProfile: React.FC = () => {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={setName}
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
           />
         </View>
-        
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Date of Birth"
-            value={dob}
-            onChangeText={setDob}
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
           />
-          <Fontisto name="date" size={20} color="#888" style={styles.icon} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -86,19 +87,18 @@ const EditProfile: React.FC = () => {
           <TextInput
             style={styles.input}
             placeholder="Phone Number"
-            value={phone}
-            onChangeText={setPhone}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
           />
           <Entypo name="chevron-down" size={20} color="#888" style={styles.icon} />
         </View>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Gender"
-            value={gender}
-            onChangeText={setGender}
+            placeholder="Profile Image URL"
+            value={profileImage || ''}
+            onChangeText={setProfileImage}
           />
-          <Entypo name="chevron-down" size={20} color="#888" style={styles.icon} />
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Update</Text>
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-    
   },
 });
 
