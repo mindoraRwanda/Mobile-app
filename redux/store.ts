@@ -5,6 +5,7 @@ import exerciseReducer from './exerciseSlice';
 import bookingReducer from './bookingSlice';  
 import userReducer from './userSlice';
 import commentReducer from './commentSlice';  
+import chatReducer from './chatSlice';  
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     bookings: bookingReducer,
     user: userReducer,
     comments: commentReducer,
+    chat: chatReducer,
   },
 });
 
