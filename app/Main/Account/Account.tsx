@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -17,12 +17,11 @@ import { logout } from '../../../redux/authSlice';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+import { getUserById } from '@/redux/userSlice';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-
   const [form, setForm] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -32,7 +31,6 @@ const Account: React.FC = () => {
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [selectedLocation, setSelectedLocation] = useState('Los Angeles, CA');
-
 
   const [languageOpen, setLanguageOpen] = useState(false);
   const [languageValue, setLanguageValue] = useState('English');
@@ -50,31 +48,25 @@ const Account: React.FC = () => {
     { label: 'Nairobi/ Kenya', value: 'Nairobi/ Kenya' },
   ]);
 
-
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(getUserById(user.id));
+    }
+  }, [dispatch, user?.id]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          {/* <TouchableOpacity
-            onPress={() => {
-              router.push("../../Main")
-            }}
-          >
-            <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity> */}
           <Text numberOfLines={1} style={styles.headerTitle}>
             Settings
           </Text>
           <View style={[styles.headerAction, { alignItems: 'flex-end' }]}>
             <TouchableOpacity
               onPress={() => {
-                router.push('../Dashboard/ProgressTracking')
+                router.push('../Dashboard/ProgressTracking');
               }}>
-              <FeatherIcon
-                color="#000"
-                name="more-vertical"
-                size={24} />
+              <FeatherIcon color="#000" name="more-vertical" size={24} />
             </TouchableOpacity>
           </View>
         </View>
@@ -89,238 +81,236 @@ const Account: React.FC = () => {
                 style={styles.profile}>
                 <Image
                   alt=""
-                  source={require('../../../assets/ImgForScreen/user.jpg')}
-                  style={styles.profileAvatar} />
+                  source={{ uri: user?.profileImage || 'default_image_url_here' }}
+                  style={styles.profileAvatar}
+                />
                 <View style={styles.profileBody}>
-                  <Text style={styles.profileName}>{user?.name || 'John Doe'}</Text>
+                  <Text style={styles.profileName}>{`${user?.firstName} ${user?.lastName}` }</Text>
                   <Text style={styles.profileHandle}>{user?.email || 'john@example.com'}</Text>
                   <Text style={styles.profileHandle}>ID: {user?.id || 'JCJ-4140'}</Text>
                 </View>
-                <FeatherIcon
-                  color="#bcbcbc"
-                  name="chevron-right"
-                  size={22} />
+                <FeatherIcon color="#bcbcbc" name="chevron-right" size={22} />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Settings</Text>
-            <View style={styles.sectionBody}>
-              <View style={[styles.rowWrapper, styles.rowFirst]}>
-                <TouchableOpacity
-                  onPress={() => setLanguageModalVisible(true)}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Language</Text>
-                  <View style={styles.rowSpacer} />
-                  <Text style={styles.rowValue}>{selectedLanguage}</Text>
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Settings</Text>
+          <View style={styles.sectionBody}>
+            <View style={[styles.rowWrapper, styles.rowFirst]}>
+              <TouchableOpacity
+                onPress={() => setLanguageModalVisible(true)}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Language</Text>
+                <View style={styles.rowSpacer} />
+                <Text style={styles.rowValue}>{selectedLanguage}</Text>
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowWrapper}>
+              <TouchableOpacity
+                onPress={() => setLocationModalVisible(true)}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Location</Text>
+                <View style={styles.rowSpacer} />
+                <Text style={styles.rowValue}>{selectedLocation}</Text>
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowWrapper}>
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Email Notifications</Text>
+                <View style={styles.rowSpacer} />
+                <Switch
+                  onValueChange={emailNotifications =>
+                    setForm({ ...form, emailNotifications })
+                  }
+                  style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
+                  value={form.emailNotifications} />
               </View>
-              <View style={styles.rowWrapper}>
-                <TouchableOpacity
-                  onPress={() => setLocationModalVisible(true)}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Location</Text>
-                  <View style={styles.rowSpacer} />
-                  <Text style={styles.rowValue}>{selectedLocation}</Text>
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.rowWrapper}>
-                <View style={styles.row}>
-                  <Text style={styles.rowLabel}>Email Notifications</Text>
-                  <View style={styles.rowSpacer} />
-                  <Switch
-                    onValueChange={emailNotifications =>
-                      setForm({ ...form, emailNotifications })
-                    }
-                    style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                    value={form.emailNotifications} />
-                </View>
-              </View>
-              <View style={[styles.rowWrapper, styles.rowLast]}>
-                <View style={styles.row}>
-                  <Text style={styles.rowLabel}>Push Notifications</Text>
-                  <View style={styles.rowSpacer} />
-                  <Switch
-                    onValueChange={pushNotifications =>
-                      setForm({ ...form, pushNotifications })
-                    }
-                    style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
-                    value={form.pushNotifications} />
-                </View>
+            </View>
+            <View style={[styles.rowWrapper, styles.rowLast]}>
+              <View style={styles.row}>
+                <Text style={styles.rowLabel}>Push Notifications</Text>
+                <View style={styles.rowSpacer} />
+                <Switch
+                  onValueChange={pushNotifications =>
+                    setForm({ ...form, pushNotifications })
+                  }
+                  style={{ transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }] }}
+                  value={form.pushNotifications} />
               </View>
             </View>
           </View>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Resources</Text>
-            <View style={styles.sectionBody}>
-              <View style={[styles.rowWrapper, styles.rowFirst]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push('../../Main/Account/ContactUs');
-                  }}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Contact Us</Text>
-                  <View style={styles.rowSpacer} />
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.rowWrapper}>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push('../../Main/Report');
-                  }}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Report Bug</Text>
-                  <View style={styles.rowSpacer} />
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.rowWrapper}>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push('../../Main/Account/Rate')
-                  }}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Rate in App Store</Text>
-                  <View style={styles.rowSpacer} />
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
-              </View>
-              <View style={[styles.rowWrapper, styles.rowLast]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push('../../Main/Account/TermsAndConditions')
-                  }}
-                  style={styles.row}>
-                  <Text style={styles.rowLabel}>Terms and Privacy</Text>
-                  <View style={styles.rowSpacer} />
-                  <FeatherIcon
-                    color="#bcbcbc"
-                    name="chevron-right"
-                    size={19} />
-                </TouchableOpacity>
-              </View>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Resources</Text>
+          <View style={styles.sectionBody}>
+            <View style={[styles.rowWrapper, styles.rowFirst]}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push('../../Main/Account/ContactUs');
+                }}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Contact Us</Text>
+                <View style={styles.rowSpacer} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowWrapper}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push('../../Main/Report');
+                }}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Report Bug</Text>
+                <View style={styles.rowSpacer} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowWrapper}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push('../../Main/Account/Rate')
+                }}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Rate in App Store</Text>
+                <View style={styles.rowSpacer} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
+            </View>
+            <View style={[styles.rowWrapper, styles.rowLast]}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push('../../Main/Account/TermsAndConditions')
+                }}
+                style={styles.row}>
+                <Text style={styles.rowLabel}>Terms and Privacy</Text>
+                <View style={styles.rowSpacer} />
+                <FeatherIcon
+                  color="#bcbcbc"
+                  name="chevron-right"
+                  size={19} />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.section}>
-            <View style={styles.sectionBody}>
-              <View
-                style={[
-                  styles.rowWrapper,
-                  styles.rowFirst,
-                  styles.rowLast,
-                  { alignItems: 'center' },
-                ]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}
-                  style={styles.row}>
-                  <Text style={[styles.rowLabel, styles.rowLabelLogout]}>
-                    Log Out
-                  </Text>
-                </TouchableOpacity>
-              </View>
+        </View>
+        <View style={styles.section}>
+          <View style={styles.sectionBody}>
+            <View
+              style={[
+                styles.rowWrapper,
+                styles.rowFirst,
+                styles.rowLast,
+                { alignItems: 'center' },
+              ]}>
+              <TouchableOpacity
+                onPress={() => {
+                  // handle onPress
+                }}
+                style={styles.row}>
+                <Text style={[styles.rowLabel, styles.rowLabelLogout]}>
+                  Log Out
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <Text style={styles.contentFooter}>App Version 1.00 #Alpha</Text>
-        </ScrollView>
+        </View>
+        <Text style={styles.contentFooter}>App Version 1.00 #Alpha</Text>
+      </ScrollView>
+    </View>
+
+    {/* Language Modal */}
+    {languageModalVisible && (
+      <View style={styles.modalBackdrop}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={languageModalVisible}
+          onRequestClose={() => {
+            setLanguageModalVisible(!languageModalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => setLanguageModalVisible(false)}
+                style={styles.modalCloseButton}>
+                <Ionicons name="arrow-back" size={24} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Select Language</Text>
+              <DropDownPicker
+                open={languageOpen}
+                value={languageValue}
+                items={languageItems}
+                setOpen={setLanguageOpen}
+                setValue={setLanguageValue}
+                setItems={setLanguageItems}
+                onChangeValue={(value) => setSelectedLanguage(value)}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setLanguageModalVisible(!languageModalVisible)}>
+                <Text style={styles.textStyle}>Done</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
+    )}
 
-      {/* Language Modal */}
-      {languageModalVisible && (
-        <View style={styles.modalBackdrop}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={languageModalVisible}
-            onRequestClose={() => {
-              setLanguageModalVisible(!languageModalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity
-                  onPress={() => setLanguageModalVisible(false)}
-                  style={styles.modalCloseButton}>
-                  <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>Select Language</Text>
-                <DropDownPicker
-                  open={languageOpen}
-                  value={languageValue}
-                  items={languageItems}
-                  setOpen={setLanguageOpen}
-                  setValue={setLanguageValue}
-                  setItems={setLanguageItems}
-                  onChangeValue={(value) => setSelectedLanguage(value)}
-                />
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setLanguageModalVisible(!languageModalVisible)}>
-                  <Text style={styles.textStyle}>Done</Text>
-                </Pressable>
-              </View>
+    {/* Location Modal */}
+    {locationModalVisible && (
+      <View style={styles.modalBackdrop}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={locationModalVisible}
+          onRequestClose={() => {
+            setLocationModalVisible(!locationModalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                onPress={() => setLocationModalVisible(false)}
+                style={styles.modalCloseButton}>
+                <Ionicons name="arrow-back" size={24} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Select Location</Text>
+              <DropDownPicker
+                open={locationOpen}
+                value={locationValue}
+                items={locationItems}
+                setOpen={setLocationOpen}
+                setValue={setLocationValue}
+                setItems={setLocationItems}
+                onChangeValue={(value) => setSelectedLocation(value)}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setLocationModalVisible(false)}>
+                <Text style={styles.textStyle}>Done</Text>
+              </Pressable>
             </View>
-          </Modal>
-        </View>
-      )}
-
-      {/* Location Modal */}
-      {locationModalVisible && (
-        <View style={styles.modalBackdrop}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={locationModalVisible}
-            onRequestClose={() => {
-              setLocationModalVisible(!locationModalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity
-                  onPress={() => setLocationModalVisible(false)}
-                  style={styles.modalCloseButton}>
-                  <Ionicons name="arrow-back" size={24} color="#000" />
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>Select Location</Text>
-                <DropDownPicker
-                  open={locationOpen}
-                  value={locationValue}
-                  items={locationItems}
-                  setOpen={setLocationOpen}
-                  setValue={setLocationValue}
-                  setItems={setLocationItems}
-                  onChangeValue={(value) => setSelectedLocation(value)}
-                />
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setLocationModalVisible(false)}>
-                  <Text style={styles.textStyle}>Done</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-        </View>
-      )}
-    </SafeAreaView>
-  );
+          </View>
+        </Modal>
+      </View>
+    )}
+  </SafeAreaView>
+);
 };
 
 const styles = StyleSheet.create({
