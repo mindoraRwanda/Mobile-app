@@ -190,9 +190,6 @@ const ChatScreen = () => {
           <TouchableOpacity onPress={openGallery}>
             <FontAwesome name="image" size={24} color="purple" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={isRecording ? stopRecording : startRecording}>
-            <FontAwesome name={isRecording ? 'stop' : 'microphone'} size={24} color="purple" />
-          </TouchableOpacity>
           <TextInput
             style={styles.input}
             placeholder="Type your message here..."
@@ -200,6 +197,9 @@ const ChatScreen = () => {
             onChangeText={setMessage}
             onSubmitEditing={() => sendMessage(message)}
           />
+          <TouchableOpacity onPress={isRecording ? stopRecording : startRecording}>
+            <FontAwesome name={isRecording ? 'stop' : 'microphone'} size={24} color="purple" paddingRight={20} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => sendMessage(message)}>
             <FontAwesome name="send" size={24} color="purple" />
           </TouchableOpacity>
