@@ -8,8 +8,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BookingModal from './BookingModel'; 
 import ProfileModal from './ProfileModal';
 import { useDispatch } from 'react-redux';
-import { fetchTherapists } from '@/redux/therapistSlice';
-import createBooking from '@/redux/bookingSlice';
+import { fetchTherapists } from '@/redux/Slices/therapistSlice';
+import createBooking from '@/redux/Slices/bookingSlice';
 
 interface Therapist {
   id: string;
