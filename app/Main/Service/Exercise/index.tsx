@@ -16,6 +16,7 @@ export default function ExercisePage() {
     }
   }, [status, dispatch]);
 
+  // Render each exercise item
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
     <TouchableOpacity
       style={styles.card}
@@ -25,6 +26,21 @@ export default function ExercisePage() {
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
+
+        {/* Display Difficulty Level */}
+        <Text style={styles.difficulty}>Difficulty: {item.difficultyLevel}</Text>
+
+        {/* Conditionally Render Questions if they exist */}
+        {item.questions.length > 0 && (
+          <View style={styles.questionsContainer}>
+            <Text style={styles.questionsHeader}>Questions:</Text>
+            {item.questions.map((question, index) => (
+              <Text key={question.id} style={styles.questionItem}>
+                {index + 1}. {question.question}
+              </Text>
+            ))}
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -94,5 +110,24 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#666',
+  },
+  difficulty: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  questionsContainer: {
+    marginTop: 10,
+  },
+  questionsHeader: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#444',
+  },
+  questionItem: {
+    fontSize: 13,
+    color: '#555',
+    marginTop: 2,
   },
 });
