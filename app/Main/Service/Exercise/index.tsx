@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import { fetchExercises } from '@/redux/exerciseSlice';
+import { fetchExercises } from '@/redux/Slices/exerciseSlice';
 import { RootState } from '@/redux/store';
 
 export default function ExercisePage() {
