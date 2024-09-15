@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Image, FlatList, TouchableOpacity,
-  Modal, TextInput, SafeAreaView, StatusBar
+  TextInput, SafeAreaView, StatusBar
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CancelBooking from '../../../../components/Cancel';
+import BookingModal from './BookingModel'; 
+import ProfileModal from './ProfileModal';
 import { useDispatch } from 'react-redux';
 import { fetchTherapists } from '@/redux/therapistSlice';
 import createBooking from '@/redux/bookingSlice';
@@ -33,6 +34,7 @@ export default function Appointment() {
     reason: ''
   });
 
+  // Fetch the list of therapists when the screen is focused
   useFocusEffect(
     useCallback(() => {
       const fetchTherapistsData = async () => {
@@ -52,18 +54,21 @@ export default function Appointment() {
     }, [dispatch])
   );
 
+  // Filter therapists based on search text
   const filteredTherapists = therapists.filter(therapist =>
     therapist.name.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.job.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.location.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  // Open modal for profile or booking
   const handleModalOpen = (therapist: Therapist, type: 'profile' | 'booking') => {
     setSelectedTherapist(therapist);
     setModalType(type);
     setModalVisible(true);
   };
 
+  // Submit the booking request
   const handleBookingSubmit = async () => {
     try {
       await dispatch(createBooking(bookingDetails)).unwrap();
@@ -75,6 +80,7 @@ export default function Appointment() {
     }
   };
 
+  // Render each therapist card
   const renderTherapistCard = ({ item }: { item: Therapist }) => (
     <TouchableOpacity
       style={styles.therapistCard}
@@ -115,74 +121,27 @@ export default function Appointment() {
       <FlatList
         data={filteredTherapists}
         renderItem={renderTherapistCard}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id}  
         contentContainerStyle={styles.listContainer}
       />
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Icon name="times" size={24} color="#333" />
-            </TouchableOpacity>
+      {modalType === 'profile' && selectedTherapist && (
+        <ProfileModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          selectedTherapist={selectedTherapist}
+        />
+      )}
 
-            {modalType === 'profile' && selectedTherapist && (
-              <View>
-                <Image source={selectedTherapist.image} style={styles.modalImage} />
-                <Text style={styles.modalName}>{selectedTherapist.name}</Text>
-                <Text style={styles.modalJob}>{selectedTherapist.job}</Text>
-                <Text style={styles.modalLocation}>{selectedTherapist.location}</Text>
-                <Text style={styles.modalDescription}>{selectedTherapist.description}</Text>
-              </View>
-            )}
-
-            {modalType === 'booking' && (
-              <View>
-                <Text style={styles.modalTitle}>Book an Appointment</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Your Name"
-                  value={bookingDetails.name}
-                  onChangeText={(text) => setBookingDetails({ ...bookingDetails, name: text })}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Date (YYYY-MM-DD)"
-                  value={bookingDetails.date}
-                  onChangeText={(text) => setBookingDetails({ ...bookingDetails, date: text })}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Time (HH:MM)"
-                  value={bookingDetails.time}
-                  onChangeText={(text) => setBookingDetails({ ...bookingDetails, time: text })}
-                />
-                <TextInput
-                  style={[styles.input, styles.textArea]}
-                  placeholder="Reason for Visit"
-                  value={bookingDetails.reason}
-                  onChangeText={(text) => setBookingDetails({ ...bookingDetails, reason: text })}
-                  multiline
-                />
-                <View style={styles.buttonContainer}>
-                  <CancelBooking />
-                  <TouchableOpacity style={styles.confirmButton} onPress={handleBookingSubmit}>
-                    <Text style={styles.confirmButtonText}>Confirm</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          </View>
-        </View>
-      </Modal>
+      {modalType === 'booking' && (
+        <BookingModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          bookingDetails={bookingDetails}
+          setBookingDetails={setBookingDetails}
+          handleBookingSubmit={handleBookingSubmit}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -191,6 +150,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F4F8',
+    paddingTop: 70,
   },
   header: {
     padding: 20,
@@ -265,84 +225,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   bookButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '90%',
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-  },
-  modalImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 15,
-  },
-  modalName: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  modalJob: {
-    fontSize: 18,
-    color: '#4A0887',
-  },
-  modalLocation: {
-    fontSize: 16,
-    color: '#777',
-  },
-  modalDescription: {
-    fontSize: 14,
-    color: '#333',
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  input: {
-    height: 45,
-    borderColor: '#E1E8ED',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    width: '100%',
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  confirmButton: {
-    backgroundColor: '#4A0887',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    flex: 1,
-  },
-  confirmButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
   },
