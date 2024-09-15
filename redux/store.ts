@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './authSlice';
-import therapistReducer from './therapistSlice';
-import exerciseReducer from './exerciseSlice';  
-import bookingReducer from './bookingSlice';  
-import userReducer from './userSlice';
-import commentReducer from './commentSlice';  
-import chatReducer from './chatSlice';  
+import authReducer from './Slices/authSlice';
+import therapistReducer from './Slices/therapistSlice';
+import exerciseReducer from './Slices/exerciseSlice';  
+import bookingReducer from './Slices/bookingSlice';
+import userReducer from './Slices/userSlice';
+import commentReducer from './Slices/commentSlice';  
+import chatReducer from './Slices/chatSlice';  
 
 const store = configureStore({
   reducer: {

@@ -1,4 +1,4 @@
-import { createComment } from '@/redux/commentSlice';
+import { createComment } from '@/redux/Slices/commentSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';

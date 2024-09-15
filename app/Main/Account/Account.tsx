@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
-import { logout } from '../../../redux/authSlice';
+import { logout } from '../../../redux/Slices/authSlice';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getUserById } from '@/redux/userSlice';
+import { getUserById } from '@/redux/Slices/userSlice';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();

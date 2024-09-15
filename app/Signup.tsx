@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch,RootState  } from '@/redux/store'; 
-import { signupUser } from '@/redux/authSlice';
+import { signupUser } from '@/redux/Slices/authSlice';
 
 
 interface FormData {

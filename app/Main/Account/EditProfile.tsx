@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert } fro
 import { Ionicons, FontAwesome, Entypo, MaterialIcons, Fontisto } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { updateUser, getUserById } from '@/redux/userSlice';
+import { updateUser, getUserById } from '@/redux/Slices/userSlice';
 
 const EditProfile: React.FC = () => {
   const dispatch = useAppDispatch();

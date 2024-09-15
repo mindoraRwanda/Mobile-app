@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput, Image, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { loginUser } from '../redux/authSlice';
+import { loginUser } from '../redux/Slices/authSlice';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const Login: FC = () => {
@@ -24,6 +24,7 @@ const Login: FC = () => {
   };
 
   const onPressSignIn = () => {
+    router.push('/Main');
     if (!validateEmail(email)) {
       Alert.alert('Invalid Email', 'Please enter a valid email address.');
       return;

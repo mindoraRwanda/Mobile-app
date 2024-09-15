@@ -1,37 +1,17 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import {
-  MaterialTopTabNavigationEventMap,
-  MaterialTopTabNavigationOptions,
-  createMaterialTopTabNavigator,
-} from '@react-navigation/material-top-tabs';
-import { withLayoutContext } from 'expo-router';
-import { ParamListBase, TabNavigationState } from '@react-navigation/native';
+import { Text, View, StyleSheet } from "react-native";
+import { TopTabs } from "@bacons/expo-router-top-tabs";
 
-const { Navigator, Screen } = createMaterialTopTabNavigator();
-
-export const MaterialTopTabs = withLayoutContext<
-  MaterialTopTabNavigationOptions,
-  typeof Navigator,
-  TabNavigationState<ParamListBase>,
-  MaterialTopTabNavigationEventMap
->(Navigator);
-
-export default function TabLayout() {
+export default function CustomLayout() {
   return (
-    <View style={styles.container}>
-      <MaterialTopTabs
-        screenOptions={{
-          tabBarLabelStyle: { textTransform: 'none' },
-          tabBarIndicatorStyle: { backgroundColor: 'purple' },
-        }}
-      >
-        <MaterialTopTabs.Screen
-          name="Chat" />
-        <MaterialTopTabs.Screen
-          name="Community" />
-      </MaterialTopTabs>
-    </View>
+    <TopTabs screenOptions={{ tabBarLabelStyle: { textTransform: 'none' }, tabBarIndicatorStyle: { backgroundColor: 'purple' } }}>
+      <TopTabs.Header>
+        <View pointerEvents="none" style={{ padding: 10, backgroundColor: 'white' }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Service</Text>
+        </View>
+      </TopTabs.Header>
+      <TopTabs.Screen name="Messages" />
+      <TopTabs.Screen name="Community" />
+    </TopTabs>
   );
 }
 

@@ -1,6 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+interface Question {
+  id: string;
+  exerciseId: string;
+  question: string;
+  correctAnswer: string;
+  points: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface Exercise {
   id: string;
   title: string;
@@ -9,6 +20,7 @@ interface Exercise {
   category: string;
   createdAt: string;
   updatedAt: string;
+  questions: Question[]; // Include questions in the Exercise type
 }
 
 interface ExerciseState {
@@ -23,8 +35,9 @@ const initialState: ExerciseState = {
   error: null,
 };
 
+
 export const fetchExercises = createAsyncThunk('exercises/fetchExercises', async () => {
-  const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api-docs/api/exercises');
+  const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api/exercises');
   return response.data;
 });
 
@@ -39,7 +52,7 @@ const exerciseSlice = createSlice({
       })
       .addCase(fetchExercises.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.exercises = action.payload;
+        state.exercises = action.payload; // Store the exercises and their associated questions
       })
       .addCase(fetchExercises.rejected, (state, action) => {
         state.status = 'failed';

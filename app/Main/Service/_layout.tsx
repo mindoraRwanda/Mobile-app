@@ -1,37 +1,45 @@
-import {
-  MaterialTopTabNavigationEventMap,
-  MaterialTopTabNavigationOptions,
-  createMaterialTopTabNavigator,
-} from "@react-navigation/material-top-tabs";
-import { withLayoutContext } from "expo-router";
-import { ParamListBase, TabNavigationState } from "@react-navigation/native";
+import { Text, View, StyleSheet, Dimensions, Platform, PixelRatio } from "react-native";
+import { TopTabs } from "@bacons/expo-router-top-tabs";
 
-const { Navigator } = createMaterialTopTabNavigator();
+const { width, height } = Dimensions.get('window');
 
-export const MaterialTopTabs = withLayoutContext<
-  MaterialTopTabNavigationOptions,
-  typeof Navigator,
-  TabNavigationState<ParamListBase>,
-  MaterialTopTabNavigationEventMap
->(Navigator);
+const scaleFontSize = (size: number) => size * PixelRatio.getFontScale();
 
-export default function TabLayout() {
+export default function CustomLayout() {
   return (
-    <MaterialTopTabs
+    <TopTabs
       screenOptions={{
-        tabBarLabelStyle: { textTransform: 'none' },
         tabBarIndicatorStyle: { backgroundColor: 'purple' },
+        tabBarItemStyle: { paddingVertical: 10, marginHorizontal: 5 },
+        tabBarStyle: { paddingHorizontal: 10 },
       }}
     >
-      <MaterialTopTabs.Screen 
-        name="Booking" 
-      />
-      <MaterialTopTabs.Screen 
-        name="feeds" 
-      />
-      <MaterialTopTabs.Screen 
-        name="exercise"
-      />
-    </MaterialTopTabs>
+      <TopTabs.Header>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Service</Text>
+        </View>
+      </TopTabs.Header>
+
+      <TopTabs.Screen name="Booking" />
+      <TopTabs.Screen name="Feeds" />
+      <TopTabs.Screen name="Exercise" />
+    </TopTabs>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: width * 0.05,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: scaleFontSize(20), // Scales the font size
+    fontWeight: 'bold',
+    color: 'purple',
+    textAlign: 'center',
+  },
+});
