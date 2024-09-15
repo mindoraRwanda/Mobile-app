@@ -28,13 +28,16 @@ export default function Appointment() {
   const [modalType, setModalType] = useState<'profile' | 'booking'>('profile');
   const [searchText, setSearchText] = useState<string>('');
   const [bookingDetails, setBookingDetails] = useState({
-    name: '',
-    date: '',
-    time: '',
-    reason: ''
+    patientId: '',
+    therapistId: '',
+    startTime: '',
+    endTime: '',
+    location: 'online',
+    appointmentType: 'Screening',
+    status: 'Scheduled',
+    notes: '',
   });
 
-  // Fetch the list of therapists when the screen is focused
   useFocusEffect(
     useCallback(() => {
       const fetchTherapistsData = async () => {
@@ -54,14 +57,14 @@ export default function Appointment() {
     }, [dispatch])
   );
 
-  // Filter therapists based on search text
+  
   const filteredTherapists = therapists.filter(therapist =>
     therapist.name.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.job.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.location.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // Open modal for profile or booking
+  
   const handleModalOpen = (therapist: Therapist, type: 'profile' | 'booking') => {
     setSelectedTherapist(therapist);
     setModalType(type);
@@ -69,15 +72,14 @@ export default function Appointment() {
   };
 
   // Submit the booking request
-  const handleBookingSubmit = async () => {
-    try {
-      await dispatch(createBooking(bookingDetails)).unwrap();
-      console.log('Booking successfully created');
-      setModalVisible(false);
-      setBookingDetails({ name: '', date: '', time: '', reason: '' });
-    } catch (error) {
-      console.error('Failed to create booking:', error);
+   const handleBookingSubmit = () => {
+    console.log('Booking Details:', bookingDetails);
+    if (!bookingDetails.patientId || !bookingDetails.therapistId || !bookingDetails.startTime || !bookingDetails.endTime || !bookingDetails.location || !bookingDetails.appointmentType || !bookingDetails.status) {
+      alert('Please fill in all required fields.');
+      return;
     }
+    dispatch(createBooking(bookingDetails));
+    setModalVisible(false);
   };
 
   // Render each therapist card
@@ -135,12 +137,12 @@ export default function Appointment() {
 
       {modalType === 'booking' && (
         <BookingModal
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          bookingDetails={bookingDetails}
-          setBookingDetails={setBookingDetails}
-          handleBookingSubmit={handleBookingSubmit}
-        />
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        bookingDetails={bookingDetails}
+        setBookingDetails={setBookingDetails}
+        handleBookingSubmit={handleBookingSubmit}
+      />
       )}
     </SafeAreaView>
   );
