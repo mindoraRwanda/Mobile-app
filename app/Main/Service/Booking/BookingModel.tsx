@@ -1,64 +1,93 @@
 import React from 'react';
-import { Text, View, TextInput, TouchableOpacity, Modal, SafeAreaView, StyleSheet } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { createBooking } from '@/redux/Slices/bookingSlice';
 
-export default function BookingModal({ modalVisible, setModalVisible, bookingDetails, setBookingDetails, handleBookingSubmit }) {
+const BookingModal = ({ modalVisible, setModalVisible, bookingDetails, setBookingDetails, handleBookingSubmit }) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    dispatch(createBooking(bookingDetails));
+    setModalVisible(false);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Book an Appointment</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButton}>X</Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder="Your Name"
-                value={bookingDetails.name}
-                onChangeText={(text) => setBookingDetails({ ...bookingDetails, name: text })}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Date (YYYY-MM-DD)"
-                value={bookingDetails.date}
-                onChangeText={(text) => setBookingDetails({ ...bookingDetails, date: text })}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Time (HH:MM)"
-                value={bookingDetails.time}
-                onChangeText={(text) => setBookingDetails({ ...bookingDetails, time: text })}
-              />
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Reason for Visit"
-                value={bookingDetails.reason}
-                onChangeText={(text) => setBookingDetails({ ...bookingDetails, reason: text })}
-                multiline
-              />
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.confirmButton} onPress={handleBookingSubmit}>
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Book an Appointment</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButton}>X</Text>
+            </TouchableOpacity>
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Patient ID"
+            value={bookingDetails.patientId}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, patientId: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Therapist ID"
+            value={bookingDetails.therapistId}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, therapistId: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Start Time"
+            value={bookingDetails.startTime}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, startTime: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="End Time"
+            value={bookingDetails.endTime}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, endTime: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Location"
+            value={bookingDetails.location}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, location: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Appointment Type"
+            value={bookingDetails.appointmentType}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, appointmentType: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Status"
+            value={bookingDetails.status}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, status: text })}
+          />
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Notes"
+            value={bookingDetails.notes}
+            onChangeText={(text) => setBookingDetails({ ...bookingDetails, notes: text })}
+            multiline
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.confirmButton} onPress={handleSubmit}>
+              <Text style={styles.confirmButtonText}>Confirm</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </SafeAreaView>
+      </View>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -133,3 +162,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default BookingModal;
