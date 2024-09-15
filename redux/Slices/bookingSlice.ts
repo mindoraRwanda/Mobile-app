@@ -24,12 +24,17 @@ interface BookingDetails {
 
 export const createBooking = createAsyncThunk(
   'bookings/createBooking',
-  async (bookingDetails: BookingDetails) => {
-    const response = await axios.post(
-      'https://mindora-backend-beta-version.onrender.com/api/appointments',
-      bookingDetails
-    );
-    return response.data;
+  async (bookingDetails: BookingDetails, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        'https://mindora-backend-beta-version.onrender.com/api/appointments',
+        bookingDetails
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      return rejectWithValue(error.response?.data?.message || 'Failed to create booking');
+    }
   }
 );
 
@@ -47,7 +52,7 @@ const bookingSlice = createSlice({
       })
       .addCase(createBooking.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to create booking';
+        state.error = action.payload || 'Failed to create booking';
       });
   },
 });
