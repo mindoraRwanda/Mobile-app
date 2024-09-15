@@ -25,7 +25,7 @@ const feeds = [
     image: 'https://via.placeholder.com/150',
   },
   {
-    id: '1',
+    id: '4',
     title: 'Understanding Mental Health',
     description: 'A brief overview of mental health and why it is important.',
     author: 'John Doe',
