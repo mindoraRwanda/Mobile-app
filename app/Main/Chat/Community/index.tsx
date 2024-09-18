@@ -28,7 +28,7 @@ type Message = {
     audioUri?: string;
 };
 
-const Community: React.FC = (): JSX.Element => {
+const Index: React.FC = (): JSX.Element => {
     const [openCommunity, setOpenCommunity] = useState<boolean>(false);
     const [selectedCommunity, setSelectedCommunity] = useState<CommunityType | null>(null);
     const [joinedCommunities, setJoinedCommunities] = useState<Record<string, boolean>>({});
@@ -348,12 +348,13 @@ const Community: React.FC = (): JSX.Element => {
     );
 };
 
-export default Community;
+export default Index;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        marginTop: 100
     },
     searchInput: {
         padding: 10,

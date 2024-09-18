@@ -1,0 +1,160 @@
+import React, { useEffect, useState } from 'react';
+import { Modal, View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchChatList } from '../../../../redux/Slices/userChatList';
+import { RootState } from '../../../../redux/store';
+
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  profileImage: string | null;
+}
+
+interface UserSelectionModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSelectUser: (user: User) => void;
+}
+
+const UserSelectionModal: React.FC<UserSelectionModalProps> = ({
+  visible,
+  onClose,
+  onSelectUser,
+}) => {
+  const dispatch = useDispatch();
+  const { users, status, error } = useSelector((state: RootState) => state.chatList);
+
+  const [imageSources, setImageSources] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchChatList());
+    }
+  }, [status, dispatch]);
+
+  const handleImageError = (userId: string) => {
+    setImageSources((prev) => ({
+      ...prev,
+      [userId]: '../../../../assets/images/null.jpg',
+    }));
+  };
+
+  const renderUserImage = (profileImage: string | null, userId: string) => {
+    const imageSource = imageSources[userId] || profileImage || '../../../../assets/images/null.jpg';
+
+    return (
+      <Image
+        source={{ uri: imageSource }}
+        style={styles.avatar}
+        onError={() => handleImageError(userId)}
+      />
+    );
+  };
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Select a User to Chat With</Text>
+          {status === 'loading' && <Text>Loading...</Text>}
+          {error && <Text>Error: {error}</Text>}
+
+          {status === 'succeeded' && (
+            <FlatList
+              data={users}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.userListItem}
+                  onPress={() => {
+                    onSelectUser(item);
+                    onClose();
+                  }}
+                >
+                  {renderUserImage(item.profileImage, item.id)}
+                  <View style={styles.userInfo}>
+                    <Text style={styles.userName}>
+                      {item.firstName} {item.lastName}
+                    </Text>
+                    <Text style={styles.userStatus}>{item.role}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    height: '70%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  userListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  userInfo: {
+    marginLeft: 10,
+  },
+  userName: {
+    fontWeight: 'bold',
+  },
+  userStatus: {
+    color: '#888',
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: '#ddd',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignSelf: 'center',
+  },
+  closeButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+});
+
+export default UserSelectionModal;
