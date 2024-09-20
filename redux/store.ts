@@ -7,6 +7,9 @@ import userReducer from './Slices/userSlice';
 import commentReducer from './Slices/commentSlice';  
 import chatReducer from './Slices/chatSlice';
 import chatListReducer from './Slices/userChatList';
+import feedsReducer from './Slices/feedsSlice';
+import supportCommunityReducer from './Slices/supportCommunitySlice';
+import Community from '@/app/Community';
 
 const store = configureStore({
   reducer: {
@@ -18,6 +21,8 @@ const store = configureStore({
     comments: commentReducer,
     chat: chatReducer,
     chatList: chatListReducer,
+    feeds: feedsReducer,
+    Community: supportCommunityReducer,
   },
 });
 

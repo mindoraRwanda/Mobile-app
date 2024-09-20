@@ -1,59 +1,50 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFeeds } from '@/redux/Slices/feedsSlice';
+import { RootState } from '@/redux/store';
 
-const feeds = [
-  {
-    id: '1',
-    title: 'Understanding Mental Health',
-    description: 'A brief overview of mental health and why it is important.',
-    author: 'John Doe',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '2',
-    title: 'Tips for Managing Anxiety',
-    description: 'Practical tips to help you manage anxiety effectively.',
-    author: 'Jane Smith',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '3',
-    title: 'Tips for Managing Anxiety',
-    description: 'Practical tips to help you manage anxiety effectively.',
-    author: 'Jane Smith',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '4',
-    title: 'Understanding Mental Health',
-    description: 'A brief overview of mental health and why it is important.',
-    author: 'John Doe',
-    image: 'https://via.placeholder.com/150',
-  },
-];
+
+
+
 
 export default function Feeds() {
+  const dispatch = useDispatch();
   const router = useRouter();
+  const { articles, videos, loading, error } = useSelector((state: RootState) => state.feeds);
 
-  const renderFeedItem = ({ item }) => (
+  useEffect(() => {
+    dispatch(fetchFeeds());
+  }, [dispatch]);
+
+ const renderFeedItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.card} 
-      onPress={() => router.push(`./Feeds/Article`)}
+      onPress={() => router.push({
+        pathname:'./Feeds/Article',
+        params: { article: JSON.stringify(item) },
+      })}
     >
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image source={{ uri: item.picture || 'https://via.placeholder.com/150' }} style={styles.image} />
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description}>{item.content.sections[0].body}</Text>
         <Text style={styles.author}>By {item.author}</Text>
       </View>
     </TouchableOpacity>
   );
 
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+   if (error) {
+    return <Text>Error: {error}</Text>;
+  }
   return (
     <View style={styles.container}>
       <FlatList 
-        data={feeds}
+        data={articles}
         renderItem={renderFeedItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}

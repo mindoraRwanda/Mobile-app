@@ -15,31 +15,38 @@ export default function Dashboard() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Progress</Text>
-      
+
+      {/* XP Progress Section */}
       <View style={styles.xpSection}>
         <Text style={styles.sectionTitle}>XP Progress</Text>
         <ProgressBar progress={0.7} color="#6a0dad" style={styles.progressBar} />
         <Text style={styles.xpText}>7,000 / 10,000 XP</Text>
       </View>
-      
+
+      {/* Streak Card */}
       <View style={styles.streakCard}>
         <View style={styles.streakIconContainer}>
-          <MaterialCommunityIcons name="fire" size={24} color="#FFA500" />
-          <Text style={styles.streakDays}>100 days</Text>
+          <MaterialCommunityIcons name="fire" size={28} color="#FFA500" style={styles.iconAnimation} />
+          <Text style={styles.streakDays}>100 Days</Text>
         </View>
         <Text style={styles.streakTitle}>Current Streak</Text>
         <Text style={styles.streakDescription}>
-          You have consistently kept in touch with all your partners for a 100 days!
+          You have consistently kept in touch with all your partners for 100 days!
         </Text>
+
+        {/* Badge Section */}
         <View style={styles.badgeContainer}>
           <MaterialCommunityIcons name="trophy" size={48} color="#6a0dad" />
           <MaterialCommunityIcons name="medal" size={48} color="#6a0dad" />
         </View>
+
+        {/* View More Button */}
         <TouchableOpacity onPress={handleViewMoreBadges} style={styles.viewMoreButton}>
           <Text style={styles.viewMoreText}>View More</Text>
         </TouchableOpacity>
       </View>
-      
+
+      {/* Daily Check-up Chart */}
       <View style={styles.chartCard}>
         <Text style={styles.sectionTitle}>Daily Check-up Progress</Text>
         <LineChart
@@ -55,7 +62,7 @@ export default function Dashboard() {
           height={220}
           chartConfig={{
             backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
+            backgroundGradientFrom: '#f7f3fc',
             backgroundGradientTo: '#ffffff',
             decimalPlaces: 0,
             color: (opacity = 1) => `rgba(106, 13, 173, ${opacity})`,
@@ -72,6 +79,8 @@ export default function Dashboard() {
           bezier
           style={styles.chart}
         />
+
+        {/* Legend Section */}
         <View style={styles.legendContainer}>
           <View style={styles.legendItem}>
             <View style={[styles.legendColor, { backgroundColor: '#6a0dad' }]} />
@@ -98,106 +107,120 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#6a0dad',
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: 'center',
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '600',
     color: '#6a0dad',
-    marginBottom: 8,
+    marginBottom: 10,
+    textAlign: 'center',
   },
   xpSection: {
     marginBottom: 24,
+    backgroundColor: '#f9f5ff',
+    padding: 16,
+    borderRadius: 10,
+    elevation: 3,
   },
   progressBar: {
-    height: 10,
-    borderRadius: 5,
-    marginTop: 8,
+    height: 12,
+    borderRadius: 8,
+    marginTop: 10,
   },
   xpText: {
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 10,
     fontSize: 16,
     color: '#6a0dad',
+    fontWeight: '600',
   },
   streakCard: {
-    backgroundColor: '#f0e6ff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#f7f3fc',
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 24,
+    elevation: 5,
   },
   streakIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   streakDays: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#6a0dad',
-    marginLeft: 8,
+    marginLeft: 10,
   },
   streakTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#6a0dad',
     textAlign: 'center',
     marginBottom: 8,
   },
   streakDescription: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   badgeContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   viewMoreButton: {
     backgroundColor: '#6a0dad',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     alignSelf: 'center',
+    elevation: 2,
   },
   viewMoreText: {
     color: '#ffffff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   chartCard: {
-    backgroundColor: '#f0e6ff',
-    borderRadius: 12,
+    backgroundColor: '#f7f3fc',
+    borderRadius: 16,
     padding: 16,
     marginBottom: 24,
+    elevation: 3,
   },
   chart: {
-    marginVertical: 8,
+    marginVertical: 12,
     borderRadius: 16,
   },
   legendContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: 10,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 10,
   },
   legendColor: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 4,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginRight: 6,
   },
   legendText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#333',
+  },
+  iconAnimation: {
+    transform: [{ rotate: '20deg' }],
   },
 });
