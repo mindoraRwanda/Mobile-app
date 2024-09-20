@@ -1,9 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter,  useLocalSearchParams } from 'expo-router';
 
 export default function Article() {
   const router = useRouter();
+  const { article } = useLocalSearchParams();
+  const articleData = article ? JSON.parse(article) : null;
+
+  if (!articleData) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>No article data available.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -11,19 +21,18 @@ export default function Article() {
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>The Benefits of Meditation for Mental Health</Text>
-        <Text style={styles.author}>By Jane Doe</Text>
+        <Text style={styles.title}>{articleData.title}</Text>
+        <Text style={styles.author}>{articleData.author}</Text>
         <Image
-          source={{ uri: 'https://via.placeholder.com/400x200' }}
+          source={{ uri: articleData.picture || 'https://via.placeholder.com/400x200' }}
           style={styles.image}
         />
-        <Text style={styles.content}>
-          Meditation has been practiced for thousands of years, but it's only recently that science has begun to understand its profound effects on the brain. Regular meditation practice can lead to improved emotional health, reduced stress, and increased focus. In this article, we'll explore the many benefits of meditation and how you can incorporate it into your daily routine...
-        </Text>
-        {/* Add more content as needed */}
-        <Text style={styles.content}>
-          Placeholder for additional article content. This section can be expanded with more text, images, or other media to fully engage the reader.
-        </Text>
+         {articleData.content.sections.map((section, index) => (
+          <View key={index}>
+            <Text style={styles.sectionHeader}>{section.header}</Text>
+            <Text style={styles.content}>{section.body}</Text>
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -65,10 +74,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
+  sectionHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
   content: {
     fontSize: 16,
     color: '#444',
     lineHeight: 24,
     marginBottom: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
