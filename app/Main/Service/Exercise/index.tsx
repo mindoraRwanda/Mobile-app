@@ -20,27 +20,16 @@ export default function ExercisePage() {
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(`./Exercise/${item.id}`)} 
+      onPress={() => router.push({
+        pathname: './Exercise/ExerciseDetiels',
+        params: { exercise: JSON.stringify(item) },
+      })} 
     >
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
-
-        {/* Display Difficulty Level */}
         <Text style={styles.difficulty}>Difficulty: {item.difficultyLevel}</Text>
-
-        {/* Conditionally Render Questions if they exist */}
-        {item.questions.length > 0 && (
-          <View style={styles.questionsContainer}>
-            <Text style={styles.questionsHeader}>Questions:</Text>
-            {item.questions.map((question, index) => (
-              <Text key={question.id} style={styles.questionItem}>
-                {index + 1}. {question.question}
-              </Text>
-            ))}
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );
