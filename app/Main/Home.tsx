@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 
 export default function Home() {
@@ -23,16 +23,9 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: '../../assets/images/bgAi.jpg' }}
-        style={styles.backgroundImage}
-      />
       <View style={styles.overlay}>
         <Animated.View style={{ ...styles.iconContainer, opacity: fadeAnim }}>
-          <Image
-            source={{ uri: '../../assets/images/AIlog.jpg' }}
-            style={styles.icon}
-          />
+          <Text style={styles.icon}>🤖</Text>
         </Animated.View>
         <Text style={styles.title}>AI Chatbot Coming Soon!</Text>
         <Text style={styles.subtitle}>
@@ -51,26 +44,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f8f8f8',
   },
-  backgroundImage: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
   overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 20,
+    borderRadius: 10,
   },
   iconContainer: {
     marginBottom: 20,
   },
   icon: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
+    fontSize: 100,
   },
   title: {
     fontSize: 28,
