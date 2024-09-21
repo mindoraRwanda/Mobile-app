@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  Switch,
-  Image,
-  Modal,
-  Pressable,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, View, ScrollView, Text, TouchableOpacity, Switch, Image, Modal, Pressable, } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useAppSelector, useAppDispatch } from '../../../redux/hooks';
 import { logout } from '../../../redux/Slices/authSlice';
@@ -18,6 +7,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getUserById } from '@/redux/Slices/userSlice';
+import LanguageSelectionModal from './LanguageSelectionModal';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,23 +19,19 @@ const Account: React.FC = () => {
 
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
-  const [selectedLocation, setSelectedLocation] = useState('Los Angeles, CA');
+  const [selectedLanguage, setSelectedLanguage] = useState('Still Under Development');
+  const [selectedLocation, setSelectedLocation] = useState('Still Under Development');
 
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [languageValue, setLanguageValue] = useState('English');
+  const [languageValue, setLanguageValue] = useState('Still Under Development');
   const [languageItems, setLanguageItems] = useState([
-    { label: 'English', value: 'English' },
-    { label: 'French', value: 'French' },
-    { label: 'Kinyarwanda', value: 'Kinyarwanda' },
+    { label: 'Still Under Developement', value: 'Still Under Development' },
   ]);
 
   const [locationOpen, setLocationOpen] = useState(false);
   const [locationValue, setLocationValue] = useState('Los Angeles, CA');
   const [locationItems, setLocationItems] = useState([
-    { label: 'Los Angeles, CA', value: 'Los Angeles, CA' },
-    { label: 'Kigali/ Rwanda', value: 'Kigali/ Rwanda' },
-    { label: 'Nairobi/ Kenya', value: 'Nairobi/ Kenya' },
+    { label: 'Still Under Development', value: 'Still Under Development' },
   ]);
 
   useEffect(() => {
@@ -237,38 +223,17 @@ const Account: React.FC = () => {
     {/* Language Modal */}
     {languageModalVisible && (
       <View style={styles.modalBackdrop}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={languageModalVisible}
-          onRequestClose={() => {
-            setLanguageModalVisible(!languageModalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                onPress={() => setLanguageModalVisible(false)}
-                style={styles.modalCloseButton}>
-                <Ionicons name="arrow-back" size={24} color="#000" />
-              </TouchableOpacity>
-              <Text style={styles.modalTitle}>Select Language</Text>
-              <DropDownPicker
-                open={languageOpen}
-                value={languageValue}
-                items={languageItems}
-                setOpen={setLanguageOpen}
-                setValue={setLanguageValue}
-                setItems={setLanguageItems}
-                onChangeValue={(value) => setSelectedLanguage(value)}
-              />
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setLanguageModalVisible(!languageModalVisible)}>
-                <Text style={styles.textStyle}>Done</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+        <LanguageSelectionModal
+      visible={languageModalVisible}
+      setVisible={setLanguageModalVisible}
+      languageOpen={languageOpen}
+      languageValue={languageValue}
+      languageItems={languageItems}
+      setLanguageOpen={setLanguageOpen}
+      setLanguageValue={setLanguageValue}
+      setLanguageItems={setLanguageItems}
+      setSelectedLanguage={setSelectedLanguage}
+    />
       </View>
     )}
 
