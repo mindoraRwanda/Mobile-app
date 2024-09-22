@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChatList } from '../../../../redux/Slices/userChatList';
+import { fetchUsers } from '../../../../redux/Slices/userChatList';
 import { RootState } from '../../../../redux/store';
 
 interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   role: string;
   profileImage: string | null;
 }
@@ -30,7 +30,7 @@ const UserSelectionModal: React.FC<UserSelectionModalProps> = ({
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchChatList());
+      dispatch(fetchUsers());
     }
   }, [status, dispatch]);
 
