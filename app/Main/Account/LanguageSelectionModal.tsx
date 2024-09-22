@@ -4,17 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export default function LanguageSelectionModal({ 
-  visible, 
-  setVisible, 
-  languageOpen, 
-  languageValue, 
-  languageItems, 
-  setLanguageOpen, 
-  setLanguageValue, 
-  setLanguageItems, 
-  setSelectedLanguage 
-}) {
+export default function LanguageSelectionModal({ visible, setVisible, languageOpen, languageValue, languageItems, setLanguageOpen, setLanguageValue, setLanguageItems, setSelectedLanguage }) {
   const [animation] = React.useState(new Animated.Value(0));
 
   React.useEffect(() => {
