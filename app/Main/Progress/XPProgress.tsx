@@ -1,20 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 
-const XPProgress = () => {
+const XPProgress = forwardRef((props, ref) => {
+  const [xp, setXp] = useState(0);
+  const maxXp = 10000;
+
+  const updateXp = (newXp) => {
+    setXp((prevXp) => Math.min(prevXp + newXp, maxXp));
+  };
+
+  useImperativeHandle(ref, () => ({
+    addXp: (amount) => {
+      updateXp(amount);
+    },
+  }));
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateXp(500);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <View style={styles.xpSection}>
       <Text style={styles.sectionTitle}>XP Progress</Text>
-      <ProgressBar progress={0.7} color="#8a2be2" style={styles.progressBar} />
-      <Text style={styles.xpText}>7,000 / 10,000 XP</Text>
+      <ProgressBar progress={xp / maxXp} color="#8a2be2" style={styles.progressBar} />
+      <Text style={styles.xpText}>{xp} / {maxXp} XP</Text>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   xpSection: {
-    margin: 20,
+    margin: 10,
     backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 20,
