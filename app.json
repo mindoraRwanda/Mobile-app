@@ -13,14 +13,46 @@
       "backgroundColor": "#000000"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "This app uses the photo library to select photos.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone to record audio.",
+        "UIBackgroundModes": [
+          "audio",
+          "location",
+          "fetch"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/log.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.kevinishimwe.Mindora"
+      "package": "com.kevinishimwe.Mindora",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "VIBRATE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "RECEIVE_BOOT_COMPLETED",
+        "ACCESS_NOTIFICATION_POLICY",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "USE_FACE",
+        "USE_IRIS",
+        "USE_BIOMETRIC",
+        "USE_BIOMETRIC_STRONG"
+      ]
     },
     "web": {
       "bundler": "metro",

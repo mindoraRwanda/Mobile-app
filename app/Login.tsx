@@ -18,21 +18,21 @@ const Login: FC = () => {
     return emailPattern.test(email);
   };
 
-  const validatePassword = (password: string): boolean => {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordPattern.test(password);
-  };
+  // const validatePassword = (password: string): boolean => {
+  //   const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  //   return passwordPattern.test(password);
+  // };
 
   const onPressSignIn = () => {
-    router.push('/Main');
+    //router.push('/Main');
     if (!validateEmail(email)) {
       Alert.alert('Invalid Email', 'Please enter a valid email address.');
       return;
     }
-    if (!validatePassword(password)) {
-      Alert.alert('Invalid Password', 'Password must be at least 6 characters long.');
-      return;
-    }
+    // if (!validatePassword(password)) {
+    //   Alert.alert('Invalid Password', 'Password must be at least 6 characters long.');
+    //   return;
+    // }
 
     setIsLoading(true);
     dispatch(loginUser({ email, password }))

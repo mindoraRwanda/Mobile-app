@@ -73,7 +73,7 @@ const Account: React.FC = () => {
                 <View style={styles.profileBody}>
                   <Text style={styles.profileName}>{`${user?.firstName} ${user?.lastName}` }</Text>
                   <Text style={styles.profileHandle}>{user?.email || 'john@example.com'}</Text>
-                  <Text style={styles.profileHandle}>ID: {user?.id || 'JCJ-4140'}</Text>
+                  <Text style={styles.profileHandle}>User: {user?.username || 'JCJ-4140'}</Text>
                 </View>
                 <FeatherIcon color="#bcbcbc" name="chevron-right" size={22} />
               </TouchableOpacity>

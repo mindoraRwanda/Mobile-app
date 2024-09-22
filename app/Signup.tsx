@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch,RootState  } from '@/redux/store'; 
+import { AppDispatch, RootState } from '@/redux/store';
 import { signupUser } from '@/redux/Slices/authSlice';
-
+import * as ImagePicker from 'expo-image-picker';
 
 interface FormData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phoneNumber: string;
   username: string;
   password: string;
+  profileImage: string;
 }
 
 export default function SignUp(): React.ReactElement {
@@ -21,11 +23,13 @@ export default function SignUp(): React.ReactElement {
   const dispatch = useDispatch<AppDispatch>();
 
   const [form, setForm] = useState<FormData>({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phoneNumber: '',
     username: '',
     password: '',
+    profileImage: '',
   });
 
   const { status, error } = useSelector((state: RootState) => state.auth);
@@ -40,35 +44,45 @@ export default function SignUp(): React.ReactElement {
     return phonePattern.test(phoneNumber);
   };
 
-  const validatePassword = (password: string): boolean => {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-    return passwordPattern.test(password);  };
-
   const validateUsername = (username: string): boolean => {
-    const usernamePattern = /^[a-zA-Z0-9_]+$/; 
+    const usernamePattern = /^[a-zA-Z0-9_]+$/;
     return usernamePattern.test(username);
   };
 
-  const onPressSignIn = async (): Promise<void> => {
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setForm({ ...form, profileImage: result.assets[0].uri });
+    }
+  };
+
+  const onPressSignUp = async (): Promise<void> => {
     const errors: { [key: string]: string } = {};
-  
-    if (!form.name) errors.name = 'Name is required';
+
+    if (!form.firstName) errors.firstName = 'First name is required';
+    if (!form.lastName) errors.lastName = 'Last name is required';
     if (!form.email || !validateEmail(form.email)) errors.email = 'Valid email is required';
     if (!form.phoneNumber || !validatePhoneNumber(form.phoneNumber)) errors.phoneNumber = 'Valid phone number is required';
     if (!form.username || !validateUsername(form.username)) errors.username = 'Username is required';
-    if (!form.password || !validatePassword(form.password)) errors.password = 'Password must be at least 6 characters long';
-  
+    if (!form.password) errors.password = 'Password is required';
+    //if (!form.profileImage) errors.profileImage = 'Profile image is required';
+
     if (Object.keys(errors).length > 0) {
       const errorMessages = Object.values(errors).join('\n');
       Alert.alert('Validation Errors', errorMessages);
       return;
     }
-  
+
     try {
-      await dispatch(signupUser(form))
-      .unwrap(); 
+      await dispatch(signupUser(form)).unwrap();
       Alert.alert('Sign up successful');
-      router.push('./Main/Account/Profile');
+      router.push('./Main/Account/Account');
     } catch (err) {
       Alert.alert('Sign up failed', err.message || 'An error occurred');
     }
@@ -87,27 +101,47 @@ export default function SignUp(): React.ReactElement {
             <Text style={styles.subtitle}>Create a new account</Text>
           </View>
           <View style={styles.form}>
+            <TouchableOpacity onPress={pickImage} style={styles.imageUpload}>
+              {form.profileImage ? (
+                <Image source={{ uri: form.profileImage }} style={styles.profileImage} />
+              ) : (
+                <Text style={styles.uploadText}>Upload Profile Picture</Text>
+              )}
+            </TouchableOpacity>
             <View style={styles.input}>
-              <Text style={styles.inputLabel}>Name</Text>
+              <Text style={styles.inputLabel}>First Name</Text>
               <TextInput
                 autoCapitalize="words"
                 autoCorrect={false}
                 clearButtonMode="while-editing"
-                onChangeText={(name) => setForm({ ...form, name })}
-                placeholder="Enter your name"
+                onChangeText={(firstName) => setForm({ ...form, firstName })}
+                placeholder="Enter your first name"
                 placeholderTextColor="#6b7280"
                 style={styles.inputControl}
-                value={form.name}
+                value={form.firstName}
               />
             </View>
             <View style={styles.input}>
-              <Text style={styles.inputLabel}>User Name</Text>
+              <Text style={styles.inputLabel}>Last Name</Text>
               <TextInput
                 autoCapitalize="words"
                 autoCorrect={false}
                 clearButtonMode="while-editing"
+                onChangeText={(lastName) => setForm({ ...form, lastName })}
+                placeholder="Enter your last name"
+                placeholderTextColor="#6b7280"
+                style={styles.inputControl}
+                value={form.lastName}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Username</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
                 onChangeText={(username) => setForm({ ...form, username })}
-                placeholder="Enter your user name"
+                placeholder="Enter your username"
                 placeholderTextColor="#6b7280"
                 style={styles.inputControl}
                 value={form.username}
@@ -155,7 +189,7 @@ export default function SignUp(): React.ReactElement {
               />
             </View>
             <View style={styles.formAction}>
-              <TouchableOpacity onPress={onPressSignIn}>
+              <TouchableOpacity onPress={onPressSignUp}>
                 <View style={{ ...styles.btn, backgroundColor: 'purple' }}>
                   {status === 'loading' ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -250,5 +284,24 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: '600',
     color: '#fff',
+  },
+  imageUpload: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#f1f5f9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  uploadText: {
+    color: '#6b7280',
+    textAlign: 'center',
   },
 });

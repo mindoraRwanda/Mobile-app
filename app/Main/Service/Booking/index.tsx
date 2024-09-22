@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, Image, FlatList, TouchableOpacity,
   TextInput, SafeAreaView, StatusBar
@@ -10,6 +10,7 @@ import ProfileModal from './ProfileModal';
 import { useDispatch } from 'react-redux';
 import { fetchTherapists } from '@/redux/Slices/therapistSlice';
 import createBooking from '@/redux/Slices/bookingSlice';
+import XPProgress from '../../Progress/XPProgress';
 
 interface Therapist {
   id: string;
@@ -37,6 +38,7 @@ export default function Appointment() {
     status: 'Scheduled',
     notes: '',
   });
+  const xpProgressRef = useRef(null);
 
   useFocusEffect(
     useCallback(() => {
