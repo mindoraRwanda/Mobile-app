@@ -1,10 +1,23 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, Modal, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 
 export default function ProfileModal({ modalVisible, setModalVisible, selectedTherapist }) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (modalVisible) {
+      // Simulate data fetching
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Replace with actual data fetching logic
+    } else {
+      setLoading(true);
+    }
+  }, [modalVisible]);
+
   return (
     <Modal
       animationType="slide"
@@ -21,13 +34,19 @@ export default function ProfileModal({ modalVisible, setModalVisible, selectedTh
             <Icon name="times" size={24} color="#FFF" />
           </TouchableOpacity>
 
-          <Image source={selectedTherapist.image} style={styles.modalImage} />
-          <View style={styles.infoContainer}>
-            <Text style={styles.modalName}>{selectedTherapist.name}</Text>
-            <Text style={styles.modalJob}>{selectedTherapist.job}</Text>
-            <Text style={styles.modalLocation}>{selectedTherapist.location}</Text>
-            <Text style={styles.modalDescription}>{selectedTherapist.description}</Text>
-          </View>
+          {loading ? (
+            <ActivityIndicator size="large" color="#4A0887" style={styles.spinner} />
+          ) : (
+            <>
+              <Image source={selectedTherapist.image} style={styles.modalImage} />
+              <View style={styles.infoContainer}>
+                <Text style={styles.modalName}>{selectedTherapist.name}</Text>
+                <Text style={styles.modalJob}>{selectedTherapist.job}</Text>
+                <Text style={styles.modalLocation}>{selectedTherapist.location}</Text>
+                <Text style={styles.modalDescription}>{selectedTherapist.description}</Text>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </Modal>
@@ -94,5 +113,10 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     paddingHorizontal: 10,
+  },
+  spinner: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
