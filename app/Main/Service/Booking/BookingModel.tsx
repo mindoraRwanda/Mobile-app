@@ -26,7 +26,7 @@ const BookingModal = ({ modalVisible, setModalVisible, bookingDetails, setBookin
               <Text style={styles.closeButton}>X</Text>
             </TouchableOpacity>
           </View>
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Patient ID"
             value={bookingDetails.patientId}
@@ -37,7 +37,7 @@ const BookingModal = ({ modalVisible, setModalVisible, bookingDetails, setBookin
             placeholder="Therapist ID"
             value={bookingDetails.therapistId}
             onChangeText={(text) => setBookingDetails({ ...bookingDetails, therapistId: text })}
-          />
+          /> */}
           <TextInput
             style={styles.input}
             placeholder="Start Time"
