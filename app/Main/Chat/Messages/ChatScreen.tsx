@@ -47,28 +47,32 @@ const Header = ({ name, image, lastSeen, onBackPress }) => (
 );
 
 // Message Bubble Component
-const MessageBubble = ({ msg, isPlaying, playingMessageId, playAudio }) => (
-  <View
-    key={msg.id}
-    style={[
-      styles.messageBubble,
-      msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
-    ]}
-  >
-    {msg.image && <Image source={{ uri: msg.image }} style={styles.messageImage} />}
-    {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
-    {msg.audioUri && (
-      <TouchableOpacity onPress={() => playAudio(msg.audioUri!, msg.id)}>
-        <Ionicons
-          name={isPlaying && playingMessageId === msg.id ? 'pause' : 'play'}
-          size={ICON_SIZE}
-          color={PURPLE_COLOR}
-        />
-      </TouchableOpacity>
-    )}
-    <Text style={styles.timestamp}>{msg.timestamp.toLocaleTimeString()}</Text>
-  </View>
-);
+const MessageBubble = ({ msg, isPlaying, playingMessageId, playAudio }) => {
+  if (!msg) return null;
+
+  return (
+    <View
+      key={msg.id}
+      style={[
+        styles.messageBubble,
+        msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
+      ]}
+    >
+      {msg.image && <Image source={{ uri: msg.image }} style={styles.messageImage} />}
+      {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
+      {msg.audioUri && (
+        <TouchableOpacity onPress={() => playAudio(msg.audioUri!, msg.id)}>
+          <Ionicons
+            name={isPlaying && playingMessageId === msg.id ? 'pause' : 'play'}
+            size={ICON_SIZE}
+            color={PURPLE_COLOR}
+          />
+        </TouchableOpacity>
+      )}
+      <Text style={styles.timestamp}>{msg.timestamp.toLocaleTimeString()}</Text>
+    </View>
+  );
+};
 
 const ChatScreen = () => {
   const route = useRoute();
@@ -79,6 +83,14 @@ const ChatScreen = () => {
     image: ImageSourcePropType;
     lastSeen?: string;
   };
+
+  if (!id || !name || !image) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Invalid chat data. Please try again.</Text>
+      </SafeAreaView>
+    );
+  }
 
   const [state, setState] = useState({
     message: '',
@@ -331,6 +343,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 20,
     color: '#888',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
