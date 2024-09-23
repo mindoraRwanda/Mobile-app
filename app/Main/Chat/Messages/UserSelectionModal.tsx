@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '../../../../redux/Slices/userChatList';
 import { RootState } from '../../../../redux/store';
@@ -53,6 +53,41 @@ const UserSelectionModal: React.FC<UserSelectionModalProps> = ({
     );
   };
 
+  const renderItem = ({ item }: { item: User }) => {
+    if (!item || typeof item !== 'object') return null;
+
+    const firstName = item.firstName ?? '';
+    const lastName = item.lastName ?? '';
+    const role = item.role ?? 'No role specified';
+
+    return (
+      <TouchableOpacity
+        style={styles.userListItem}
+        onPress={() => {
+          onSelectUser(item);
+          onClose();
+        }}
+      >
+        {renderUserImage(item.profileImage, item.id)}
+        <View style={styles.userInfo}>
+          <Text style={styles.userName}>
+            {firstName} {lastName}
+          </Text>
+          <Text style={styles.userStatus}>{role}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const filteredUsers = (users ?? []).filter((user): user is User => 
+    user !== null && 
+    typeof user === 'object' && 
+    typeof user.id === 'string' && 
+    (user.firstName === null || typeof user.firstName === 'string') &&
+    (user.lastName === null || typeof user.lastName === 'string') &&
+    typeof user.role === 'string'
+  );
+
   return (
     <Modal
       animationType="slide"
@@ -63,30 +98,14 @@ const UserSelectionModal: React.FC<UserSelectionModalProps> = ({
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Select a User to Chat With</Text>
-          {status === 'loading' && <Text>Loading...</Text>}
+          {status === 'loading' && <ActivityIndicator size="large" color="#4A0887" />}
           {error && <Text>Error: {error}</Text>}
 
           {status === 'succeeded' && (
             <FlatList
-              data={users}
+              data={filteredUsers}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.userListItem}
-                  onPress={() => {
-                    onSelectUser(item);
-                    onClose();
-                  }}
-                >
-                  {renderUserImage(item.profileImage, item.id)}
-                  <View style={styles.userInfo}>
-                    <Text style={styles.userName}>
-                      {item.firstName} {item.lastName}
-                    </Text>
-                    <Text style={styles.userStatus}>{item.role}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              renderItem={renderItem}
             />
           )}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -97,6 +116,7 @@ const UserSelectionModal: React.FC<UserSelectionModalProps> = ({
     </Modal>
   );
 };
+
 
 const styles = StyleSheet.create({
   modalOverlay: {
