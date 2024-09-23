@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { View, ActivityIndicator, FlatList, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCommunities } from '@/redux/Slices/supportCommunitySlice';
 import { RootState } from '@/redux/store';
@@ -16,24 +15,32 @@ const Index: React.FC = (): JSX.Element => {
     dispatch(fetchCommunities());
   }, [dispatch]);
 
-  const renderCommunityItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => router.push({
-        pathname: './Community/CommunityView',
-        params: { community: JSON.stringify(item) },
-        })}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Ionicons name="chevron-forward" size={24} color="#666" />
-      </View>
-      <Text style={styles.description}>{item.description}</Text>
-      <View style={styles.moderatorContainer}>
-        <Ionicons name="person-circle" size={20} color="#666" />
-        <Text style={styles.moderator}>Moderator: {item.moderator.firstName} {item.moderator.lastName}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderCommunityItem = ({ item }) => {
+    const moderatorName = item.moderator
+      ? `${item.moderator.firstName ?? 'Unknown'} ${item.moderator.lastName ?? 'User'}`
+      : 'Moderator Info Unavailable';
+
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          router.push({
+            pathname: './Community/CommunityView',
+            params: { community: JSON.stringify(item) },
+          })
+        }>
+        <View style={styles.cardHeader}>
+          <Text style={styles.title}>{item.name}</Text>
+          <Ionicons name="chevron-forward" size={24} color="#666" />
+        </View>
+        <Text style={styles.description}>{item.description}</Text>
+        <View style={styles.moderatorContainer}>
+          <Ionicons name="person-circle" size={20} color="#666" />
+          <Text style={styles.moderator}>Moderator: {moderatorName}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />;
@@ -45,10 +52,10 @@ const Index: React.FC = (): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      <FlatList 
+      <FlatList
         data={communities}
         renderItem={renderCommunityItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
       />
     </View>
@@ -72,7 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-    elevation: 3, 
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },

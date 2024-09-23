@@ -14,8 +14,8 @@ import { Ionicons } from '@expo/vector-icons'; // For icons
 
 interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   role: string;
   profileImage: string | null;
 }
@@ -27,20 +27,52 @@ const Index = () => {
   const router = useRouter();
 
   const handleUserPress = (user: User) => {
-    router.push({
-      pathname: '/Main/Chat/Messages/ChatScreen',
-      params: { 
-        id: user.id, 
-        name: `${user.firstName} ${user.lastName}`, 
-        image: user.profileImage || '../../../../assets/images/null.jpg', 
-        //lastSeen: user.lastSeen 
-      },
-    });
+    if (user && user.id) {
+      router.push({
+        pathname: '/Main/Chat/Messages/ChatScreen',
+        params: { 
+          id: user.id, 
+          name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'Unknown User', 
+          image: user.profileImage || '../../../../assets/images/null.jpg', 
+        },
+      });
+    }
   };
 
   const handleSelectUser = (user: User) => {
-    setSelectedUsers((prevUsers) => [...prevUsers, user]);
+    if (user && user.id) {
+      setSelectedUsers((prevUsers) => [...prevUsers, user]);
+    }
   };
+
+  const renderUserItem = ({ item }: { item: User }) => {
+    // Ensure the user object is defined and contains necessary properties
+    if (!item || typeof item !== 'object' || !item.firstName || !item.lastName) {
+      return null;
+    }
+
+    const userName = `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim() || 'Unknown User';
+    const userRole = item.role || 'No role specified';
+
+    return (
+      <TouchableOpacity style={styles.userCard} onPress={() => handleUserPress(item)}>
+        <Image
+          source={{ uri: item.profileImage || '../../../../assets/images/null.jpg' }}
+          style={styles.avatar}
+        />
+        <View style={styles.userInfo}>
+          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.userRole}>{userRole}</Text>
+        </View>
+        <Text style={styles.userStatus}>Online</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  // Filter users safely, ensuring they have valid properties
+  const filteredUsers = selectedUsers.filter(
+    user => user && user.id && user.firstName && user.lastName && user.role
+  );
 
   return (
     <View style={styles.container}>
@@ -55,23 +87,9 @@ const Index = () => {
       </View>
 
       <FlatList
-        data={selectedUsers}
+        data={filteredUsers}
         keyExtractor={(user) => user.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.userCard} onPress={() => handleUserPress(item)}>
-            <Image
-              source={{ uri: item.profileImage || '../../../../assets/images/null.jpg' }}
-              style={styles.avatar}
-            />
-            <View style={styles.userInfo}>
-              <Text style={styles.userName}>
-                {item.firstName} {item.lastName}
-              </Text>
-              <Text style={styles.userRole}>{item.role}</Text>
-            </View>
-            <Text style={styles.userStatus}>Online</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={renderUserItem}
       />
 
       <TouchableOpacity style={styles.newChatButton} onPress={() => setIsModalVisible(true)}>
