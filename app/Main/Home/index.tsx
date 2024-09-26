@@ -160,14 +160,14 @@ export default function Home() {
           </Pressable>
         </View>
 
-        {/* <View style={styles.characterContainer}>
+        <View style={styles.characterContainer}>
           <LottieView
             ref={lottieRef}
             source={require('../../../assets/animation/miss-minutes-animation.json')}
             style={styles.characterAnimation}
             loop={false}
           />
-        </View> */}
+        </View>
       </View>
     </View>
   );
