@@ -123,12 +123,12 @@ export default function Home() {
           {loading && (
             <View style={styles.loadingContainer}>
               <Text style={styles.loadingText}>Mindora is thinking...</Text>
-              <LottieView
+              {/* <LottieView
                 source={require('../../../assets/animation/clock-loading-animation.json')}
                 autoPlay
                 loop
                 style={styles.loadingAnimation}
-              />
+              /> */}
             </View>
           )}
         </ScrollView>
@@ -160,14 +160,14 @@ export default function Home() {
           </Pressable>
         </View>
 
-        <View style={styles.characterContainer}>
+        {/* <View style={styles.characterContainer}>
           <LottieView
             ref={lottieRef}
             source={require('../../../assets/animation/miss-minutes-animation.json')}
             style={styles.characterAnimation}
             loop={false}
           />
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -224,15 +224,15 @@ const styles = StyleSheet.create({
   userMessage: {
     fontSize: 16,
     color: '#FFF',
-    backgroundColor: '#4A90E2', // Adjust this color if needed
+    backgroundColor: '#4A90E2', 
     padding: 10,
     borderRadius: 15,
     maxWidth: '80%',
-    elevation: 2, // Add shadow to the user message for depth
+    elevation: 2, 
   },
   aiMessage: {
     fontSize: 16,
-    color: '#FFF', // Change text color to white
+    color: '#FFF', 
     backgroundColor: '#A66DFF', // Purple background for AI messages
     padding: 10,
     borderRadius: 15,
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: '#FFD700',
+    color: '#A66DFF', // Purple
     fontStyle: 'italic',
     marginBottom: 10,
   },
