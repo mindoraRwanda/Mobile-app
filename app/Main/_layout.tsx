@@ -47,7 +47,7 @@ export default function HomeLayout() {
       <Tabs.Screen
         name="Service"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: 'Services',
         }}
       />

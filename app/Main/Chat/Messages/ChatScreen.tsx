@@ -18,6 +18,11 @@ import { Audio } from 'expo-av';
 import { useRouter } from 'expo-router';
 import { useRoute } from '@react-navigation/native';
 
+// Constants
+const ICON_SIZE = 24;
+const PURPLE_COLOR = 'purple';
+
+// Message Interface
 interface Message {
   id: string;
   text: string;
@@ -27,10 +32,51 @@ interface Message {
   audioUri?: string;
 }
 
+// Header Component
+const Header = ({ name, image, lastSeen, onBackPress }) => (
+  <View style={styles.header}>
+    <TouchableOpacity style={styles.closeButton} onPress={onBackPress}>
+      <Ionicons name="arrow-back" size={ICON_SIZE} color="black" />
+    </TouchableOpacity>
+    <Image style={styles.avatarSmall} source={image} />
+    <View style={styles.headerInfo}>
+      <Text style={styles.headerName}>{name}</Text>
+      <Text style={styles.headerStatus}>{lastSeen}</Text>
+    </View>
+  </View>
+);
+
+// Message Bubble Component
+const MessageBubble = ({ msg, isPlaying, playingMessageId, playAudio }) => {
+  if (!msg) return null;
+
+  return (
+    <View
+      key={msg.id}
+      style={[
+        styles.messageBubble,
+        msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
+      ]}
+    >
+      {msg.image && <Image source={{ uri: msg.image }} style={styles.messageImage} />}
+      {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
+      {msg.audioUri && (
+        <TouchableOpacity onPress={() => playAudio(msg.audioUri!, msg.id)}>
+          <Ionicons
+            name={isPlaying && playingMessageId === msg.id ? 'pause' : 'play'}
+            size={ICON_SIZE}
+            color={PURPLE_COLOR}
+          />
+        </TouchableOpacity>
+      )}
+      <Text style={styles.timestamp}>{msg.timestamp.toLocaleTimeString()}</Text>
+    </View>
+  );
+};
+
 const ChatScreen = () => {
   const route = useRoute();
   const router = useRouter();
-
   const { id, name, image, lastSeen } = route.params as {
     id: string;
     name: string;
@@ -38,20 +84,31 @@ const ChatScreen = () => {
     lastSeen?: string;
   };
 
-  const [message, setMessage] = useState<string>('');
-  const [messages, setMessages] = useState<{ [key: string]: Message[] }>({});
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [playingAudio, setPlayingAudio] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+  if (!id || !name || !image) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Invalid chat data. Please try again.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const [state, setState] = useState({
+    message: '',
+    messages: {} as { [key: string]: Message[] },
+    recording: null as Audio.Recording | null,
+    isRecording: false,
+    playingAudio: null as Audio.Sound | null,
+    isPlaying: false,
+    playingMessageId: null as string | null,
+  });
+
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [messages[id]]);
+  }, [state.messages[id]]);
 
   const sendMessage = (text: string, image?: string, audioUri?: string) => {
     if (text.trim() || image || audioUri) {
@@ -63,11 +120,14 @@ const ChatScreen = () => {
         image,
         audioUri,
       };
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [id]: [...(prevMessages[id] || []), newMessage],
+      setState((prevState) => ({
+        ...prevState,
+        messages: {
+          ...prevState.messages,
+          [id]: [...(prevState.messages[id] || []), newMessage],
+        },
+        message: '',
       }));
-      setMessage('');
     }
   };
 
@@ -95,8 +155,11 @@ const ChatScreen = () => {
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
-      setRecording(recording);
-      setIsRecording(true);
+      setState((prevState) => ({
+        ...prevState,
+        recording,
+        isRecording: true,
+      }));
     } catch (error) {
       console.error('Failed to start recording', error);
     }
@@ -104,12 +167,15 @@ const ChatScreen = () => {
 
   const stopRecording = async () => {
     try {
-      if (recording) {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
+      if (state.recording) {
+        await state.recording.stopAndUnloadAsync();
+        const uri = state.recording.getURI();
         sendMessage('', '', uri!);
-        setRecording(null);
-        setIsRecording(false);
+        setState((prevState) => ({
+          ...prevState,
+          recording: null,
+          isRecording: false,
+        }));
       }
     } catch (error) {
       console.error('Failed to stop recording', error);
@@ -117,22 +183,31 @@ const ChatScreen = () => {
   };
 
   const playAudio = async (audioUri: string, messageId: string) => {
-    if (playingAudio) {
-      await playingAudio.unloadAsync();
-      setPlayingAudio(null);
-      setIsPlaying(false);
-      setPlayingMessageId(null);
+    if (state.playingAudio) {
+      await state.playingAudio.unloadAsync();
+      setState((prevState) => ({
+        ...prevState,
+        playingAudio: null,
+        isPlaying: false,
+        playingMessageId: null,
+      }));
     }
 
     const { sound } = await Audio.Sound.createAsync({ uri: audioUri });
-    setPlayingAudio(sound);
-    setIsPlaying(true);
-    setPlayingMessageId(messageId);
+    setState((prevState) => ({
+      ...prevState,
+      playingAudio: sound,
+      isPlaying: true,
+      playingMessageId: messageId,
+    }));
 
     sound.setOnPlaybackStatusUpdate((status) => {
       if (status.didJustFinish) {
-        setIsPlaying(false);
-        setPlayingMessageId(null);
+        setState((prevState) => ({
+          ...prevState,
+          isPlaying: false,
+          playingMessageId: null,
+        }));
       }
     });
 
@@ -141,16 +216,7 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Image style={styles.avatarSmall} source={image} />
-        <View style={styles.headerInfo}>
-          <Text style={styles.headerName}>{name}</Text>
-          <Text style={styles.headerStatus}>{lastSeen}</Text>
-        </View>
-      </View>
+      <Header name={name} image={image} lastSeen={lastSeen} onBackPress={() => router.back()} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -158,28 +224,15 @@ const ChatScreen = () => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
         <ScrollView ref={scrollViewRef} contentContainerStyle={styles.messagesContainer}>
-          {messages[id]?.length > 0 ? (
-            messages[id].map((msg) => (
-              <View
+          {state.messages[id]?.length > 0 ? (
+            state.messages[id].map((msg) => (
+              <MessageBubble
                 key={msg.id}
-                style={[
-                  styles.messageBubble,
-                  msg.sender === 'me' ? styles.myMessage : styles.theirMessage,
-                ]}
-              >
-                {msg.image && <Image source={{ uri: msg.image }} style={styles.messageImage} />}
-                {msg.text && <Text style={styles.messageText}>{msg.text}</Text>}
-                {msg.audioUri && (
-                  <TouchableOpacity onPress={() => playAudio(msg.audioUri!, msg.id)}>
-                    <Ionicons
-                      name={isPlaying && playingMessageId === msg.id ? 'pause' : 'play'}
-                      size={24}
-                      color="purple"
-                    />
-                  </TouchableOpacity>
-                )}
-                <Text style={styles.timestamp}>{msg.timestamp.toLocaleTimeString()}</Text>
-              </View>
+                msg={msg}
+                isPlaying={state.isPlaying}
+                playingMessageId={state.playingMessageId}
+                playAudio={playAudio}
+              />
             ))
           ) : (
             <Text style={styles.noMessages}>No messages yet...</Text>
@@ -188,20 +241,20 @@ const ChatScreen = () => {
 
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={openGallery}>
-            <FontAwesome name="image" size={24} color="purple" />
+            <FontAwesome name="image" size={ICON_SIZE} color={PURPLE_COLOR} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={isRecording ? stopRecording : startRecording}>
-            <FontAwesome name={isRecording ? 'stop' : 'microphone'} size={24} color="purple" />
+          <TouchableOpacity onPress={state.isRecording ? stopRecording : startRecording}>
+            <FontAwesome name={state.isRecording ? 'stop' : 'microphone'} size={ICON_SIZE} color={PURPLE_COLOR} />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
             placeholder="Type your message here..."
-            value={message}
-            onChangeText={setMessage}
-            onSubmitEditing={() => sendMessage(message)}
+            value={state.message}
+            onChangeText={(text) => setState((prevState) => ({ ...prevState, message: text }))}
+            onSubmitEditing={() => sendMessage(state.message)}
           />
-          <TouchableOpacity onPress={() => sendMessage(message)}>
-            <FontAwesome name="send" size={24} color="purple" />
+          <TouchableOpacity onPress={() => sendMessage(state.message)}>
+            <FontAwesome name="send" size={ICON_SIZE} color={PURPLE_COLOR} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -212,6 +265,7 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 90,
   },
   header: {
     flexDirection: 'row',
@@ -289,6 +343,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 20,
     color: '#888',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

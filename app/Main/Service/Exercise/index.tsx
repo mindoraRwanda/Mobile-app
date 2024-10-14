@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import { fetchExercises } from '@/redux/exerciseSlice';
+import { fetchExercises } from '@/redux/Slices/exerciseSlice';
 import { RootState } from '@/redux/store';
 
 export default function ExercisePage() {
@@ -16,15 +16,20 @@ export default function ExercisePage() {
     }
   }, [status, dispatch]);
 
+  // Render each exercise item
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(`./Exercise/${item.id}`)} 
+      onPress={() => router.push({
+        pathname: './Exercise/ExerciseDetiels',
+        params: { exercise: JSON.stringify(item) },
+      })} 
     >
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.difficulty}>Difficulty: {item.difficultyLevel}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -94,5 +99,24 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#666',
+  },
+  difficulty: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  questionsContainer: {
+    marginTop: 10,
+  },
+  questionsHeader: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#444',
+  },
+  questionItem: {
+    fontSize: 13,
+    color: '#555',
+    marginTop: 2,
   },
 });
