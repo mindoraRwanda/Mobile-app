@@ -44,17 +44,22 @@ export const signupUser = createAsyncThunk(
     email: string;
     username: string;
     phoneNumber: string;
-    profileImage: string;
+    profileImage: File;
     password: string;
   }) => {
-    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/register', {
-      firstName,
-      lastName,
-      email,
-      username,
-      phoneNumber,
-      profileImage,
-      password,
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('email', email);
+    formData.append('username', username);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('profileImage', profileImage);
+    formData.append('password', password);
+
+    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
     return response.data;
   }
