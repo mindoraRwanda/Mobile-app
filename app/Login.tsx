@@ -13,19 +13,19 @@ const Login: FC = () => {
   const { status, error } = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateEmail = (email: string): boolean => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
+  // const validateEmail = (email: string): boolean => {
+  //   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   return emailPattern.test(email);
+  // };
 
   
 
   const onPressSignIn = () => {
-    //router.push('/Main');
-    if (!validateEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-      return;
-    }
+    router.push('/Main');
+    // if (!validateEmail(email)) {
+    //   Alert.alert('Invalid Email', 'Please enter a valid email address.');
+    //   return;
+    // }
     
 
     setIsLoading(true);
