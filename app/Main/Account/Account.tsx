@@ -274,7 +274,11 @@ const Account: React.FC = () => {
                 setOpen={setLocationOpen}
                 setValue={setLocationValue}
                 setItems={setLocationItems}
-                onChangeValue={(value) => setSelectedLocation(value)}
+                onChangeValue={(value) => {
+                  if (value !== null) {
+                    setSelectedLocation(value);
+                  }
+                }}
               />
               <Pressable
                 style={[styles.button, styles.buttonClose]}
