@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { ReactNativeFile } from 'apollo-upload-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 interface AuthState {
   token: string | null;
@@ -10,14 +10,12 @@ interface AuthState {
   error: string | null;
 }
 
-
 const initialAuthState: AuthState = {
   token: null,
   user: null,
   status: 'idle',
   error: null,
 };
-
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
@@ -35,13 +33,14 @@ export const loginUser = createAsyncThunk(
 export const signupUser = createAsyncThunk(
   'auth/signupUser',
   async ({
-     firstName,
-     lastName,
-     email,
-     username,
-     phoneNumber,
-     profileImage,
-     password }: {
+    firstName,
+    lastName,
+    email,
+    username,
+    phoneNumber,
+    profileImage,
+    password
+  }: {
     firstName: string;
     lastName: string;
     email: string;
@@ -50,15 +49,27 @@ export const signupUser = createAsyncThunk(
     profileImage: string;
     password: string;
   }) => {
-    const response = await axios.post('https://mindora-backend-beta-version-m0bk.onrender.com/api/auth/register', {
-      firstName,
-      lastName,
-      email,
-      username,
-      phoneNumber,
-      profileImage,
-      password,
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('email', email);
+    formData.append('username', username);
+    formData.append('phoneNumber', phoneNumber);
+    formData.append('password', password);
+    if (profileImage) {
+      formData.append('profile', new ReactNativeFile({
+        uri: profileImage,
+        type: 'image/jpeg', 
+        name: 'profile.jpg',
+      }));
+    }
+
+    const response = await axios.post('https://mindora-backend-beta-version-m0bk.onrender.com/api/auth/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
+
     await AsyncStorage.setItem('token', response.data.token);
     await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
     return response.data;
@@ -67,13 +78,12 @@ export const signupUser = createAsyncThunk(
 
 export const loadToken = createAsyncThunk(
   'auth/loadToken',
-  async()=>{
+  async () => {
     const token = await AsyncStorage.getItem('token');
     const user = await AsyncStorage.getItem('user');
-    return token;
+    return { token, user: user ? JSON.parse(user) : null };
   }
 );
-
 
 const authSlice = createSlice({
   name: 'auth',
