@@ -33,7 +33,7 @@ export const createBooking = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error('Error creating booking:', error);
-      return rejectWithValue(error.response?.data?.message || 'Failed to create booking');
+      return rejectWithValue((error as any).response?.data?.message || 'Failed to create booking');
     }
   }
 );
@@ -52,7 +52,7 @@ const bookingSlice = createSlice({
       })
       .addCase(createBooking.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.payload || 'Failed to create booking';
+        state.error = (action.payload as string) || 'Failed to create booking';
       });
   },
 });
