@@ -84,7 +84,8 @@ export default function SignUp(): React.ReactElement {
       Alert.alert('Sign up successful');
       router.push('./Main/Account/Account');
     } catch (err) {
-      Alert.alert('Sign up failed', err.message || 'An error occurred');
+      const errorMessage = (err as Error).message || 'An error occurred';
+      Alert.alert('Sign up failed', errorMessage);
     }
   };
 
