@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getUserById } from '@/redux/Slices/userSlice';
 import LanguageSelectionModal from './LanguageSelectionModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -39,6 +40,12 @@ const Account: React.FC = () => {
       dispatch(getUserById(user.id));
     }
   }, [dispatch, user?.id]);
+
+  const handleLogout = async (dispatch: any, router: any) => {
+    await AsyncStorage.removeItem('token');
+    dispatch(logout());
+    router.push('/Login');
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
@@ -206,7 +213,7 @@ const Account: React.FC = () => {
               ]}>
               <TouchableOpacity
                 onPress={() => {
-                  // handle onPress
+                  handleLogout(dispatch, router);
                 }}
                 style={styles.row}>
                 <Text style={[styles.rowLabel, styles.rowLabelLogout]}>
