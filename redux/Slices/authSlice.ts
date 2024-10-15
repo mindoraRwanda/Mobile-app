@@ -27,6 +27,7 @@ export const loginUser = createAsyncThunk(
       password,
     });
     await AsyncStorage.setItem('token', response.data.token);
+    await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
     return response.data;
   }
 );
@@ -58,6 +59,8 @@ export const signupUser = createAsyncThunk(
       profileImage,
       password,
     });
+    await AsyncStorage.setItem('token', response.data.token);
+    await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
     return response.data;
   }
 );
@@ -66,6 +69,7 @@ export const loadToken = createAsyncThunk(
   'auth/loadToken',
   async()=>{
     const token = await AsyncStorage.getItem('token');
+    const user = await AsyncStorage.getItem('user');
     return token;
   }
 );
@@ -79,6 +83,7 @@ const authSlice = createSlice({
       state.token = null;
       state.user = null;
       AsyncStorage.removeItem('token');
+      AsyncStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {
