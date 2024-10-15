@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -34,6 +34,32 @@ export default function SignUp(): React.ReactElement {
 
   const { status, error } = useSelector((state: RootState) => state.auth);
 
+  const generateUniqueUsername = (): string => {
+    const adjectives = [
+      'Inyange','Umuhire', 'Ubutwari', 'Umwiza', 'Ishema', 'Ubwenge', 'Inkomezi', 'Imbuto', 
+      'Ubumwe', 'Amahirwe', 'Icyizere','Sangwa','Ingenzi', 'Ishyaka','Inkotanyi', 'Courageous', 
+      'Loyal', 'Honest', 'Brave', 'Kind', 'Smart', 'Creative', 'Mighty', 'Fearless', 'Gentle', 
+      'Swift', 'Bright', 'Radiant', 'Noble', 'Bold', 'Peaceful', 'Brilliant'
+    ];
+
+    const nouns = [
+      'Inyambo','Akagera','Nyungwe','Kivu', 'Intare', 'Imvubu', 'Inzovu', 'Ingwe', 'Igikona',
+      'Urutare','Ingoma','Explorer', 'Mountain', 'Lion', 'Elephant', 'Phoenix', 'Panther', 
+      'Tiger', 'Eagle','Giraffe', 'Horizon','River', 'Thunder', 'Vision', 'Voyager', 'Stallion', 
+      'Oasis','Sky','Sahara','Savannah','Comet'
+    ];
+
+    const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const randomNumber = Math.floor(1000 + Math.random() * 9000);
+    return `${adjective}${noun}${randomNumber}`;
+  };
+
+  useEffect(() => {
+    const username = generateUniqueUsername();
+    setForm((prevForm) => ({ ...prevForm, username }));
+  }, []);
+
   const validateEmail = (email: string): boolean => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
@@ -42,11 +68,6 @@ export default function SignUp(): React.ReactElement {
   const validatePhoneNumber = (phoneNumber: string): boolean => {
     const phonePattern = /^[0-9]{10,}$/;
     return phonePattern.test(phoneNumber);
-  };
-
-  const validateUsername = (username: string): boolean => {
-    const usernamePattern = /^[a-zA-Z0-9_]+$/;
-    return usernamePattern.test(username);
   };
 
   const pickImage = async () => {
@@ -69,9 +90,7 @@ export default function SignUp(): React.ReactElement {
     if (!form.lastName) errors.lastName = 'Last name is required';
     if (!form.email || !validateEmail(form.email)) errors.email = 'Valid email is required';
     if (!form.phoneNumber || !validatePhoneNumber(form.phoneNumber)) errors.phoneNumber = 'Valid phone number is required';
-    if (!form.username || !validateUsername(form.username)) errors.username = 'Username is required';
     if (!form.password) errors.password = 'Password is required';
-    //if (!form.profileImage) errors.profileImage = 'Profile image is required';
 
     if (Object.keys(errors).length > 0) {
       const errorMessages = Object.values(errors).join('\n');
@@ -92,7 +111,6 @@ export default function SignUp(): React.ReactElement {
   const onPressHaveAccount = (): void => {
     router.back();
   };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -133,19 +151,6 @@ export default function SignUp(): React.ReactElement {
                 placeholderTextColor="#6b7280"
                 style={styles.inputControl}
                 value={form.lastName}
-              />
-            </View>
-            <View style={styles.input}>
-              <Text style={styles.inputLabel}>Username</Text>
-              <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                clearButtonMode="while-editing"
-                onChangeText={(username) => setForm({ ...form, username })}
-                placeholder="Enter your username"
-                placeholderTextColor="#6b7280"
-                style={styles.inputControl}
-                value={form.username}
               />
             </View>
             <View style={styles.input}>
