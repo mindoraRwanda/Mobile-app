@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Account: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  //const { user } = useAppSelector((state) => state.auth);
   const [form, setForm] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -34,12 +34,17 @@ const Account: React.FC = () => {
   const [locationItems, setLocationItems] = useState([
     { label: 'Still Under Development', value: 'Still Under Development' },
   ]);
+  const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    if (user?.id) {
-      dispatch(getUserById(user.id));
-    }
-  }, [dispatch, user?.id]);
+   useEffect(() => {
+    const loadUserData = async () => {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+    loadUserData();
+  }, []);
 
   const handleLogout = async (dispatch: any, router: any) => {
     await AsyncStorage.removeItem('token');
