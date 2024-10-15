@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 interface AuthState {
@@ -21,10 +22,11 @@ const initialAuthState: AuthState = {
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }: { email: string; password: string }) => {
-    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/login', {
+    const response = await axios.post('https://mindora-backend-beta-version-m0bk.onrender.com/api/auth/login', {
       email,
       password,
     });
+    await AsyncStorage.setItem('token', response.data.token);
     return response.data;
   }
 );
@@ -47,7 +49,7 @@ export const signupUser = createAsyncThunk(
     profileImage: string;
     password: string;
   }) => {
-    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/auth/register', {
+    const response = await axios.post('https://mindora-backend-beta-version-m0bk.onrender.com/api/auth/register', {
       firstName,
       lastName,
       email,
@@ -60,6 +62,14 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+export const loadToken = createAsyncThunk(
+  'auth/loadToken',
+  async()=>{
+    const token = await AsyncStorage.getItem('token');
+    return token;
+  }
+);
+
 
 const authSlice = createSlice({
   name: 'auth',
@@ -68,6 +78,7 @@ const authSlice = createSlice({
     logout(state) {
       state.token = null;
       state.user = null;
+      AsyncStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
