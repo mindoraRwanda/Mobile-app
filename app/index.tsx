@@ -1,12 +1,29 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index(): React.ReactElement {
   const router = useRouter();
-  
+
+  // Check token from AsyncStorage directly
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          // Navigate to the main page if a token exists
+          router.replace('/Main');
+        }
+      } catch (error) {
+        console.error('Error loading token from AsyncStorage:', error);
+      }
+    };
+
+    checkToken(); // Run the token check when component mounts
+  }, [router]);
+
   const onPressHandler = (): void => {
     router.push('/Login');
   };
