@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, Image, FlatList, TouchableOpacity,
-  TextInput, SafeAreaView, StatusBar
+  TextInput, SafeAreaView, StatusBar, ActivityIndicator, RefreshControl
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { fetchTherapists } from '@/redux/Slices/therapistSlice';
 import createBooking from '@/redux/Slices/bookingSlice';
 import XPProgress from '../../Progress/XPProgress';
+import { debounce } from 'lodash';
 
 interface Therapist {
   id: string;
@@ -20,6 +21,26 @@ interface Therapist {
   image: any;
   description: string;
 }
+
+const TherapistCard = React.memo(({ item, onProfilePress, onBookingPress }: { item: Therapist, onProfilePress: () => void, onBookingPress: () => void }) => (
+  <TouchableOpacity
+    style={styles.therapistCard}
+    onPress={onProfilePress}
+  >
+    <Image source={item.image} style={styles.avatar} />
+    <View style={styles.therapistInfo}>
+      <Text style={styles.therapistName}>{item.name}</Text>
+      <Text style={styles.therapistJob}>{item.job}</Text>
+      <Text style={styles.therapistLocation}>{item.location}</Text>
+    </View>
+    <TouchableOpacity
+      style={styles.bookButton}
+      onPress={onBookingPress}
+    >
+      <Text style={styles.bookButtonText}>Book</Text>
+    </TouchableOpacity>
+  </TouchableOpacity>
+));
 
 export default function Appointment() {
   const dispatch = useDispatch();
@@ -38,43 +59,51 @@ export default function Appointment() {
     status: 'Scheduled',
     notes: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const xpProgressRef = useRef(null);
+
+  const fetchTherapistsData = async () => {
+    setLoading(true);
+    const data = await dispatch(fetchTherapists()).unwrap() as Therapist[];
+    const therapistsData: Therapist[] = data.map((item: any) => ({
+      id: item.id,
+      name: `${item.user.firstName} ${item.user.lastName}`,
+      location: item.personalInformation.address || 'N/A',
+      job: item.personalInformation.degree || 'N/A',
+      image: { uri: item.user.profileImage },
+      description: `Gender: ${item.personalInformation.gender}\nEmail: ${item.user.email}\nPhone: ${item.personalInformation.phone}\nDate of Birth: ${item.personalInformation.dateOfBirth}\nDiploma: ${item.personalInformation.diploma}\nLicense: ${item.personalInformation.licence}`
+    }));
+    setTherapists(therapistsData);
+    setLoading(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
-      const fetchTherapistsData = async () => {
-        const data = await dispatch(fetchTherapists()).unwrap();
-        const therapistsData: Therapist[] = data.map((item: any) => ({
-          id: item.id,
-          name: `${item.user.firstName} ${item.user.lastName}`,
-          location: item.personalInformation.address || 'N/A',
-          job: item.personalInformation.degree || 'N/A',
-          image: { uri: item.user.profileImage },
-          description: `Gender: ${item.personalInformation.gender}\nEmail: ${item.user.email}\nPhone: ${item.personalInformation.phone}\nDate of Birth: ${item.personalInformation.dateOfBirth}\nDiploma: ${item.personalInformation.diploma}\nLicense: ${item.personalInformation.licence}`
-        }));
-        setTherapists(therapistsData);
-      };
-
       fetchTherapistsData();
     }, [dispatch])
   );
 
-  
-  const filteredTherapists = therapists.filter(therapist =>
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchTherapistsData().then(() => setRefreshing(false));
+  }, []);
+
+  const debouncedSetSearchText = useCallback(debounce(setSearchText, 300), []);
+
+  const filteredTherapists = useMemo(() => therapists.filter(therapist =>
     therapist.name.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.job.toLowerCase().includes(searchText.toLowerCase()) ||
     therapist.location.toLowerCase().includes(searchText.toLowerCase())
-  );
+  ), [therapists, searchText]);
 
-  
-  const handleModalOpen = (therapist: Therapist, type: 'profile' | 'booking') => {
+  const handleModalOpen = useCallback((therapist: Therapist, type: 'profile' | 'booking') => {
     setSelectedTherapist(therapist);
     setModalType(type);
     setModalVisible(true);
-  };
+  }, []);
 
-  // Submit the booking request
-   const handleBookingSubmit = () => {
+  const handleBookingSubmit = useCallback(() => {
     console.log('Booking Details:', bookingDetails);
     if (!bookingDetails.patientId || !bookingDetails.therapistId || !bookingDetails.startTime || !bookingDetails.endTime || !bookingDetails.location || !bookingDetails.appointmentType || !bookingDetails.status) {
       alert('Please fill in all required fields.');
@@ -82,28 +111,15 @@ export default function Appointment() {
     }
     dispatch(createBooking(bookingDetails));
     setModalVisible(false);
-  };
+  }, [bookingDetails, dispatch]);
 
-  // Render each therapist card
-  const renderTherapistCard = ({ item }: { item: Therapist }) => (
-    <TouchableOpacity
-      style={styles.therapistCard}
-      onPress={() => handleModalOpen(item, 'profile')}
-    >
-      <Image source={item.image} style={styles.avatar} />
-      <View style={styles.therapistInfo}>
-        <Text style={styles.therapistName}>{item.name}</Text>
-        <Text style={styles.therapistJob}>{item.job}</Text>
-        <Text style={styles.therapistLocation}>{item.location}</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.bookButton}
-        onPress={() => handleModalOpen(item, 'booking')}
-      >
-        <Text style={styles.bookButtonText}>Book</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
-  );
+  const renderTherapistCard = useCallback(({ item }: { item: Therapist }) => (
+    <TherapistCard
+      item={item}
+      onProfilePress={() => handleModalOpen(item, 'profile')}
+      onBookingPress={() => handleModalOpen(item, 'booking')}
+    />
+  ), [handleModalOpen]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,17 +133,33 @@ export default function Appointment() {
             placeholder="Search therapists"
             placeholderTextColor="#888"
             value={searchText}
-            onChangeText={setSearchText}
+            onChangeText={debouncedSetSearchText}
           />
         </View>
       </View>
 
-      <FlatList
-        data={filteredTherapists}
-        renderItem={renderTherapistCard}
-        keyExtractor={(item) => item.id}  
-        contentContainerStyle={styles.listContainer}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#4A0887" />
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTherapists}
+          renderItem={renderTherapistCard}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#4A0887']}
+            />
+          }
+        />
+      )}
 
       {modalType === 'profile' && selectedTherapist && (
         <ProfileModal
@@ -139,12 +171,12 @@ export default function Appointment() {
 
       {modalType === 'booking' && (
         <BookingModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        bookingDetails={bookingDetails}
-        setBookingDetails={setBookingDetails}
-        handleBookingSubmit={handleBookingSubmit}
-      />
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          bookingDetails={bookingDetails}
+          setBookingDetails={setBookingDetails}
+          handleBookingSubmit={handleBookingSubmit}
+        />
       )}
     </SafeAreaView>
   );
@@ -186,6 +218,11 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 15,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   therapistCard: {
     flexDirection: 'row',
