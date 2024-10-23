@@ -11,7 +11,7 @@ export default function Layout() {
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Account" />
+          <Stack.Screen name="Accounts" />
          
         </Stack>
       </GestureHandlerRootView>
