@@ -14,10 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.kevinishimwe.Mindora",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to take photos.",
         "NSPhotoLibraryUsageDescription": "This app uses the photo library to select photos.",
         "NSMicrophoneUsageDescription": "This app uses the microphone to record audio.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to convert your speech to text.",
         "UIBackgroundModes": [
           "audio",
           "location",
@@ -50,9 +52,10 @@
         "USE_FINGERPRINT",
         "USE_FACE",
         "USE_IRIS",
-        "USE_BIOMETRIC",
-        "USE_BIOMETRIC_STRONG"
+        "USE_BIOMETRIC_STRONG",
+        "android.permission.RECORD_AUDIO"
       ]
+      
     },
     "web": {
       "bundler": "metro",
@@ -60,7 +63,8 @@
       "favicon": "./assets/log.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "@wdragon/react-native-voice"
     ],
     "experiments": {
       "typedRoutes": true
