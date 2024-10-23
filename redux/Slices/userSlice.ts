@@ -4,7 +4,7 @@ import axios from 'axios';
 export const getUserById = createAsyncThunk(
   'user/fetchById',
   async (userId: string) => {
-    const response = await axios.get(`https://mindora-backend-beta-version.onrender.com/api/therapists/${userId}`);
+    const response = await axios.get(`https://mindora-backend-beta-version-m0bk.onrender.com/api/therapists/${userId}`);
     return response.data;
   }
 );
@@ -20,7 +20,7 @@ export const updateUser = createAsyncThunk(
     profileImage: string | null;
   }) => {
     const { userId, ...data } = userData;
-    const response = await axios.put(`https://mindora-backend-beta-version.onrender.com/api/therapists/${userId}`, data);
+    const response = await axios.put(`https://mindora-backend-beta-version-m0bk.onrender.com/api/therapists/${userId}`, data);
     return response.data;
   }
 );

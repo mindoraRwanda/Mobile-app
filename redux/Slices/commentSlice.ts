@@ -10,7 +10,7 @@ const initialState = {
 export const createComment = createAsyncThunk(
   'comments/createComment',
   async (commentData: { content: string; createdBy: string; postId: string }) => {
-    const response = await axios.post('https://mindora-backend-beta-version.onrender.com/api/comments', commentData);
+    const response = await axios.post('https://mindora-backend-beta-version-m0bk.onrender.com/api/comments', commentData);
     return response.data;
   }
 );

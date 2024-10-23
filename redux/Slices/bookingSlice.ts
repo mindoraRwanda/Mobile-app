@@ -27,7 +27,7 @@ export const createBooking = createAsyncThunk(
   async (bookingDetails: BookingDetails, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        'https://mindora-backend-beta-version.onrender.com/api/appointments',
+        'https://mindora-backend-beta-version-m0bk.onrender.com/api/appointments',
         bookingDetails
       );
       return response.data;
