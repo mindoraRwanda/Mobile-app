@@ -14,7 +14,7 @@ export default function CustomLayout() {
           <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>Service</Text>
         </View>
       </TopTabs.Header>
-      <TopTabs.Screen name="Messages" />
+      {/* <TopTabs.Screen name="Messages" /> */}
       <TopTabs.Screen name="Community" />
     </TopTabs>
   );
