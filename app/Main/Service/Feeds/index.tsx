@@ -5,10 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFeeds } from '@/redux/Slices/feedsSlice';
 import { RootState } from '@/redux/store';
 
-
-
-
-
 export default function Feeds() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -18,11 +14,14 @@ export default function Feeds() {
     dispatch(fetchFeeds());
   }, [dispatch]);
 
- const renderFeedItem = ({ item }) => (
+  // Sort articles by publishedAt date in descending order
+  const sortedArticles = articles.slice().sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)).reverse();
+
+  const renderFeedItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.card} 
       onPress={() => router.push({
-        pathname:'./Feeds/Article',
+        pathname: './Feeds/Article',
         params: { article: JSON.stringify(item) },
       })}
     >
@@ -38,13 +37,13 @@ export default function Feeds() {
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
-   if (error) {
+  if (error) {
     return <Text>Error: {error}</Text>;
   }
   return (
     <View style={styles.container}>
       <FlatList 
-        data={articles}
+        data={sortedArticles}
         renderItem={renderFeedItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
