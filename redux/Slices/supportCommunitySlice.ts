@@ -44,7 +44,7 @@ const initialState: CommunityState = {
 export const fetchCommunities = createAsyncThunk(
   'communities/fetchCommunities',
   async () => {
-    const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api/support-communities');
+    const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/support-communities');
     return response.data;
   },
 );

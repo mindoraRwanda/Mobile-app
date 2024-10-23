@@ -59,7 +59,7 @@ const initialState: FeedsState = {
 };
 
 export const fetchFeeds = createAsyncThunk('feeds/fetchFeeds', async () => {
-  const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api/resources');
+  const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/resources');
   return response.data;
 });
 

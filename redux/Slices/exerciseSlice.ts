@@ -20,7 +20,7 @@ interface Exercise {
   category: string;
   createdAt: string;
   updatedAt: string;
-  questions: Question[]; // Include questions in the Exercise type
+  questions: Question[]; 
 }
 
 interface ExerciseState {
@@ -37,7 +37,7 @@ const initialState: ExerciseState = {
 
 
 export const fetchExercises = createAsyncThunk('exercises/fetchExercises', async () => {
-  const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api/exercises');
+  const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/exercises');
   return response.data;
 });
 
@@ -52,7 +52,7 @@ const exerciseSlice = createSlice({
       })
       .addCase(fetchExercises.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.exercises = action.payload; // Store the exercises and their associated questions
+        state.exercises = action.payload; 
       })
       .addCase(fetchExercises.rejected, (state, action) => {
         state.status = 'failed';

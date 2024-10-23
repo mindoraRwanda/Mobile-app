@@ -22,7 +22,7 @@ const initialState: ChatListState = {
 };
 
 export const fetchUsers = createAsyncThunk('chatList/fetchUsers', async () => {
-  const response = await axios.get('https://mindora-backend-beta-version.onrender.com/api/users');
+  const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/users');
   return response.data.map((user: any) => ({
     id: user.id,
     firstName: user.firstName,
