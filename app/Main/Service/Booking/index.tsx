@@ -12,6 +12,7 @@ import { fetchTherapists } from '@/redux/Slices/therapistSlice';
 import createBooking from '@/redux/Slices/bookingSlice';
 import XPProgress from '../../Progress/XPProgress';
 import { debounce } from 'lodash';
+import ActivityMenu from './ActivityMenu';
 
 interface Therapist {
   id: string;
@@ -124,6 +125,7 @@ export default function Appointment() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F4F8" />
+      <ActivityMenu />
       <View style={styles.header}>
         <Text style={styles.title}>Find Your Therapist</Text>
         <View style={styles.searchBar}>

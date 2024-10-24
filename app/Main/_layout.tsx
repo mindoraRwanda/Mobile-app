@@ -6,7 +6,7 @@ export default function HomeLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName: keyof typeof MaterialCommunityIcons.glyphMap;
           color = focused ? 'purple' : 'rgba(74, 8, 135, 0.557)';
 
           if (route.name === 'Home') {
@@ -18,16 +18,20 @@ export default function HomeLayout() {
             return <AntDesign name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Service') {
-            iconName = 'laptop-medical';
+            iconName = 'stethoscope';
             return <FontAwesome5 name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Progress') {
-            iconName = 'dashboard';
-            return <AntDesign name={iconName} size={size} color={color} />;
+            iconName = 'view-dashboard';
+            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Account') {
             iconName = 'account-cog-outline';
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          }
+          if (route.name === "Exercise") {
+            iconName = 'heart';
+            return <AntDesign name={iconName} size={size} color={color} />;
           }
         },
         tabBarActiveTintColor: 'purple',
@@ -49,6 +53,12 @@ export default function HomeLayout() {
         options={{
           headerShown: false,
           title: 'Services',
+        }}
+      />
+      <Tabs.Screen
+        name="Exercise"
+        options={{
+          headerShown: false,
         }}
       />
       <Tabs.Screen

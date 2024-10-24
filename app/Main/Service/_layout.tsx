@@ -22,7 +22,6 @@ export default function CustomLayout() {
 
       <TopTabs.Screen name="Booking" />
       <TopTabs.Screen name="Feeds" />
-      <TopTabs.Screen name="Exercise" />
     </TopTabs>
   );
 }
