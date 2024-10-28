@@ -10,9 +10,6 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Mindora AI Companion</Text>
-        <Text style={styles.subtitle}>
-          Hey y'all! I'm Mindora, your friendly AI assistant. How can I help you today?
-        </Text>
       </View>
       <View style={styles.navigation}>
         <TouchableOpacity
@@ -48,7 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#4A0887',
-    marginBottom: 15,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
