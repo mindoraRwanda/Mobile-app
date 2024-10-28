@@ -10,9 +10,9 @@ import ProfileModal from './ProfileModal';
 import { useDispatch } from 'react-redux';
 import { fetchTherapists } from '@/redux/Slices/therapistSlice';
 import createBooking from '@/redux/Slices/bookingSlice';
-import XPProgress from '../../Progress/XPProgress';
 import { debounce } from 'lodash';
-import ActivityMenu from './ActivityMenu';
+import { Button } from 'react-native-paper';
+import { router } from 'expo-router';
 
 interface Therapist {
   id: string;
@@ -125,9 +125,18 @@ export default function Appointment() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F4F8" />
-      <ActivityMenu />
       <View style={styles.header}>
         <Text style={styles.title}>Find Your Therapist</Text>
+       <Button
+          mode="contained"
+          onPress={() => router.push('./Service/Booking/Plan')}
+          style={styles.button}
+          labelStyle={styles.buttonText}
+          contentStyle={styles.buttonContent}
+          icon="calendar"
+        >
+          View Upcoming Appointments
+        </Button>
         <View style={styles.searchBar}>
           <Icon name="search" size={20} color="#4A0887" style={styles.searchIcon} />
           <TextInput
@@ -201,6 +210,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4A0887',
     marginBottom: 15,
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    marginBottom: 20,
+  },
+   buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+   buttonContent: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchBar: {
     flexDirection: 'row',
