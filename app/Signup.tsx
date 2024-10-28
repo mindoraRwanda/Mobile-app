@@ -101,7 +101,7 @@ export default function SignUp(): React.ReactElement {
     try {
       await dispatch(signupUser(form)).unwrap();
       Alert.alert('Sign up successful');
-      router.push('./Main/Account/Account');
+      router.push('./Main/Account/Accounts');
     } catch (err) {
       const errorMessage = (err as Error).message || 'An error occurred';
       Alert.alert('Sign up failed', errorMessage);
