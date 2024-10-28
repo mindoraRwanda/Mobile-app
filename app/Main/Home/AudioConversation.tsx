@@ -1,259 +1,237 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
+  StyleSheet,
   Animated,
+  Dimensions,
+  Text,
   Alert,
-  ScrollView,
 } from 'react-native';
 import { Audio } from 'expo-av';
-import * as Speech from 'expo-speech';
-import Voice from '@wdragon/react-native-voice';
-import axios from 'axios';
-import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
 
-interface Message {
-  id: string;
-  text: string;
-  type: 'user' | 'ai';
-  timestamp: Date;
+interface PulseCircleProps {
+  delay: number;
+  scale: number;
 }
 
-const AudioConversation: React.FC = () => {
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+const { width, height } = Dimensions.get('window');
+const RECORDING_DURATION = 10000; // 10 seconds
+
+const PulseCircle: React.FC<PulseCircleProps> = ({ delay, scale }) => {
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    setupVoice();
-    return cleanup;
+    const pulse = Animated.sequence([
+      Animated.delay(delay),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: scale,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ),
+    ]);
+    pulse.start();
+    return () => pulse.stop();
   }, []);
 
-  const setupVoice = async () => {
-    try {
-      const available = await Voice.isAvailable();
-      if (available) {
-        Voice.onSpeechStart = onSpeechStart;
-        Voice.onSpeechEnd = onSpeechEnd;
-        Voice.onSpeechResults = onSpeechResults;
-        Voice.onSpeechError = onSpeechError;
-        
-        await Audio.requestPermissionsAsync();
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-          playsInSilentModeIOS: true,
-          interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-          interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-          playThroughEarpieceAndroid: false,
-        });
-      } else {
-        throw new Error('Voice recognition is not available');
+  return (
+    <Animated.View
+      style={[
+        styles.pulseCircle,
+        {
+          transform: [{ scale: pulseAnim }],
+        },
+      ]}
+    />
+  );
+};
+
+const VoiceInterface: React.FC = () => {
+  const [isListening, setIsListening] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(true);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [countdown, setCountdown] = useState(10);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const floatingAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  const countdownInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    Audio.requestPermissionsAsync();
+    setupAudioMode();
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
       }
-    } catch (error) {
-      console.error('Error setting up voice:', error);
-      Alert.alert('Error', 'Failed to initialize voice recognition');
-    }
-  };
+    };
+  }, []);
 
-  const cleanup = () => {
-    Voice.destroy().then(() => Voice.removeAllListeners());
-    if (recording) {
-      recording.stopAndUnloadAsync();
-    }
-  };
-
-  const startPulseAnimation = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.2,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  };
-
-  const stopPulseAnimation = () => {
-    pulseAnim.setValue(1);
-    pulseAnim.stopAnimation();
-  };
-
-  const onSpeechStart = (e: any) => {
-    console.log('onSpeechStart:', e);
-  };
-
-  const onSpeechEnd = (e: any) => {
-    console.log('onSpeechEnd:', e);
-    stopRecording();
-  };
-
-  const onSpeechResults = async (e: any) => {
-    const userInput = e.value[0];
-    if (userInput) {
-      addMessage(userInput, 'user');
-      await handleSendToAI(userInput);
-    }
-  };
-
-  const onSpeechError = (e: any) => {
-    console.error('Speech recognition error:', e);
-    Alert.alert('Error', 'Failed to recognize speech. Please try again.');
-    stopRecording();
+  const setupAudioMode = async () => {
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
   };
 
   const startRecording = async () => {
     try {
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      if (sound) {
+        await sound.unloadAsync();
+      }
+      const { recording: newRecording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
-      setRecording(recording);
-      setIsRecording(true);
-      await Voice.start('en-US');
-      startPulseAnimation();
-    } catch (err) {
-      console.error('Failed to start recording:', err);
-      Alert.alert('Error', 'Failed to start recording');
+      setRecording(newRecording);
+      setIsListening(true);
+      setCountdown(10);
+      
+      // Start countdown
+      countdownInterval.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            stopRecording();
+            clearInterval(countdownInterval.current!);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      // Auto-stop after 10 seconds
+      setTimeout(() => {
+        stopRecording();
+      }, RECORDING_DURATION);
+    } catch (error) {
+      console.error('Failed to start recording', error);
     }
   };
 
   const stopRecording = async () => {
+    if (!recording) return;
+
     try {
-      if (recording) {
-        setIsRecording(false);
-        stopPulseAnimation();
-        await recording.stopAndUnloadAsync();
-        await Voice.stop();
-        setRecording(null);
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setRecording(null);
+      setIsListening(false);
+      if (countdownInterval.current) {
+        clearInterval(countdownInterval.current);
       }
-    } catch (err) {
-      console.error('Failed to stop recording:', err);
-      Alert.alert('Error', 'Failed to stop recording');
-    }
-  };
-
-  const addMessage = (text: string, type: 'user' | 'ai') => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text,
-      type,
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, newMessage]);
-    
-    // Scroll to bottom after message is added
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
-  const handleSendToAI = async (userInput: string) => {
-    setIsProcessing(true);
-    try {
-      const response = await axios.post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=YOUR_API_KEY',
-        {
-          contents: [{ role: 'user', parts: [{ text: userInput }] }]
-        },
-        {
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-
-      if (response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        const aiResponse = response.data.candidates[0].content.parts[0].text;
-        addMessage(aiResponse, 'ai');
-        Speech.speak(aiResponse);
-      } else {
-        throw new Error('Invalid AI response format');
+      
+      if (uri) {
+        playDemoResponse(uri);
       }
     } catch (error) {
-      console.error('Error fetching AI response:', error);
-      Alert.alert('Error', 'Failed to get AI response');
-    } finally {
-      setIsProcessing(false);
+      console.error('Failed to stop recording', error);
     }
   };
 
-  const formatTimestamp = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const playDemoResponse = async (recordingUri: string) => {
+    try {
+      // First play the user's recording
+      const { sound: recordingSound } = await Audio.Sound.createAsync({ uri: recordingUri });
+      setSound(recordingSound);
+      await recordingSound.playAsync();
+      
+      // Wait for the recording to finish
+      recordingSound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.didJustFinish) {
+          // After recording playback, play the demo response
+          await recordingSound.unloadAsync();
+          Alert.alert(
+            "Mindora AI Demo",
+            "Thank you for trying our demo! Mindora Voice AI is still under development. Soon, you'll be able to have natural conversations with our AI assistant. Stay tuned for updates!",
+            [{ text: "OK" }]
+          );
+        }
+      });
+    } catch (error) {
+      console.error('Failed to play demo response', error);
+    }
+  };
+
+  const toggleListening = () => {
+    if (!isListening) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Voice Assistant</Text>
-      </View>
+      <LinearGradient
+        colors={['#4A0887', '#2D0052', '#1A0033']}
+        style={StyleSheet.absoluteFill}
+      />
 
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.messagesContainer}
-        contentContainerStyle={styles.messagesContent}
-      >
-        {messages.map((message) => (
-          <View
-            key={message.id}
+      <View style={styles.mainContent}>
+        <View style={styles.circleContainer}>
+          {isListening && (
+            <>
+              <PulseCircle delay={0} scale={1.3} />
+              <PulseCircle delay={333} scale={1.5} />
+              <PulseCircle delay={666} scale={1.7} />
+            </>
+          )}
+          <TouchableOpacity
+            onPress={toggleListening}
             style={[
-              styles.messageWrapper,
-              message.type === 'user' ? styles.userMessageWrapper : styles.aiMessageWrapper,
+              styles.micButton,
+              isListening && styles.micButtonActive
             ]}
+            activeOpacity={0.8}
           >
-            <View
-              style={[
-                styles.message,
-                message.type === 'user' ? styles.userMessage : styles.aiMessage,
-              ]}
-            >
-              <Text style={styles.messageText}>{message.text}</Text>
-              <Text style={styles.timestamp}>
-                {formatTimestamp(message.timestamp)}
-              </Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-
-      <View style={styles.footer}>
-        {isProcessing && (
-          <View style={styles.processingContainer}>
-            <ActivityIndicator color="#4A0887" />
-            <Text style={styles.processingText}>Processing...</Text>
-          </View>
-        )}
-        
-        <TouchableOpacity
-          onPress={isRecording ? stopRecording : startRecording}
-          style={styles.recordButton}
-          disabled={isProcessing}
-        >
-          <Animated.View
-            style={[
-              styles.recordButtonInner,
-              { transform: [{ scale: isRecording ? pulseAnim : 1 }] },
-            ]}
-          >
-            <Feather
-              name={isRecording ? 'stop-circle' : 'mic'}
-              size={30}
-              color="white"
+            <Ionicons
+              name={isListening ? 'mic' : 'mic-off'}
+              size={40}
+              color="#FFF"
             />
-          </Animated.View>
-          <Text style={styles.recordButtonText}>
-            {isRecording ? 'Stop' : 'Start Recording'}
-          </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.statusText}>
+          {isListening 
+            ? `Recording... ${countdown}s` 
+            : 'Tap to speak'}
+        </Text>
       </View>
+
+      {showComingSoon && (
+        <BlurView intensity={60} style={StyleSheet.absoluteFill}>
+          <TouchableOpacity
+            style={styles.comingSoonContainer}
+            onPress={() => setShowComingSoon(false)}
+            activeOpacity={0.9}
+          >
+            <View style={styles.comingSoonContent}>
+              <Text style={styles.comingSoonTitle}>Coming Soon!</Text>
+              <Text style={styles.comingSoonText}>
+                Try our demo version!{'\n'}
+                Record for 10 seconds and hear how{'\n'}
+                Mindora AI will work.{'\n\n'}
+                Tap anywhere to start the demo.
+              </Text>
+              <Ionicons name="rocket" size={40} color="#FFF" />
+            </View>
+          </TouchableOpacity>
+        </BlurView>
+      )}
     </View>
   );
 };
@@ -261,89 +239,74 @@ const AudioConversation: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
   },
-  header: {
-    padding: 20,
-    backgroundColor: '#4A0887',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  messagesContainer: {
+  mainContent: {
     flex: 1,
-    padding: 15,
-  },
-  messagesContent: {
-    paddingBottom: 20,
-  },
-  messageWrapper: {
-    marginVertical: 5,
-    maxWidth: '80%',
-  },
-  userMessageWrapper: {
-    alignSelf: 'flex-end',
-  },
-  aiMessageWrapper: {
-    alignSelf: 'flex-start',
-  },
-  message: {
-    padding: 12,
-    borderRadius: 15,
-    elevation: 1,
-  },
-  userMessage: {
-    backgroundColor: '#4A0887',
-  },
-  aiMessage: {
-    backgroundColor: 'white',
-  },
-  messageText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  timestamp: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
-    alignSelf: 'flex-end',
-  },
-  footer: {
-    padding: 20,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-  },
-  processingContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  circleContainer: {
+    width: 150,
+    height: 150,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pulseCircle: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 2,
+    borderColor: 'rgba(74, 8, 135, 0.3)',
+  },
+  micButton: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: 'rgba(74, 8, 135, 0.8)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  micButtonActive: {
+    backgroundColor: 'rgba(74, 8, 135, 1)',
+    borderColor: '#fff',
+  },
+  statusText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: '#FFF',
+    fontWeight: '600',
+  },
+  comingSoonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(74, 8, 135, 0.3)',
+  },
+  comingSoonContent: {
+    padding: 30,
+    alignItems: 'center',
+    backgroundColor: 'rgba(74, 8, 135, 0.8)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  comingSoonTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFF',
     marginBottom: 10,
   },
-  processingText: {
-    marginLeft: 10,
-    color: '#666',
-  },
-  recordButton: {
-    alignItems: 'center',
-  },
-  recordButtonInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#4A0887',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  recordButtonText: {
-    color: '#4A0887',
-    fontSize: 14,
-    fontWeight: '600',
+  comingSoonText: {
+    fontSize: 16,
+    color: '#FFF',
+    textAlign: 'center',
+    marginBottom: 20,
+    opacity: 0.9,
+    lineHeight: 24,
   },
 });
 
-export default AudioConversation;
+export default VoiceInterface;
