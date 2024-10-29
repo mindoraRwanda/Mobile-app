@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { View, ActivityIndicator, FlatList, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCommunities } from '@/redux/Slices/supportCommunitySlice';
-import { RootState } from '@/redux/store';
+import { fetchCommunities, fetchCommunitiesByUserId } from '@/redux/Slices/supportCommunitySlice';
+import { RootState, AppDispatch } from '@/redux/store';
 import { useRouter } from 'expo-router';
 
 const CommunityList: React.FC = (): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState('My Community'); // Default tab
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { communities, loading, error } = useSelector((state: RootState) => state.Community);
+  const { communities, userCommunities, loading, error } = useSelector((state: RootState) => state.Community);
 
   useEffect(() => {
     dispatch(fetchCommunities());
+    dispatch(fetchCommunitiesByUserId());
   }, [dispatch]);
 
-  const renderCommunityItem = ({ item }) => {
+  const renderCommunityItem = ({ item }: { item: any }) => {
     const moderatorName = item.moderator
       ? `${item.moderator.firstName ?? 'Unknown'} ${item.moderator.lastName ?? 'User'}`
       : 'Moderator Info Unavailable';
@@ -26,7 +27,7 @@ const CommunityList: React.FC = (): JSX.Element => {
         style={styles.card}
         onPress={() =>
           router.push({
-            pathname: './Chat/CommunityView',
+            pathname: './Community/CommunityView',
             params: { community: JSON.stringify(item) },
           })
         }>
@@ -47,12 +48,14 @@ const CommunityList: React.FC = (): JSX.Element => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />;
+    return <ActivityIndicator size="large" color="#4A0887" style={styles.loading} />;
   }
 
   if (error) {
     return <Text style={styles.errorText}>Error: {error}</Text>;
   }
+
+  const data = selectedTab === 'My Community' ? userCommunities : communities;
 
   return (
     <View style={styles.container}>
@@ -72,7 +75,7 @@ const CommunityList: React.FC = (): JSX.Element => {
 
       {/* Community List */}
       <FlatList
-        data={communities} // You may need to filter the data here based on `selectedTab`
+        data={data}
         renderItem={renderCommunityItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
@@ -103,14 +106,14 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#6200ee',
+    borderBottomColor: '#4A0887',
   },
   tabText: {
     fontSize: 16,
     color: '#666',
   },
   activeTabText: {
-    color: '#6200ee',
+    color: '#4A0887',
     fontWeight: 'bold',
   },
   list: {
