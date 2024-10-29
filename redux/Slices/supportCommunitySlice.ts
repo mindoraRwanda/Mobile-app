@@ -1,8 +1,8 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
- interface Moderator {
+interface Moderator {
   id: string;
   firstName: string;
   lastName: string;
@@ -31,12 +31,14 @@ interface Community {
 
 interface CommunityState {
   communities: Community[];
+  userCommunities: Community[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: CommunityState = {
   communities: [],
+  userCommunities: [],
   loading: false,
   error: null,
 };
@@ -49,24 +51,49 @@ export const fetchCommunities = createAsyncThunk(
   },
 );
 
+export const fetchCommunitiesByUserId = createAsyncThunk(
+  'communities/fetchCommunitiesByUserId',
+  async () => {
+    const user = await AsyncStorage.getItem('user');
+    if (!user) {
+      throw new Error('User not found in local storage');
+    }
+    const userId = JSON.parse(user).id;
+    const response = await axios.get(`https://mindora-backend-beta-version-m0bk.onrender.com/api/user-communities/${userId}`);
+    return response.data;
+  },
+);
+
 const supportCommunitySlice = createSlice({
-    name: 'supportCommunity',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder.addCase(fetchCommunities.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        });
-        builder.addCase(fetchCommunities.fulfilled, (state, action) => {
-        state.loading = false;
-        state.communities = action.payload;
-        });
-        builder.addCase(fetchCommunities.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || 'An error occurred.';
-        });
-    },
+  name: 'supportCommunity',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchCommunities.pending, (state) => {
+      state.loading = true;
+      state.error = null;
     });
+    builder.addCase(fetchCommunities.fulfilled, (state, action) => {
+      state.loading = false;
+      state.communities = action.payload;
+    });
+    builder.addCase(fetchCommunities.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'An error occurred.';
+    });
+    builder.addCase(fetchCommunitiesByUserId.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchCommunitiesByUserId.fulfilled, (state, action) => {
+      state.loading = false;
+      state.userCommunities = action.payload;
+    });
+    builder.addCase(fetchCommunitiesByUserId.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || 'An error occurred.';
+    });
+  },
+});
 
 export default supportCommunitySlice.reducer;
