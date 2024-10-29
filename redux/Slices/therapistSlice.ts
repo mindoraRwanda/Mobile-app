@@ -19,7 +19,7 @@ const initialTherapistState: TherapistState = {
 export const fetchTherapists = createAsyncThunk(
   'therapists/fetchTherapists',
   async () => {
-    const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/therapists');
+    const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/appointment_available_slots');
     return response.data;
   }
 );
