@@ -13,9 +13,9 @@ export default function HomeLayout() {
             iconName = 'robot';
             return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
-          if (route.name === 'Chat') {
-            iconName = 'wechat';
-            return <AntDesign name={iconName} size={size} color={color} />;
+          if (route.name === 'Community') {
+            iconName = 'account-group';
+            return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
           }
           if (route.name === 'Service') {
             iconName = 'stethoscope';
@@ -62,7 +62,7 @@ export default function HomeLayout() {
         }}
       />
       <Tabs.Screen
-       name="Chat" 
+       name="Community" 
        options={{
         headerShown: false,
       }}
