@@ -11,7 +11,7 @@ export default function CommunityView() {
     details: 'Detailed information about the community.',
   };
 
-  const [selectedTab, setSelectedTab] = useState('Posts'); // Switch between "Posts" and "About"
+  const [selectedTab, setSelectedTab] = useState('Posts'); 
 
   // Sample posts data (replace with actual data)
   const posts = [

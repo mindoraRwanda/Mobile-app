@@ -150,7 +150,7 @@ const VoiceInterface: React.FC = () => {
       
       // Wait for the recording to finish
       recordingSound.setOnPlaybackStatusUpdate(async (status) => {
-        if (status.didJustFinish) {
+        if ((status as AVPlaybackStatusSuccess).didJustFinish) {
           // After recording playback, play the demo response
           await recordingSound.unloadAsync();
           Alert.alert(
