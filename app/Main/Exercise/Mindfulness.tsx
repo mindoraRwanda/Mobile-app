@@ -1,3 +1,5 @@
+// Mindfulness.tsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -7,16 +9,21 @@ import {
   ScrollView,
   Animated,
   SafeAreaView,
-  Modal,
+  Easing,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Audio } from 'expo-av';
+import Svg, { Circle } from 'react-native-svg';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const mindfulnessExercises = [
   {
     id: '1',
     title: 'Body Scan',
-    duration: 300, // 5 minutes in seconds
+    duration: 300,
     color: '#4CAF50',
     icon: 'accessibility',
     steps: [
@@ -33,7 +40,7 @@ const mindfulnessExercises = [
   {
     id: '2',
     title: 'Mindful Walking',
-    duration: 180, // 3 minutes
+    duration: 180,
     color: '#2196F3',
     icon: 'directions-walk',
     steps: [
@@ -48,7 +55,7 @@ const mindfulnessExercises = [
   {
     id: '3',
     title: 'Five Senses',
-    duration: 240, // 4 minutes
+    duration: 240,
     color: '#9C27B0',
     icon: 'visibility',
     steps: [
@@ -62,7 +69,7 @@ const mindfulnessExercises = [
   {
     id: '4',
     title: 'Mindful Listening',
-    duration: 180, // 3 minutes
+    duration: 180,
     color: '#FF9800',
     icon: 'hearing',
     steps: [
@@ -77,23 +84,47 @@ const mindfulnessExercises = [
 
 export default function Mindfulness() {
   const router = useRouter();
-  const [selectedExercise, setSelectedExercise] = useState(null);
+  const [selectedExercise, setSelectedExercise] = useState<any>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
+  const progress = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const startSession = (exercise) => {
+  const playSound = async () => {
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require('../../../assets/sounds/chime.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    } catch (error) {
+      console.log('Error playing sound:', error);
+    }
+  };
+
+  const startSession = (exercise: any) => {
     setSelectedExercise(exercise);
     setIsSessionActive(true);
     setRemainingTime(exercise.duration);
     setCurrentStep(0);
+    progress.setValue(0);
+
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: exercise.duration * 1000,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start();
+
+    playSound();
   };
 
   const endSession = () => {
@@ -101,9 +132,21 @@ export default function Mindfulness() {
     setSelectedExercise(null);
     setCurrentStep(0);
     setRemainingTime(0);
+    progress.stopAnimation();
+    progress.setValue(0);
+    if (sound) {
+      sound.unloadAsync();
+    }
   };
 
   const nextStep = () => {
+    if (currentStep < selectedExercise.steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      playSound();
+    } else {
+      endSession();
+    }
+
     Animated.sequence([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -116,14 +159,10 @@ export default function Mindfulness() {
         useNativeDriver: true,
       }),
     ]).start();
-
-    if (currentStep < selectedExercise.steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
   };
 
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (isSessionActive && remainingTime > 0) {
       interval = setInterval(() => {
         setRemainingTime((prev) => {
@@ -135,46 +174,107 @@ export default function Mindfulness() {
         });
       }, 1000);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isSessionActive, remainingTime]);
+
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
+
+  const ProgressCircle = () => {
+    const size = 220;
+    const strokeWidth = 12;
+    const halfSize = size / 2;
+    const radius = halfSize - strokeWidth / 2;
+    const circumference = 2 * Math.PI * radius;
+
+    const animatedStroke = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [circumference, 0],
+    });
+
+    return (
+      <View style={{ width: size, height: size }}>
+        <Svg width={size} height={size}>
+          <Circle
+            cx={halfSize}
+            cy={halfSize}
+            r={radius}
+            stroke="#e0e0e0"
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+          <AnimatedCircle
+            cx={halfSize}
+            cy={halfSize}
+            r={radius}
+            stroke={selectedExercise.color}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeDasharray={`${circumference}`}
+            strokeDashoffset={animatedStroke}
+            strokeLinecap="round"
+          />
+        </Svg>
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: size,
+            height: size,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={styles.timerText}>{formatTime(remainingTime)}</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
+          <MaterialIcons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mindfulness Exercises</Text>
+        <Text style={styles.headerTitle}>Mindfulness</Text>
       </View>
 
       {!isSessionActive ? (
-        <ScrollView style={styles.exerciseList}>
+        <ScrollView contentContainerStyle={styles.exerciseList}>
           {mindfulnessExercises.map((exercise) => (
             <TouchableOpacity
               key={exercise.id}
-              style={[styles.exerciseCard, { borderLeftColor: exercise.color }]}
+              style={styles.exerciseCard}
               onPress={() => startSession(exercise)}
             >
-              <View style={[styles.iconContainer, { backgroundColor: exercise.color }]}>
-                <MaterialIcons name={exercise.icon} size={32} color="white" />
-              </View>
-              <View style={styles.exerciseInfo}>
+              <LinearGradient
+                colors={[exercise.color, `${exercise.color}AA`]}
+                style={styles.cardGradient}
+              >
+                <MaterialIcons name={exercise.icon} size={48} color="#fff" />
                 <Text style={styles.exerciseTitle}>{exercise.title}</Text>
                 <Text style={styles.exerciseDuration}>
                   Duration: {formatTime(exercise.duration)}
                 </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={24} color="#666" />
+              </LinearGradient>
             </TouchableOpacity>
           ))}
         </ScrollView>
       ) : (
-        <View style={styles.sessionContainer}>
-          <View style={[styles.timerContainer, { borderColor: selectedExercise.color }]}>
-            <Text style={[styles.timerText, { color: selectedExercise.color }]}>
-              {formatTime(remainingTime)}
-            </Text>
-          </View>
+        <LinearGradient
+          colors={['#005C97', '#363795']}
+          style={styles.sessionContainer}
+        >
+          <ProgressCircle />
 
           <Animated.View style={[styles.instructionContainer, { opacity: fadeAnim }]}>
             <Text style={styles.instructionStep}>
@@ -190,17 +290,21 @@ export default function Mindfulness() {
               style={[styles.controlButton, { backgroundColor: selectedExercise.color }]}
               onPress={nextStep}
             >
-              <Text style={styles.controlButtonText}>Next Step</Text>
+              <Text style={styles.controlButtonText}>
+                {currentStep + 1 < selectedExercise.steps.length ? 'Next Step' : 'Finish'}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.controlButton, styles.endButton]}
               onPress={endSession}
             >
-              <Text style={[styles.controlButtonText, { color: '#FF5252' }]}>End Session</Text>
+              <Text style={[styles.controlButtonText, { color: '#FF5252' }]}>
+                End Session
+              </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </LinearGradient>
       )}
     </SafeAreaView>
   );
@@ -209,124 +313,94 @@ export default function Mindfulness() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F6FA',
+    backgroundColor: '#121212',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#1F1F1F',
   },
   backButton: {
     padding: 8,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 16,
-    color: '#333',
+    color: '#fff',
   },
   exerciseList: {
-    flex: 1,
     padding: 16,
   },
   exerciseCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 12,
     marginBottom: 16,
-    padding: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    borderLeftWidth: 4,
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 5,
   },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+  cardGradient: {
+    padding: 24,
     alignItems: 'center',
-    marginRight: 16,
-  },
-  exerciseInfo: {
-    flex: 1,
   },
   exerciseTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    color: '#fff',
+    marginTop: 16,
   },
   exerciseDuration: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: '#fff',
+    marginTop: 8,
   },
   sessionContainer: {
     flex: 1,
-    padding: 16,
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  timerContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 32,
+    paddingVertical: 32,
   },
   timerText: {
     fontSize: 48,
     fontWeight: 'bold',
+    color: '#fff',
   },
   instructionContainer: {
     padding: 24,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 16,
+    width: '90%',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   instructionStep: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    color: '#fff',
     marginBottom: 8,
   },
   instructionText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '500',
-    color: '#333',
+    color: '#fff',
     textAlign: 'center',
   },
   controlsContainer: {
-    width: '100%',
-    padding: 16,
+    width: '90%',
   },
   controlButton: {
-    width: '100%',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 12,
   },
-  endButton: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#FF5252',
-  },
   controlButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  endButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#FF5252',
   },
 });
