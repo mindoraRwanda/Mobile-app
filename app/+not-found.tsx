@@ -9,8 +9,8 @@ export default function NotFoundScreen() {
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <ThemedView style={styles.container}>
-        <ThemedText type="title">APP is still under construction some page might work</ThemedText>
-        <Link href="/Index" style={styles.link}>
+        <ThemedText type="title">APP is still under construction some page might not work</ThemedText>
+        <Link href="/index" style={styles.link}>
           <ThemedText type="link">Go to home screen!</ThemedText>
         </Link>
       </ThemedView>
