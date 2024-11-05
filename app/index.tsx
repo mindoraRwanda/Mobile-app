@@ -21,7 +21,7 @@ export default function Index(): React.ReactElement {
       }
     };
 
-    checkToken(); // Run the token check when component mounts
+    checkToken();
   }, [router]);
 
   const onPressHandler = (): void => {

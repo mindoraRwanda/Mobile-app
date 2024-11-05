@@ -9,11 +9,14 @@ import chatReducer from './Slices/chatSlice';
 import chatListReducer from './Slices/userChatList';
 import feedsReducer from './Slices/feedsSlice';
 import supportCommunityReducer from './Slices/supportCommunitySlice';
+import profileReducer from './Slices/profileSlice';
 import Community from '@/app/Community';
+
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    profile: profileReducer,
     therapists: therapistReducer,
     exercises: exerciseReducer,
     bookings: bookingReducer,

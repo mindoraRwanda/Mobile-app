@@ -17,6 +17,7 @@ export default function Layout() {
           <Stack.Screen name="Login" />
           <Stack.Screen name="Main" />
           <Stack.Screen name="Signup" />
+          <Stack.Screen name="Profile" />
         </Stack>
       </GestureHandlerRootView>
     </Provider>
