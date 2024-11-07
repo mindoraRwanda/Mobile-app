@@ -1,3 +1,5 @@
+// supportCommunitySlice.ts
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,6 +29,7 @@ interface Community {
   createdAt: string;
   updatedAt: string;
   moderator: Moderator;
+  // Include any other fields returned by your API
 }
 
 interface CommunityState {
@@ -46,9 +49,11 @@ const initialState: CommunityState = {
 export const fetchCommunities = createAsyncThunk(
   'communities/fetchCommunities',
   async () => {
-    const response = await axios.get('https://mindora-backend-beta-version-m0bk.onrender.com/api/support-communities');
+    const response = await axios.get(
+      'https://mindora-backend-beta-version-m0bk.onrender.com/api/support-communities'
+    );
     return response.data;
-  },
+  }
 );
 
 export const fetchCommunitiesByUserId = createAsyncThunk(
@@ -59,9 +64,33 @@ export const fetchCommunitiesByUserId = createAsyncThunk(
       throw new Error('User not found in local storage');
     }
     const userId = JSON.parse(user).id;
-    const response = await axios.get(`https://mindora-backend-beta-version-m0bk.onrender.com/api/user-communities/${userId}`);
+    const response = await axios.get(
+      `https://mindora-backend-beta-version-m0bk.onrender.com/api/support-communities/user/${userId}`
+    );
     return response.data;
-  },
+  }
+);
+
+export const joinCommunity = createAsyncThunk(
+  'communities/joinCommunity',
+  async (
+    data: { communityId: string; userId: string; role: string; status: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        'https://mindora-backend-beta-version-m0bk.onrender.com/api/user-communities',
+        data
+      );
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message || 'An unknown error occurred.');
+      }
+    }
+  }
 );
 
 const supportCommunitySlice = createSlice({
@@ -69,30 +98,50 @@ const supportCommunitySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchCommunities.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(fetchCommunities.fulfilled, (state, action) => {
-      state.loading = false;
-      state.communities = action.payload;
-    });
-    builder.addCase(fetchCommunities.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || 'An error occurred.';
-    });
-    builder.addCase(fetchCommunitiesByUserId.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(fetchCommunitiesByUserId.fulfilled, (state, action) => {
-      state.loading = false;
-      state.userCommunities = action.payload;
-    });
-    builder.addCase(fetchCommunitiesByUserId.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || 'An error occurred.';
-    });
+    builder
+      // Fetch Communities
+      .addCase(fetchCommunities.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCommunities.fulfilled, (state, action) => {
+        state.loading = false;
+        state.communities = action.payload;
+      })
+      .addCase(fetchCommunities.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'An error occurred while fetching communities.';
+      })
+      // Fetch User Communities
+      .addCase(fetchCommunitiesByUserId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCommunitiesByUserId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userCommunities = action.payload;
+      })
+      .addCase(fetchCommunitiesByUserId.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message || 'An error occurred while fetching user communities.';
+      })
+      // Join Community
+      .addCase(joinCommunity.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(joinCommunity.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally, you can update userCommunities state here if needed
+      })
+      .addCase(joinCommunity.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          'An error occurred while joining the community.';
+      });
   },
 });
 
