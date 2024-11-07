@@ -1,9 +1,8 @@
-// profileSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-// Define the structure of your profile data
+
 interface MedicalProfile {
   condition: string;
   prison: string;
@@ -61,8 +60,7 @@ const initialState: ProfileState = {
   error: null,
 };
 
-// Async thunk to submit profile data
-// profileSlice.ts
+
 export const submitProfile = createAsyncThunk<
   { patientId: string },
   ProfileData,
@@ -71,20 +69,22 @@ export const submitProfile = createAsyncThunk<
   'profile/submitProfile',
   async (profileData, thunkAPI) => {
     try {
-      // Retrieve the 'user' object from AsyncStorage
       const userString = await AsyncStorage.getItem('user');
       if (userString) {
         const user = JSON.parse(userString);
-        profileData.userId = user.userId || ''; // Adjust the key if different
+        profileData.userId = user.id || ''; 
+        if (!profileData.userId) {
+          return thunkAPI.rejectWithValue('User ID not found in user data.');
+        }
       } else {
         return thunkAPI.rejectWithValue('User not found. Please sign up first.');
       }
 
-      // Log the payload for debugging
+
       console.log('Submitting Profile Data:', profileData);
 
       const response = await axios.post(
-        'https://mindora-backend-beta-version-m0bk.onrender.com/api/patients', // Ensure this is correct
+        'https://mindora-backend-beta-version-m0bk.onrender.com/api/patients', 
         profileData,
         {
           headers: {
@@ -113,7 +113,6 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    // You can add synchronous reducers here if needed
     setProfile: (state, action: PayloadAction<ProfileData>) => {
       state.profile = action.payload;
     },
@@ -132,7 +131,6 @@ const profileSlice = createSlice({
       .addCase(submitProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.patientId = action.payload.patientId;
-        // Optionally, you can store the profile data in the state
         // state.profile = action.meta.arg;
       })
       .addCase(submitProfile.rejected, (state, action) => {

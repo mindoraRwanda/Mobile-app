@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store'; 
 import { submitProfile } from '../redux/Slices/profileSlice'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
@@ -107,17 +108,24 @@ export default function Profile() {
     },
   });
 
-  // Fetch userId from AsyncStorage when the component mounts
+ 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const user = await AsyncStorage.getItem('user');
-        if (user) {
-          const parsedUser = JSON.parse(user);
-          setForm((prevForm) => ({
-            ...prevForm,
-            userId: parsedUser.userId || '',
-          }));
+        const userString = await AsyncStorage.getItem('user');
+        if (userString) {
+          const parsedUser = JSON.parse(userString);
+          const userId = parsedUser.id || '';
+          if (userId) {
+            setForm((prevForm) => ({
+              ...prevForm,
+              userId,
+            }));
+          } else {
+            Alert.alert('Error', 'User ID not found. Please sign up first.');
+          }
+        } else {
+          Alert.alert('Error', 'User not found. Please sign up first.');
         }
       } catch (err) {
         console.error('Error fetching user from AsyncStorage:', err);
@@ -128,7 +136,7 @@ export default function Profile() {
     fetchUserId();
   }, []);
 
-  // Optional: Handle displaying errors
+ 
   useEffect(() => {
     if (error) {
       Alert.alert('Error', error);
@@ -174,6 +182,7 @@ export default function Profile() {
     .then((res) => {
       Alert.alert('Success', 'Profile submitted successfully!');
       // Navigate to another screen or perform other actions here
+      router.push('./Main/Account/Accounts');
     })
     .catch((err) => {
       // Errors are already handled in the useEffect above
