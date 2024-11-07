@@ -176,16 +176,14 @@ export default function Profile() {
     return;
   }
 
-  // Dispatch the submitProfile action with the form data
+
   dispatch(submitProfile(form))
     .unwrap()
     .then((res) => {
       Alert.alert('Success', 'Profile submitted successfully!');
-      // Navigate to another screen or perform other actions here
       router.push('./Main/Account/Accounts');
     })
     .catch((err) => {
-      // Errors are already handled in the useEffect above
       console.error('Profile submission failed:', err);
       Alert.alert('Error', `Failed to submit profile: ${err}`);
     });
