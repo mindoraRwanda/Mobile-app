@@ -72,6 +72,7 @@ export const signupUser = createAsyncThunk(
 
     await AsyncStorage.setItem('token', response.data.token);
     await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+    //console.log('User Data:', response.data.user);
     return response.data;
   }
 );
