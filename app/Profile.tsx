@@ -1,29 +1,28 @@
 // Profile.tsx
 import React, { useState, useEffect } from 'react';
 import {
-  ScrollView,
+  Animated,
+  Easing,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Animated,
-  Easing,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../redux/store'; 
-import { submitProfile } from '../redux/Slices/profileSlice'; 
+import { RootState, AppDispatch } from '../redux/store';
+import { submitProfile } from '../redux/Slices/profileSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, error, patientId } = useSelector((state: RootState) => state.profile);
+  const { loading, error } = useSelector((state: RootState) => state.profile);
 
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
@@ -108,7 +107,6 @@ export default function Profile() {
     },
   });
 
- 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -136,7 +134,6 @@ export default function Profile() {
     fetchUserId();
   }, []);
 
- 
   useEffect(() => {
     if (error) {
       Alert.alert('Error', error);
@@ -170,24 +167,22 @@ export default function Profile() {
   };
 
   const handleSubmit = () => {
-  // Basic validation to ensure userId is present
-  if (!form.userId) {
-    Alert.alert('Error', 'User ID is missing. Please sign up first.');
-    return;
-  }
+    if (!form.userId) {
+      Alert.alert('Error', 'User ID is missing. Please sign up first.');
+      return;
+    }
 
-
-  dispatch(submitProfile(form))
-    .unwrap()
-    .then((res) => {
-      Alert.alert('Success', 'Profile submitted successfully!');
-      router.push('./Main/Account/Accounts');
-    })
-    .catch((err) => {
-      console.error('Profile submission failed:', err);
-      Alert.alert('Error', `Failed to submit profile: ${err}`);
-    });
-};
+    dispatch(submitProfile(form))
+      .unwrap()
+      .then(() => {
+        Alert.alert('Success', 'Profile submitted successfully!');
+        router.push('./Main/Account/Accounts');
+      })
+      .catch((err) => {
+        console.error('Profile submission failed:', err);
+        Alert.alert('Error', `Failed to submit profile: ${err}`);
+      });
+  };
 
   const fadeAnim = new Animated.Value(0);
 
@@ -201,205 +196,227 @@ export default function Profile() {
   }, [currentStep]);
 
   const renderStepIndicator = () => {
-    const steps = [];
+    const indicators = [];
     for (let i = 1; i <= totalSteps; i++) {
-      steps.push(
+      indicators.push(
         <View
           key={i}
           style={[
-            styles.step,
-            currentStep === i && styles.currentStep,
-            i < currentStep && styles.completedStep,
+            styles.stepIndicatorItem,
+            currentStep === i && styles.currentStepIndicatorItem,
+            i < currentStep && styles.completedStepIndicatorItem,
           ]}
         >
-          <Text style={styles.stepText}>{i}</Text>
+          <Text style={styles.stepIndicatorText}>{i}</Text>
         </View>
       );
       if (i !== totalSteps) {
-        steps.push(<View key={`line-${i}`} style={styles.stepLine} />);
+        indicators.push(<View key={`line-${i}`} style={styles.stepIndicatorLine} />);
       }
     }
-    return <View style={styles.stepIndicator}>{steps}</View>;
+    return <View style={styles.stepIndicatorContainer}>{indicators}</View>;
   };
+
+  const steps = [
+    {
+      title: 'Medical Profile',
+      section: 'medicalProfile',
+      questions: [
+        {
+          label: 'Do you have any diagnosed mental health conditions? If so, please specify.',
+          field: 'condition',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Are you currently taking any medications? Please list them and their dosages.',
+          field: 'currentMedications',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Have you ever received mental health treatment before? If yes, please describe.',
+          field: 'mentalHealthTreatmentHistory',
+          multiline: true,
+          keyboardType: 'default',
+        },
+      ],
+    },
+    {
+      title: 'Medical Profile (Continued)',
+      section: 'medicalProfile',
+      questions: [
+        {
+          label: 'Do you have any allergies? Please list them.',
+          field: 'allergies',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Have you been hospitalized for mental health or other medical reasons? If so, please provide details.',
+          field: 'previousHospitalizations',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Do you use substances such as alcohol, tobacco, or recreational drugs? If yes, please specify.',
+          field: 'substanceUse',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Describe your sleep patterns (e.g., insomnia, oversleeping).',
+          field: 'sleepPatterns',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Describe your dietary habits (e.g., appetite changes, special diet).',
+          field: 'dietaryHabits',
+          multiline: true,
+          keyboardType: 'default',
+        },
+        {
+          label: 'Describe your physical activity level.',
+          field: 'physicalActivity',
+          multiline: true,
+          keyboardType: 'default',
+        },
+      ],
+    },
+    {
+      title: 'Personal Information',
+      section: 'personalInformation',
+      questions: [
+        {
+          label: 'What is your full name?',
+          field: 'fullName',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is your date of birth?',
+          field: 'dateOfBirth',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is your age?',
+          field: 'age',
+          multiline: false,
+          keyboardType: 'numeric',
+        },
+        {
+          label: 'What is your gender?',
+          field: 'gender',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is your marital status?',
+          field: 'maritalStatus',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is your occupation?',
+          field: 'occupation',
+          multiline: false,
+          keyboardType: 'default',
+        },
+      ],
+    },
+    {
+      title: 'Emergency Contact',
+      section: 'emergencyContact',
+      questions: [
+        {
+          label: 'What is the name of your emergency contact?',
+          field: 'name',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is your relationship with this person?',
+          field: 'relationship',
+          multiline: false,
+          keyboardType: 'default',
+        },
+        {
+          label: 'What is their phone number?',
+          field: 'contact',
+          multiline: false,
+          keyboardType: 'phone-pad',
+        },
+        {
+          label: 'Do you consent to us contacting this person in case of emergency?',
+          field: 'consentToContact',
+          isCheckbox: true,
+        },
+      ],
+    },
+  ];
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {renderStepIndicator()}
         <Animated.ScrollView
-          contentContainerStyle={styles.formContainer}
+          contentContainerStyle={[styles.formContainer, { paddingBottom: 120 }]}
           style={{ opacity: fadeAnim }}
         >
-          {currentStep === 1 && (
-            <>
-              <Text style={styles.sectionTitle}>Medical Profile</Text>
-
-              <Text style={styles.question}>
-                Do you have any diagnosed mental health conditions? If so, please specify.
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.condition}
-                onChangeText={(text) => handleChange('medicalProfile', 'condition', text)}
-              />
-
-              <Text style={styles.question}>
-                Are you currently taking any medications? Please list them and their dosages.
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.currentMedications}
-                onChangeText={(text) =>
-                  handleChange('medicalProfile', 'currentMedications', text)
-                }
-              />
-
-              <Text style={styles.question}>
-                Have you ever received mental health treatment before? If yes, please describe.
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.mentalHealthTreatmentHistory}
-                onChangeText={(text) =>
-                  handleChange('medicalProfile', 'mentalHealthTreatmentHistory', text)
-                }
-              />
-            </>
-          )}
-
-          {currentStep === 2 && (
-            <>
-              <Text style={styles.sectionTitle}>Medical Profile (Continued)</Text>
-
-              <Text style={styles.question}>Do you have any allergies? Please list them.</Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.allergies}
-                onChangeText={(text) => handleChange('medicalProfile', 'allergies', text)}
-              />
-
-              <Text style={styles.question}>
-                Have you been hospitalized for mental health or other medical reasons? If so, please
-                provide details.
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.previousHospitalizations}
-                onChangeText={(text) =>
-                  handleChange('medicalProfile', 'previousHospitalizations', text)
-                }
-              />
-
-              <Text style={styles.question}>
-                Do you use substances such as alcohol, tobacco, or recreational drugs? If yes,
-                please specify.
-              </Text>
-              <TextInput
-                style={styles.input}
-                multiline
-                value={form.medicalProfile.substanceUse}
-                onChangeText={(text) => handleChange('medicalProfile', 'substanceUse', text)}
-              />
-            </>
-          )}
-
-          {currentStep === 3 && (
-            <>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
-
-              <Text style={styles.question}>What is your full name?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.personalInformation.fullName}
-                onChangeText={(text) => handleChange('personalInformation', 'fullName', text)}
-              />
-
-              <Text style={styles.question}>What is your date of birth?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.personalInformation.dateOfBirth}
-                onChangeText={(text) => handleChange('personalInformation', 'dateOfBirth', text)}
-              />
-
-              <Text style={styles.question}>What is your age?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.personalInformation.age}
-                onChangeText={(text) => handleChange('personalInformation', 'age', text)}
-                keyboardType="numeric"
-              />
-
-              <Text style={styles.question}>What is your gender?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.personalInformation.gender}
-                onChangeText={(text) => handleChange('personalInformation', 'gender', text)}
-              />
-            </>
-          )}
-
-          {currentStep === 4 && (
-            <>
-              <Text style={styles.sectionTitle}>Emergency Contact</Text>
-
-              <Text style={styles.question}>What is the name of your emergency contact?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.emergencyContact.name}
-                onChangeText={(text) => handleChange('emergencyContact', 'name', text)}
-              />
-
-              <Text style={styles.question}>What is your relationship with this person?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.emergencyContact.relationship}
-                onChangeText={(text) =>
-                  handleChange('emergencyContact', 'relationship', text)
-                }
-              />
-
-              <Text style={styles.question}>What is their phone number?</Text>
-              <TextInput
-                style={styles.input}
-                value={form.emergencyContact.contact}
-                onChangeText={(text) => handleChange('emergencyContact', 'contact', text)}
-                keyboardType="phone-pad"
-              />
-
-              <Text style={styles.question}>
-                Do you consent to us contacting this person in case of emergency?
-              </Text>
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() =>
-                  handleChange(
-                    'emergencyContact',
-                    'consentToContact',
-                    !form.emergencyContact.consentToContact
-                  )
-                }
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    form.emergencyContact.consentToContact && styles.checkboxChecked,
-                  ]}
+          <Text style={styles.sectionTitle}>{steps[currentStep - 1].title}</Text>
+          {steps[currentStep - 1].questions.map((question, index) => (
+            <View key={index} style={styles.questionContainer}>
+              <Text style={styles.question}>{question.label}</Text>
+              {question.isCheckbox ? (
+                <TouchableOpacity
+                  style={styles.checkboxContainer}
+                  onPress={() =>
+                    handleChange(
+                      steps[currentStep - 1].section as keyof FormState,
+                      question.field,
+                      !(form[steps[currentStep - 1].section] as any)[question.field]
+                    )
+                  }
                 >
-                  {form.emergencyContact.consentToContact && (
-                    <Ionicons name="checkmark" size={16} color="#FFF" />
-                  )}
-                </View>
-                <Text style={styles.checkboxLabel}>
-                  {form.emergencyContact.consentToContact ? 'Yes' : 'No'}
-                </Text>
-              </TouchableOpacity>
-            </>
-          )}
+                  <View
+                    style={[
+                      styles.checkbox,
+                      (form[steps[currentStep - 1].section] as any)[question.field] &&
+                        styles.checkboxChecked,
+                    ]}
+                  >
+                    {(form[steps[currentStep - 1].section] as any)[question.field] && (
+                      <Ionicons name="checkmark" size={16} color="#FFF" />
+                    )}
+                  </View>
+                  <Text style={styles.checkboxLabel}>
+                    {(form[steps[currentStep - 1].section] as any)[question.field]
+                      ? 'Yes'
+                      : 'No'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TextInput
+                  style={[
+                    styles.input,
+                    question.multiline && styles.multilineInput,
+                  ]}
+                  multiline={question.multiline}
+                  value={(form[steps[currentStep - 1].section] as any)[question.field]}
+                  onChangeText={(text) =>
+                    handleChange(
+                      steps[currentStep - 1].section as keyof FormState,
+                      question.field,
+                      text
+                    )
+                  }
+                  keyboardType={question.keyboardType}
+                />
+              )}
+            </View>
+          ))}
         </Animated.ScrollView>
 
         {/* Navigation Buttons */}
@@ -438,19 +455,20 @@ export default function Profile() {
   );
 }
 
+// Styles defined outside of the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
   },
-  stepIndicator: {
+  stepIndicatorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 20,
     backgroundColor: '#F0F4F8',
   },
-  step: {
+  stepIndicatorItem: {
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -458,50 +476,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  currentStep: {
+  currentStepIndicatorItem: {
     backgroundColor: '#4A0887',
   },
-  completedStep: {
+  completedStepIndicatorItem: {
     backgroundColor: '#8E44AD',
   },
-  stepText: {
+  stepIndicatorText: {
     color: '#FFF',
     fontWeight: 'bold',
   },
-  stepLine: {
+  stepIndicatorLine: {
     flex: 1,
     height: 2,
     backgroundColor: '#DDD',
   },
   formContainer: {
     padding: 16,
-    paddingBottom: 100,
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 24,
     color: '#4A0887',
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 16,
     textAlign: 'center',
+  },
+  questionContainer: {
+    marginBottom: 16,
   },
   question: {
     fontSize: 16,
     color: '#333',
-    marginTop: 16,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
     borderColor: '#CCC',
-    borderRadius: 12,
+    borderRadius: 8,
     padding: 12,
     backgroundColor: '#FFF',
-    elevation: 1,
+  },
+  multilineInput: {
+    height: 100,
+    textAlignVertical: 'top',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 8,
   },
   checkbox: {
     height: 24,
@@ -511,11 +533,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF', // Default background
-    borderRadius: 4,
+    backgroundColor: '#FFF',
   },
   checkboxChecked: {
-    backgroundColor: '#4A0887', // Change background when checked
+    backgroundColor: '#4A0887',
   },
   checkboxLabel: {
     fontSize: 16,
