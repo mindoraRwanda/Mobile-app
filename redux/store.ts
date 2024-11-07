@@ -25,7 +25,7 @@ const store = configureStore({
     chat: chatReducer,
     chatList: chatListReducer,
     feeds: feedsReducer,
-    Community: supportCommunityReducer,
+    supportCommunity: supportCommunityReducer,
   },
 });
 
